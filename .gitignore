@@ -62,3 +62,13 @@ Thumbs.db                             # Windows Explorer
 # Custom
 # =========================
 .fastRequest/
+/.gradle/
+/.idea/
+/build/
+
+# =========================
+# Environment variables
+# =========================
+.env
+.env.*
+!.env.example
