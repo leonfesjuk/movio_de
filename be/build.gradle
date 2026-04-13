@@ -39,7 +39,8 @@ dependencies {
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.6.3'
 
     // База данных
-    runtimeOnly 'com.mysql:mysql-connector-j'
+//    runtimeOnly 'com.mysql:mysql-connector-j'
+    runtimeOnly 'org.postgresql:postgresql'
 
     // JJWT — API на компиляцию, реализация и Jackson — на runtime
     implementation 'io.jsonwebtoken:jjwt-api:0.12.6'

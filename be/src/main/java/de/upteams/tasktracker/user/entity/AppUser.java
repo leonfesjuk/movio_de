@@ -29,7 +29,7 @@ public class AppUser extends BaseEntity {
             name = "email",
             unique = true,
             nullable = false,
-            columnDefinition = "VARCHAR(255) COLLATE ascii_bin"
+            columnDefinition = "VARCHAR(255)"
     )
     private String email;
 
