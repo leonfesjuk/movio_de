@@ -1,4 +1,6 @@
-export const SessionCardContent = ({ session }) => {
+import type { SessionCardContentProps } from "./types"
+
+export const SessionCardContent = ({ session }: SessionCardContentProps) => {
     return (
         <div>
             <h3>{session.title}</h3>
