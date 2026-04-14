@@ -1,13 +1,16 @@
-import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card.tsx";
-import {Input} from "@/components/ui/input.tsx";
+import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
+import {Input} from "@/components/ui/input";
 import {Label} from "@/components/ui/label";
-import {Button} from "@/components/ui/button.tsx";
-import {Textarea} from "@/components/ui/textarea.tsx";
+import {Button} from "@/components/ui/button";
+import {Textarea} from "@/components/ui/textarea";
+import FilterBar from "@/components/common/FilterBar.tsx";
+
 
 export default function TestUI(){
     return(
-        <div className="p-10 space-y-6">
 
+        <div className="p-10 space-y-6">
+            <FilterBar />
             <h1 className="text-2xl font-bold">UI Components Test</h1>
 
             <Card className="w-[300px]">
@@ -31,6 +34,7 @@ export default function TestUI(){
             </Card>
 
             <Textarea placeholder="Write something..."/>
+
 
         </div>
     )
