@@ -38,9 +38,13 @@ dependencies {
     implementation 'org.mapstruct:mapstruct:1.6.3'
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.6.3'
 
-    // База данных
-//    runtimeOnly 'com.mysql:mysql-connector-j'
+    // Database
     runtimeOnly 'org.postgresql:postgresql'
+    implementation 'org.flywaydb:flyway-core'
+    runtimeOnly 'org.flywaydb:flyway-database-postgresql'
+
+    // Dotenv - load .env file
+    implementation 'io.github.cdimascio:dotenv-java:3.0.0'
 
     // JJWT — API на компиляцию, реализация и Jackson — на runtime
     implementation 'io.jsonwebtoken:jjwt-api:0.12.6'

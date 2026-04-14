@@ -2,9 +2,9 @@ spring:
   application:
     name: Task Tracker
   datasource:
-    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:task_tracker}
-    username: ${DB_USERNAME:root}
-    password: ${DB_PASSWORD:root}
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:movio_web_main}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
   jpa:
@@ -15,14 +15,17 @@ spring:
     properties:
       hibernate:
         format_sql: true
+
+  flyway:
+    enabled: false # Вимкнули Flyway згідно з вашим запитом
+    locations: classpath:db/migration
   mail:
-    username: ${EMAIL_USERNAME:fake}
-    password: ${EMAIL_PASSWORD:fake}
+    username: ${EMAIL_USERNAME}
+    password: ${EMAIL_PASSWORD}
     host: smtp.gmail.com
     port: 587
     properties:
       mail:
-        #        debug: true
         smtp:
           auth: true
           starttls:
@@ -30,11 +33,6 @@ spring:
           ssl:
             protocols: TLSv1.2
             trust: smtp.gmail.com
-
-logging:
-  level:
-    #    root: debug
-    org.hibernate.SQL: DEBUG
 
 confirmation:
   expiration:
@@ -45,8 +43,8 @@ app:
 
 digitalocean:
   spaces:
-    access-key: ${DO_SPACES_ACCESS_KEY:fake}
-    secret-key: ${DO_SPACES_SECRET_KEY:fake}
+    access-key: ${DO_SPACES_ACCESS_KEY}
+    secret-key: ${DO_SPACES_SECRET_KEY}
     endpoint: ${DO_SPACES_ENDPOINT:https://fra1.digitaloceanspaces.com}
     region: ${DO_SPACES_REGION:fra1}
     bucket-name: ${DO_SPACES_BUCKET:test-bucket}
@@ -56,11 +54,11 @@ digitalocean:
 #7 day = 10080min
 jwt:
   at:
-    live-in-min: ${JWT_AT_LIVE_IN_MIN:10}
-    secret: ${JWT_AT_SECRET:eW91ci0yNTYtYml0LXNlY3JldC1mb3ItYWNjZXNzLXRva2VuLTAxMjM0NTY3ODlhYmNkZWY=}
+    live-in-min: ${JWT_AT_LIVE_IN_MIN}
+    secret: ${JWT_AT_SECRET}
   rt:
-    live-in-min: ${JWT_RT_LIVE_IN_MIN:1440}
-    secret: ${JWT_RT_SECRET:eW91ci0yNTYtYml0LXNlY3JldC1mb3ItcmVmcmVzaC10b2tlbi1hYmNkZWYwMTIzNDU2Nzg5}
+    live-in-min: ${JWT_RT_LIVE_IN_MIN}
+    secret: ${JWT_RT_SECRET}
 
 springdoc:
   swagger-ui:
