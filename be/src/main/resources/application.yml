@@ -1,20 +1,25 @@
 spring:
+  config:
+    import: optional:file:.env[.properties]
   application:
     name: Task Tracker
   datasource:
-    url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:movio_web_main}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:changeme}
+    driver-class-name: org.postgresql.Driver
 
   jpa:
-    database-platform: org.hibernate.dialect.MySQL8Dialect
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: update
 
+  flyway:
+    enabled: false
+
   mail:
-    username: ${EMAIL_USERNAME}
-    password: ${EMAIL_PASSWORD}
+    username: ${EMAIL_USERNAME:fake}
+    password: ${EMAIL_PASSWORD:fake}
     host: smtp.gmail.com
     port: 587
     properties:
@@ -28,18 +33,18 @@ spring:
             trust: smtp.gmail.com
 confirmation:
   expiration:
-    days: ${CONFIRMATION_EXPIRATION_DAYS}
+    days: ${CONFIRMATION_EXPIRATION_DAYS:5}
 
 app:
-  base-url: ${BASE_URL}
+  base-url: ${BASE_URL:http://localhost:8080}
 
 digitalocean:
   spaces:
-    access-key: ${DO_SPACES_ACCESS_KEY}
-    secret-key: ${DO_SPACES_SECRET_KEY}
-    endpoint: ${DO_SPACES_ENDPOINT}
-    region: ${DO_SPACES_REGION}
-    bucket-name: ${DO_SPACES_BUCKET}
+    access-key: ${DO_SPACES_ACCESS_KEY:fake}
+    secret-key: ${DO_SPACES_SECRET_KEY:fake}
+    endpoint: ${DO_SPACES_ENDPOINT:https://fra1.digitaloceanspaces.com}
+    region: ${DO_SPACES_REGION:fra1}
+    bucket-name: ${DO_SPACES_BUCKET:test-bucket}
 
 jwt:
   at:
