@@ -1,4 +1,4 @@
-import FilterBar from "@/components/common/FilterBar.tsx";git checkout alexandra-fe
+import FilterBar from "@/components/common/FilterBar.tsx";
 export default function Home() {
   return(
       <div className="p-10">
