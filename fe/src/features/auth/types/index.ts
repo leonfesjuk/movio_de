@@ -22,4 +22,17 @@ export interface AuthSliceState {
   isAuthenticated: boolean;
   user?: User;
   loginErrorMessage?: string;
+  registerFieldErrors?: Record<string, string[]>;
 }
+
+export type ValidationErrorResponse = {
+  timestamp: string;
+  status: number;
+  error: string;
+  message: string;
+  errors: {
+    field: string;
+    messages: string[];
+  }[];
+  path: string;
+};
