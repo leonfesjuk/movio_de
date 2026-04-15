@@ -8,11 +8,11 @@ export const SessionCardActions = ({ session }: SessionCardActionsProps) => {
     return (
         <div>
             <Badge>
-                {hasNotifications ? "Отправлено" : "Не отправлено"}
+                {hasNotifications ? "Send" : "Not send"}
             </Badge>
 
             {!hasNotifications && (
-                <Button>Удалить</Button>
+                <Button>Delete</Button>
             )}
         </div>
     )
