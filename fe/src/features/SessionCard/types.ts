@@ -1,0 +1,19 @@
+export type Session = {
+    id: string
+    title: string
+    time: string
+    notificationsSent: boolean
+}
+
+export type SessionCardActionsProps = {
+    session: Session
+}
+
+export type SessionCardContentProps = {
+    session: Session
+}
+
+export type SessionCardProps = {
+    session: Session;
+    isAuth: boolean;
+};
