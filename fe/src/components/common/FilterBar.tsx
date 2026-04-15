@@ -4,25 +4,22 @@ import {Input} from "@/components/ui/input";
 
 export default function FilterBar(){
     return(
-        <div className="flex items-center gap-4 mb-6">
-
-            <Input
-                placeholder="Search..."
-                className="w-[200px]"
-            />
+        <div className="flex gap-4 items-center mb-6">
 
             <Select>
-                <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Status"/>
+                <SelectTrigger className="w-[200px]">
+                    <SelectValue placeholder="All cities"/>
                 </SelectTrigger>
 
                 <SelectContent>
-                    <SelectItem value="active">Active</SelectItem>
-                    <SelectItem value="inactive">Inactive</SelectItem>
+                    <SelectItem value="essen">Essen</SelectItem>
+                    <SelectItem value="berlin">Berlin</SelectItem>
                 </SelectContent>
             </Select>
 
-            <Button>Filter</Button>
+            <Input placeholder="Search movie..." className="w-[250px]"/>
+
+            <Button>Apply</Button>
         </div>
     );
 }

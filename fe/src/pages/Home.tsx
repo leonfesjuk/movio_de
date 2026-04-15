@@ -3,6 +3,13 @@ import {SessionCard} from "@/features/SessionCard/SessionCard";
 
 
 export default function Home() {
+
+    const sessions = [
+        {id: "1", title: "Avatar", time: "18:00", notificationsSent: false},
+        {id: "2", title: "Batman", time: "19:30", notificationsSent: true},
+        {id: "3", title: "Avatar", time: "20:40", notificationsSent: false},
+    ];
+
   return(
       <div className="p-10">
 
@@ -14,18 +21,17 @@ export default function Home() {
               <FilterBar/>
           </div>
 
-        <div className="grid grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 ">
 
+            {sessions.map((session) => (
             <SessionCard
-                session={{
-                    id:"1",
-                    title: "Avatar",
-                    time: "18:00",
-                    notificationsSent: false
-                }}
+                key={session.id}
+                session={session}
                 isAuth={true}
-            />
+                />
+            ))}
+
         </div>
       </div>
-  )
+  );
 }
