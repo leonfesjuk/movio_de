@@ -3,6 +3,8 @@ export type Session = {
     title: string
     time: string
     notificationsSent: boolean
+    imageUrl?: string;
+    externalUrl?: string;
 }
 
 export type SessionCardActionsProps = {
