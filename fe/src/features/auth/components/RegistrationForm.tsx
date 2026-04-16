@@ -1,12 +1,16 @@
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { register } from "../slice/authSlice";
-import { useAppDispatch } from "../../../app/hooks";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 const RegistrationForm = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const registerFieldErrors = useAppSelector(
+    (state) => state.auth.registerFieldErrors,
+  );
   const formik = useFormik({
     initialValues: {
       email: "",
@@ -29,6 +33,25 @@ const RegistrationForm = () => {
       }
     },
   });
+
+  useEffect(() => {
+    return () => {
+      formik.setErrors({});
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!registerFieldErrors) return;
+
+    const formatted = Object.fromEntries(
+      Object.entries(registerFieldErrors).map(([field, messages]) => [
+        field,
+        messages.join("\n"), // или " • " или просто перенос строки
+      ]),
+    );
+
+    formik.setErrors(formatted);
+  }, [registerFieldErrors]);
 
   return (
     <div className="mx-auto max-w-sm space-y-6 p-6 rounded-lg border bg-white shadow-sm mt-10">
@@ -84,8 +107,12 @@ const RegistrationForm = () => {
             }`}
             placeholder="••••••••"
           />
-          {formik.touched.password && formik.errors.password && (
-            <p className="text-sm text-red-500">{formik.errors.password}</p>
+          {formik.errors.password && (
+            <ul className="text-sm text-red-500 list-disc ml-5">
+              {formik.errors.password.split("\n").map((msg, i) => (
+                <li key={i}>{msg}</li>
+              ))}
+            </ul>
           )}
         </div>
 
