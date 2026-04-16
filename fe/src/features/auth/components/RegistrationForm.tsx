@@ -1,6 +1,6 @@
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { clearAuthErrors, register, selectRegisterError } from "../slice/authSlice";
+import { register, selectRegisterError } from "../slice/authSlice";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
