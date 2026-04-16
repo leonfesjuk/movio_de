@@ -79,7 +79,7 @@ const RegistrationForm = () => {
     return () => {
       formik.setErrors({});
     };
-  }, []);
+  }, [formik]);
 
   useEffect(() => {
     if (!registerFieldErrors) return;

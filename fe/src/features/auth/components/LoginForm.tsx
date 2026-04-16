@@ -37,7 +37,7 @@ const LoginForm = () => {
 
   useEffect(() => {
     dispatch(clearAuthErrors());
-  }, []);
+  }, [dispatch]);
 
   return (
     <Card className="w-full max-w-sm mx-auto mt-10">
