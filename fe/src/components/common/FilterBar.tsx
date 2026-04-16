@@ -2,27 +2,55 @@ import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/c
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 
-export default function FilterBar(){
-    return(
-        <div className="flex items-center gap-4 mb-6">
+type FilterBarProps = {
+  search: string,
+    setSearch: (value: string) => void;
+  status: string,
+    setStatus: (value: string) => void;
+};
 
-            <Input
-                placeholder="Search..."
-                className="w-[200px]"
-            />
+export default function FilterBar({
+    search,
+    setSearch,
+    status,
+    setStatus,
+}: FilterBarProps){
+    return(
+        <div className="flex gap-4 items-center mb-6">
 
             <Select>
-                <SelectTrigger className="w-[180px]">
+                <SelectTrigger className="w-[200px]">
+                    <SelectValue placeholder="All cities"/>
+                </SelectTrigger>
+
+                <SelectContent>
+                    <SelectItem value="essen">Essen</SelectItem>
+                    <SelectItem value="berlin">Berlin</SelectItem>
+                </SelectContent>
+            </Select>
+
+            <Input
+                placeholder="Search movie..."
+                className="w-[250px]"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+            />
+
+            <Select
+                value={status}
+                onValueChange={(value) => setStatus(value)}
+            >
+                <SelectTrigger className="w-[150px]">
                     <SelectValue placeholder="Status"/>
                 </SelectTrigger>
 
                 <SelectContent>
-                    <SelectItem value="active">Active</SelectItem>
-                    <SelectItem value="inactive">Inactive</SelectItem>
+                    <SelectItem value="essen">Essen</SelectItem>
+                    <SelectItem value="berlin">Berlin</SelectItem>
                 </SelectContent>
             </Select>
 
-            <Button>Filter</Button>
+            <Button>Apply</Button>
         </div>
     );
 }
