@@ -3,14 +3,22 @@ import {Input} from "@/components/ui/input";
 import {Label} from "@/components/ui/label";
 import {Button} from "@/components/ui/button";
 import {Textarea} from "@/components/ui/textarea";
-import FilterBar from "@/components/common/FilterBar.tsx";
-
+import FilterBar from "@/components/common/FilterBar";
+import { useState } from "react";
 
 export default function TestUI(){
+    const [search, setSearch] = useState("");
+    const [status, setStatus] = useState("");
+
     return(
 
         <div className="p-10 space-y-6">
-            <FilterBar />
+            <FilterBar
+                search={search}
+                setSearch={setSearch}
+                status={status}
+                setStatus={setStatus}
+            />
             <h1 className="text-2xl font-bold">UI Components Test</h1>
 
             <Card className="w-[300px]">
