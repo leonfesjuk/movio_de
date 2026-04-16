@@ -44,7 +44,7 @@ public class ConfirmationServiceImpl implements ConfirmationService {
             final ConfirmationCode existingCode = optionalCode.get();
             final LocalDateTime newExpiration = getExpiration(confirmationDays);
 
-            existingCode.setExpired(newExpiration);
+            existingCode.setExpiresAt(newExpiration);
             repository.save(existingCode);
 
             return existingCode.getId().toString();
@@ -58,7 +58,7 @@ public class ConfirmationServiceImpl implements ConfirmationService {
         ConfirmationCode codeEntity = getConfirmationCode(code)
                 .orElseThrow(() -> new UserConfirmationException("Confirmation Code not found"));
 
-        if (codeEntity.getExpired().isBefore(LocalDateTime.now())) {
+        if (codeEntity.getExpiresAt().isBefore(LocalDateTime.now())) {
             throw new UserConfirmationException("Confirmation Code is already expired");
         }
 

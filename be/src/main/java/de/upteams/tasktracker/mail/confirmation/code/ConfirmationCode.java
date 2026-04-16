@@ -22,7 +22,7 @@ public class ConfirmationCode extends BaseEntity {
     @Setter
     @NotNull
     @Column(name = "expired", nullable = false)
-    private LocalDateTime expired;
+    private LocalDateTime expiresAt;
 
     @NotNull
     @ManyToOne
@@ -30,8 +30,8 @@ public class ConfirmationCode extends BaseEntity {
     private AppUser user;
 
 
-    public ConfirmationCode(LocalDateTime expired, AppUser user) {
-        this.expired = expired;
+    public ConfirmationCode(LocalDateTime expiresAt, AppUser user) {
+        this.expiresAt = expiresAt;
         this.user = user;
     }
 
@@ -39,7 +39,7 @@ public class ConfirmationCode extends BaseEntity {
     public String toString() {
         return "ConfirmationCode{" +
                 "code=" + id +
-                ", expired=" + expired +
+                ", expired=" + expiresAt +
                 ", appUserId=" + getIdForToString(user) +
                 '}';
     }
