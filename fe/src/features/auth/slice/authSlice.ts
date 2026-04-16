@@ -69,20 +69,20 @@ export const authSlice = createAppSlice({
         fulfilled: (state, action) => {
           state.isAuthenticated = true;
           state.user = action.payload;
+          state.registerFieldErrors = undefined;
         },
         rejected: (state, action) => {
           state.isAuthenticated = false;
           state.user = undefined;
 
-          const payload = action.payload as ValidationErrorResponse | undefined;
-
-          if (payload?.errors) {
-            state.registerFieldErrors = payload.errors.reduce<
-              Record<string, string[]>
-            >((acc, err) => {
-              acc[err.field] = err.messages;
-              return acc;
-            }, {});
+          if (
+            action.payload &&
+            typeof action.payload === "object" &&
+            "message" in action.payload
+          ) {
+            state.loginErrorMessage = String(action.payload.message);
+          } else {
+            state.loginErrorMessage = action.error.message;
           }
         },
       },
@@ -95,6 +95,7 @@ export const authSlice = createAppSlice({
     selectUser: (state) => state.user,
     selectRole: (state) => state.user?.role,
     selectLoginError: (state) => state?.loginErrorMessage,
+    selectRegisterError: (state) => state?.registerFieldErrors,
   },
 });
 
@@ -107,4 +108,5 @@ export const {
   selectUser,
   selectRole,
   selectLoginError,
+  selectRegisterError,
 } = authSlice.selectors;
