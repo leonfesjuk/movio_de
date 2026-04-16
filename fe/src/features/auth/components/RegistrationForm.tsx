@@ -1,6 +1,6 @@
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { register, selectRegisterError } from "../slice/authSlice";
+import { clearAuthErrors, register, selectRegisterError } from "../slice/authSlice";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -14,6 +14,9 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import type { ValidationErrorResponse } from "../types";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AlertCircleIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const RegistrationForm = () => {
   const dispatch = useAppDispatch();
@@ -42,7 +45,9 @@ const RegistrationForm = () => {
       const dispatchResult = await dispatch(register(values));
       if (register.fulfilled.match(dispatchResult)) {
         // if successful, it will navigate to login page
-        navigate("/login");
+        navigate("/check-email", {
+          state: { email: values.email },
+        });
         return;
       }
 
@@ -109,7 +114,11 @@ const RegistrationForm = () => {
       <CardContent>
         <form onSubmit={formik.handleSubmit} className="flex flex-col gap-6">
           {serverFormError && (
-            <p className="text-sm text-red-500">{serverFormError}</p>
+            <Alert variant="destructive" className="max-w-md">
+              <AlertCircleIcon />
+              <AlertTitle>Registration failed</AlertTitle>
+              <AlertDescription>{serverFormError}</AlertDescription>
+            </Alert>
           )}
           {/* Email Field */}
           <CustomInput
@@ -130,10 +139,14 @@ const RegistrationForm = () => {
             placeholder="Create a password"
             {...formik.getFieldProps("password")}
             error={
-              formik.touched.password && formik.errors.password ? (
-                <p className="text-sm text-red-500">{formik.errors.password}</p>
-              ) : serverPasswordErrors.length > 0 ? (
+              (formik.touched.password && formik.errors.password) ||
+              serverPasswordErrors.length > 0 ?
+              (
                 <ul className="ml-6 list-disc text-red-500">
+                  {formik.errors.password && (
+                    <li>{formik.errors.password}</li>
+                    )
+                  }
                   {serverPasswordErrors.map((error, index) => (
                     <li key={index}>{error}</li>
                   ))}
@@ -143,12 +156,13 @@ const RegistrationForm = () => {
           />
 
           {/* Submit Button */}
-          <button
+          <Button
             type="submit"
-            className="w-full inline-flex items-center justify-center rounded-md bg-black px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black"
+            className="w-full hover:bg-zinc-800 focus:outline-none"
+            size="lg"
           >
             Register
-          </button>
+          </Button>
         </form>
       </CardContent>
     </Card>

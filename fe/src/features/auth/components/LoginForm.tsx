@@ -1,11 +1,14 @@
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { login, selectLoginError } from "../slice/authSlice";
+import { clearAuthErrors, login, selectLoginError } from "../slice/authSlice";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { CustomInput } from "@/components/common/input/CustomInput";
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AlertCircleIcon } from "lucide-react";
+import { useEffect } from "react";
 
 const LoginForm = () => {
   const dispatch = useAppDispatch();
@@ -32,6 +35,10 @@ const LoginForm = () => {
     },
   });
 
+  useEffect(() => {
+    dispatch(clearAuthErrors());
+  }, []);
+
   return (
     <Card className="w-full max-w-sm mx-auto mt-10">
       <CardHeader>
@@ -51,7 +58,13 @@ const LoginForm = () => {
       <CardContent>
         <form onSubmit={formik.handleSubmit} className="flex flex-col gap-6">
           {loginError && (
-            <div className="text-sm text-red-500">{loginError}</div>
+            <Alert variant="destructive" className="max-w-md">
+              <AlertCircleIcon />
+              <AlertTitle>Login failed</AlertTitle>
+              <AlertDescription>
+                {loginError}
+              </AlertDescription>
+            </Alert>
           )}
           {/* Email Field */}
           <CustomInput

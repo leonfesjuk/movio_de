@@ -3,7 +3,6 @@ import type {
   AuthSliceState,
   Credentials,
   UserRegistrationDto,
-  ValidationErrorResponse,
 } from "../types";
 import * as api from "../services/api";
 import { isAxiosError } from "axios";
@@ -40,7 +39,6 @@ export const authSlice = createAppSlice({
         rejected: (state, action) => {
           state.isAuthenticated = false;
           state.user = undefined;
-          console.log(action.error);
           state.loginErrorMessage = action.error.message;
         },
       },
@@ -87,6 +85,11 @@ export const authSlice = createAppSlice({
         },
       },
     ),
+
+    clearAuthErrors: create.reducer((state) => {
+      state.loginErrorMessage = undefined;
+      state.registerFieldErrors = undefined;
+    })
   }),
   // You can define your selectors here. These selectors receive the slice
   // state as their first argument.
@@ -100,7 +103,7 @@ export const authSlice = createAppSlice({
 });
 
 // // Action creators are generated for each case reducer function.
-export const { login, register } = authSlice.actions;
+export const { login, register, clearAuthErrors } = authSlice.actions;
 
 // Selectors returned by `slice.selectors` take the root state as their first argument.
 export const {
