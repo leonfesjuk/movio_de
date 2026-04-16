@@ -1,6 +1,6 @@
 import { useState } from "react";
 import FilterBar from "@/components/common/FilterBar";
-import {SessionCard} from "@/features/SessionCard/SessionCard";
+import {SessionCard} from "@/features/session-card/SessionCard";
 
 
 export default function Home() {
