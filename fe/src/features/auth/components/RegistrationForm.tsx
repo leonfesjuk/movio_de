@@ -92,7 +92,7 @@ const RegistrationForm = () => {
     );
 
     formik.setErrors(formatted);
-  }, [registerFieldErrors]);
+  }, [registerFieldErrors, formik]);
 
   return (
     <Card className="w-full max-w-sm mx-auto mt-10">
