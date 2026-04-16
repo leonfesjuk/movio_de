@@ -6,6 +6,7 @@ import Registration from "./pages/Registration";
 import Login from "./pages/Login";
 import Projects from "./pages/Projects";
 import TestUI from "@/pages/TestUI";
+import EmailConfirmationPage from "./pages/EmailConfirmationPage";
 
 function App() {
   return (
@@ -18,7 +19,8 @@ function App() {
           <Route path="/register" element={<Registration />} />
           <Route path="/login" element={<Login />} />
           <Route path="/projects" element={<Projects />} />
-            <Route path="/test-ui" element={<TestUI/>}/>
+          <Route path="/test-ui" element={<TestUI />} />
+          <Route path="/check-email" element={<EmailConfirmationPage />} />
         </Routes>
       </Layout>
     </div>
