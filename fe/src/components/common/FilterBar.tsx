@@ -45,8 +45,8 @@ export default function FilterBar({
                 </SelectTrigger>
 
                 <SelectContent>
-                    <SelectItem value="active">Active</SelectItem>
-                    <SelectItem value="inactive">Inactive</SelectItem>
+                    <SelectItem value="essen">Essen</SelectItem>
+                    <SelectItem value="berlin">Berlin</SelectItem>
                 </SelectContent>
             </Select>
 
