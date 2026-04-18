@@ -72,7 +72,7 @@ export const CustomInput: React.FC<CustomInputProps> = ({
           </Button>
         )}
       </div>
-      {description && <FieldDescription>{description}</FieldDescription>}
+      {description && description}
       {error && <FieldError>{error}</FieldError>}
     </Field>
   );

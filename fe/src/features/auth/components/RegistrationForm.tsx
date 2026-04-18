@@ -1,9 +1,9 @@
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { register, selectRegisterError } from "../slice/authSlice";
-import { useAppDispatch, useAppSelector } from "../../../app/hooks";
+import { register } from "../slice/authSlice";
+import { useAppDispatch } from "../../../app/hooks";
 import { Link, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { CustomInput } from "@/components/common/input/CustomInput";
 import {
   Card,
@@ -21,11 +21,11 @@ import { Button } from "@/components/ui/button";
 const RegistrationForm = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const [serverPasswordErrors, setServerPasswordErrors] = useState<string[]>(
-    [],
-  );
   const [serverFormError, setServerFormError] = useState<string | null>(null);
-  const registerFieldErrors = useAppSelector(selectRegisterError);
+  const [serverPasswordErrors, setServerPasswordErrors] = useState<
+    Record<string, string[]>
+  >({});
+  // const registerFieldErrors = useAppSelector(selectRegisterError);
   const formik = useFormik({
     initialValues: {
       email: "",
@@ -40,59 +40,52 @@ const RegistrationForm = () => {
         .required("Password is required"),
     }),
     onSubmit: async (values, { setSubmitting }) => {
-      setServerPasswordErrors([]);
+      setServerPasswordErrors({});
       setServerFormError(null);
-      const dispatchResult = await dispatch(register(values));
-      if (register.fulfilled.match(dispatchResult)) {
-        // if successful, it will navigate to login page
-        navigate("/check-email", {
-          state: { email: values.email },
-        });
-        return;
-      }
 
-      if (register.rejected.match(dispatchResult)) {
-        const payload = dispatchResult.payload as
-          | ValidationErrorResponse
-          | undefined;
+      try {
+        const dispatchResult = await dispatch(register(values));
 
-        if (payload) {
-          setServerFormError(payload.message || "Registration failed");
-
-          const passwordError = payload.errors?.find(
-            (error) => error.field === "password",
-          );
-
-          if (passwordError?.messages.length) {
-            setServerPasswordErrors(passwordError.messages);
-          }
-        } else {
-          setServerFormError("Registration failed");
+        if (register.fulfilled.match(dispatchResult)) {
+          navigate("/check-email", {
+            state: { email: values.email },
+          });
+          return;
         }
-      }
 
-      setSubmitting(false);
+        if (register.rejected.match(dispatchResult)) {
+          const payload = dispatchResult.payload as
+            | ValidationErrorResponse
+            | undefined;
+
+          if (payload) {
+            setServerFormError(payload.message || "Registration failed");
+
+            const fieldErrors: Record<string, string[]> = {};
+
+            payload.errors?.forEach((e) => {
+              fieldErrors[e.field] = e.messages;
+            });
+
+            setServerPasswordErrors(fieldErrors);
+          } else {
+            setServerFormError("Registration failed");
+          }
+        }
+      } finally {
+        setSubmitting(false);
+      }
     },
   });
 
-  useEffect(() => {
-    return () => {
-      formik.setErrors({});
-    };
-  }, [formik]);
-
-  useEffect(() => {
-    if (!registerFieldErrors) return;
-
-    const formatted = Object.fromEntries(
-      Object.entries(registerFieldErrors).map(([field, messages]) => [
-        field,
-        messages.join("\n"), // или " • " или просто перенос строки
-      ]),
-    );
-
-    formik.setErrors(formatted);
-  }, [registerFieldErrors, formik]);
+  const passwordFormikError = formik.touched.password && formik.errors.password;
+  const passwordServerErrors = serverPasswordErrors.password ?? [];
+  const emailFormikError = formik.touched.email && formik.errors.email;
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    formik.handleChange(e);
+    setServerPasswordErrors({});
+    setServerFormError(null);
+  };
 
   return (
     <Card className="w-full max-w-sm mx-auto mt-10">
@@ -127,7 +120,7 @@ const RegistrationForm = () => {
             label="Email"
             placeholder="Enter your email"
             {...formik.getFieldProps("email")}
-            error={formik.errors.email}
+            error={emailFormikError}
           />
 
           {/* Password Field */}
@@ -138,20 +131,23 @@ const RegistrationForm = () => {
             label="Password"
             placeholder="Create a password"
             {...formik.getFieldProps("password")}
+            onChange={handlePasswordChange}
             error={
-              (formik.touched.password && formik.errors.password) ||
-              serverPasswordErrors.length > 0 ?
-              (
-                <ul className="ml-6 list-disc text-red-500">
-                  {formik.errors.password && (
-                    <li>{formik.errors.password}</li>
-                    )
-                  }
-                  {serverPasswordErrors.map((error, index) => (
+              passwordFormikError || passwordServerErrors.length > 0 ? (
+                <ul className="pl-6 list-disc text-red-500">
+                  {passwordFormikError && <li>{passwordFormikError}</li>}
+
+                  {passwordServerErrors.map((error, index) => (
                     <li key={index}>{error}</li>
                   ))}
                 </ul>
               ) : null
+            }
+            description={
+              <ul className="pl-6 list-disc">
+                <li>Password must contain at least 8 characters</li>
+                <li>Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 number and 1 special character, and only Latin letters.</li>
+              </ul>
             }
           />
 
@@ -160,6 +156,7 @@ const RegistrationForm = () => {
             type="submit"
             className="w-full hover:bg-zinc-800 focus:outline-none"
             size="lg"
+            disabled={formik.isSubmitting}
           >
             Register
           </Button>

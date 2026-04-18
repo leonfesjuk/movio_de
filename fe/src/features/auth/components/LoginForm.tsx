@@ -5,7 +5,14 @@ import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { CustomInput } from "@/components/common/input/CustomInput";
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
-import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircleIcon } from "lucide-react";
 import { useEffect } from "react";
@@ -61,9 +68,7 @@ const LoginForm = () => {
             <Alert variant="destructive" className="max-w-md">
               <AlertCircleIcon />
               <AlertTitle>Login failed</AlertTitle>
-              <AlertDescription>
-                {loginError}
-              </AlertDescription>
+              <AlertDescription>{loginError}</AlertDescription>
             </Alert>
           )}
           {/* Email Field */}
@@ -95,6 +100,14 @@ const LoginForm = () => {
           >
             Login
           </Button>
+          <div className="text-center">
+            <Link
+              to="/forgot-password"
+              className="text-sm font-medium text-gray-500 hover:text-black transition-colors"
+            >
+              Forgot password?
+            </Link>
+          </div>
         </form>
       </CardContent>
     </Card>
