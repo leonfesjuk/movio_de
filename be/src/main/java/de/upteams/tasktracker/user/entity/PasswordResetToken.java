@@ -1,5 +1,6 @@
 package de.upteams.tasktracker.user.entity;
 
+import de.upteams.tasktracker.utils.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,11 +18,7 @@ import java.time.LocalDateTime;
                 @Index(name = "idx_password_reset_token", columnList = "token")
         }
 )
-public class PasswordResetToken {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class PasswordResetToken extends BaseEntity {
 
     @Column(nullable = false, unique = true)
     private String token;
@@ -30,9 +27,17 @@ public class PasswordResetToken {
     @JoinColumn(name = "user_id", nullable = false)
     private AppUser user;
 
-    @Column(name = "expiry_data", nullable = false)
+    @Column(name = "expiry_date", nullable = false)
     private LocalDateTime expiryDate;
 
     @Column(nullable = false)
     private boolean used;
+
+    @Override
+    public String toString() {
+        return "PasswordResetToken{" +
+                "id=" + getId() +
+                ", token='" + token + '\'' +
+                '}';
+    }
 }
