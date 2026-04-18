@@ -14,6 +14,7 @@ import {
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { AlertCircleIcon, CheckCircle2Icon } from "lucide-react";
+import type { ValidationErrorResponse } from "@/features/auth/types";
 
 const VerifyEmailPage = () => {
   const [searchParams] = useSearchParams();
@@ -44,7 +45,7 @@ const VerifyEmailPage = () => {
         }
 
         if (verifyEmail.rejected.match(result)) {
-          const payload = result.payload as any;
+          const payload = result.payload as ValidationErrorResponse;
           setStatus("error");
           setError(payload?.message || "Verification failed");
         }

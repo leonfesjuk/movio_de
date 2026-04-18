@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircleIcon } from "lucide-react";
 import { forgotPassword } from "@/features/auth/slice/authSlice";
+import type { ValidationErrorResponse } from "@/features/auth/types";
 
 const ForgotPasswordPage = () => {
   const dispatch = useAppDispatch();
@@ -47,7 +48,7 @@ const ForgotPasswordPage = () => {
         }
 
         if (forgotPassword.rejected.match(result)) {
-          const payload = result.payload as any;
+          const payload = result.payload as ValidationErrorResponse;
           setServerError(payload?.message || "Request failed");
         }
       } finally {

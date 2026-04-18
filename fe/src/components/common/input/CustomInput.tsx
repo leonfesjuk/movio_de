@@ -1,7 +1,6 @@
 import { useState, type ReactNode } from "react";
 import {
   Field,
-  FieldDescription,
   FieldError,
   FieldLabel,
 } from "../../ui/field";

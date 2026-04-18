@@ -144,7 +144,7 @@ const RegistrationForm = () => {
               ) : null
             }
             description={
-              <ul className="pl-6 list-disc">
+              <ul className="pl-6 list-disc text-muted-foreground">
                 <li>Password must contain at least 8 characters</li>
                 <li>Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 number and 1 special character, and only Latin letters.</li>
               </ul>
