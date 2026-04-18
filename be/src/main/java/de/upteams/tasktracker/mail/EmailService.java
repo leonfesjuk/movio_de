@@ -25,7 +25,7 @@ public class EmailService {
 
     @Async
     public void sendConfirmationEmail(String sentTo, String confirmationCode) {
-        String confirmationLink = "%s/#/users/confirm/%s".formatted(baseUrl, confirmationCode);
+        String confirmationLink = "%s/#/verify-email?code=%s".formatted(frontendUrl, confirmationCode);
 
         Map<String, Object> model = Map.of(
                 "link", confirmationLink
