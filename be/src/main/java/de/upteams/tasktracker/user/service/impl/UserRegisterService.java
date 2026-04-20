@@ -32,13 +32,23 @@ public class UserRegisterService {
     public UserCreateResponseDto register(final UserCreateDto dto) {
         final String normalizedEmail = dto.email().toLowerCase().trim();
         final String encodedPassword = passwordEncoder.encode(dto.password());
+        final String normalizedName = dto.name().trim();
+        final String normalizedWebLink = normalizeWebLink(dto.webLink());
+
+        if (userService.existsByName(normalizedName)) {
+            throw new UserAlreadyExistException("Name already exists");
+        }
 
         final Optional<AppUser> foundUserByEmail = userService.getByEmail(normalizedEmail);
         if (foundUserByEmail.isPresent()) {
             return handleExistingUser(foundUserByEmail.get());
         }
 
-        final AppUser appUser = new AppUser(encodedPassword, normalizedEmail);
+        final AppUser appUser = new AppUser(
+                encodedPassword,
+                normalizedEmail,
+                dto.name(),
+                normalizedWebLink);
         final AppUser savedNewUser = userService.saveOrUpdate(appUser);
 
         String confirmationCode = confirmationService.generateConfirmationCode(savedNewUser);
@@ -52,7 +62,6 @@ public class UserRegisterService {
         );
     }
 
-
     private UserCreateResponseDto handleExistingUser(AppUser existingUser) {
         if (UNCONFIRMED.equals(existingUser.getConfirmationStatus())) {
             String confirmationCode = confirmationService.regenerateCode(existingUser);
@@ -63,7 +72,7 @@ public class UserRegisterService {
                     existingUser.getRole().name(),
                     true);
         }
-        throw new UserAlreadyExistException();
+        throw new UserAlreadyExistException("Email already exists");
     }
 
     @Transactional
@@ -81,5 +90,15 @@ public class UserRegisterService {
                 registeredUser.getRole().name(),
                 registeredUser.getConfirmationStatus()
         );
+    }
+
+    private String normalizeWebLink(String webLink) {
+        String trimmed = webLink.trim();
+
+        if (!trimmed.startsWith("http://") && !trimmed.startsWith("https://")) {
+            return "https://" + trimmed;
+        }
+
+        return trimmed;
     }
 }

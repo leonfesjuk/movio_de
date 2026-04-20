@@ -1,9 +1,12 @@
 package de.upteams.tasktracker.user.entity;
 
 import de.upteams.tasktracker.utils.BaseEntity;
+import de.upteams.tasktracker.validation.url.ValidUrl;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -25,13 +28,29 @@ public class AppUser extends BaseEntity {
     private String password;
 
     @NotBlank(message = "{user.email.notBlank}")
+    @Email(message = "{user.email.invalid}")
     @Column(
             name = "email",
             unique = true,
-            nullable = false,
-            columnDefinition = "VARCHAR(255)"
+            nullable = false
     )
     private String email;
+
+    @NotBlank(message = "{user.name.notBlank}")
+    @Column(
+            name = "name",
+            unique = true,
+            nullable = false
+    )
+    private String name;
+
+    @NotBlank(message = "{user.webLink.notBlank}")
+    @ValidUrl
+    @Column(
+            name = "web_link",
+            nullable = false
+    )
+    private String webLink;
 
     @NotNull(message = "{field.notNull}")
     @Column(name = "confirm_status", nullable = false)
@@ -44,10 +63,12 @@ public class AppUser extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    public AppUser(String password, String email) {
+    public AppUser(String password, String email, String name, String webLink) {
         this.password = password;
         this.email = email;
-        role = Role.ROLE_USER;
+        this.name = name;
+        this.webLink = webLink;
+        this.role = Role.ROLE_USER;
     }
 
     @Override
@@ -57,6 +78,8 @@ public class AppUser extends BaseEntity {
                 ", confirmationStatus=" + confirmationStatus +
                 ", password='" + (StringUtils.isBlank(password) ? "null" : "*hidden*") + '\'' +
                 ", email='" + email + '\'' +
+                ", name='" + name + '\'' +
+                ", webLink='" + webLink + '\'' +
                 ", role=" + role +
                 '}';
     }

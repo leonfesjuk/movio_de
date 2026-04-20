@@ -22,5 +22,20 @@ public record UserCreateDto(
         )
         @NotBlank(message = "{user.password.notBlank}")
         @ValidPassword
-        String password) {
+        String password,
+
+        @Schema(
+                description = "Organization identifier",
+                example = "CinemaxX"
+        )
+        @NotBlank(message = "{user.name.notBlank}")
+        String name,
+
+        @Schema(
+                description = "Organization website (http/https will be normalized automatically)",
+                example = "https://cinemaxx.com"
+        )
+        @NotBlank(message = "{user.webLink.notBlank}")
+        String webLink
+) {
 }
