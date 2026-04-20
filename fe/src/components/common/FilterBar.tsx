@@ -44,14 +44,21 @@ export default function FilterBar({
                 <SelectTrigger className="w-[150px]">
                     <SelectValue placeholder="Status"/>
                 </SelectTrigger>
-
                 <SelectContent>
                     <SelectItem value="active">Active</SelectItem>
                     <SelectItem value="inactive">Inactive</SelectItem>
                 </SelectContent>
             </Select>
 
-            <Button>Apply</Button>
+            <Button variant="outline"
+                    onClick={()=>{
+                        setSearch("");
+                        setStatus("");
+                        setCity("");
+                    }}>
+                Reset
+            </Button>
+
         </div>
     );
 }

@@ -34,7 +34,7 @@ export default function Home() {
     });
 
   return(
-      <div className="p-10">
+  <div className="p-10">
 
         <h1 className="text-2xl font-bold mb-6">
           Movie Sessions
@@ -51,6 +51,12 @@ export default function Home() {
               />
           </div>
 
+
+      {filteredSessions.length === 0 ? (
+          <div className="text-gray-500">
+              No sessions found
+          </div>
+      ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 ">
             {filteredSessions.map((session) => (
             <SessionCard
@@ -60,6 +66,7 @@ export default function Home() {
                 />
             ))}
         </div>
-      </div>
+      )}
+  </div>
   );
 }
