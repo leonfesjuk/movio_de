@@ -22,31 +22,55 @@ public abstract class EntityUtil {
      * If the collection is null or empty, an empty collection representation ("[]") is returned.
      *
      * @param entities a collection of BaseEntity objects from which IDs are extracted
-     * @return a string representation of the list of IDs of the entities in the collection,
-     * or "[]" if the collection is null or empty
+     * @return a string representation of the list of IDs of entities, or "[]" if the collection is null or empty
      */
-    public static String getIdsForToString(Collection<? extends BaseEntity> entities) {
+    public static String getIdsForToString(Collection<? extends UuidEntityId> entities) {
         if (entities == null || entities.isEmpty()) {
             return EMPTY_COLLECTION;
         }
         return entities.stream()
-                .map(BaseEntity::getId)
+                .map(UuidEntityId::getId)
                 .map(Object::toString)
                 .toList()
                 .toString();
     }
 
     /**
-     * Retrieves a string representation of the ID of the given entity.
-     * If the entity is null, a predefined "null" string is returned.
-     * Otherwise, the string representation of the entity's ID is returned.
+     * Generates a string representation of the IDs of all Long-based entities in the given collection.
      *
-     * @param <E>    the type of the entity that extends {@code BaseEntity}
-     * @param entity the entity whose ID is to be retrieved; can be null
-     * @return the ID of the entity as a string if the entity is not null,
-     * or the string "null" if the entity is null
+     * @param entities collection of entities with Long ids
+     * @return a string representation of the list of IDs of entities, or "[]" if the collection is null or empty
      */
-    public static <E extends BaseEntity> String getIdForToString(E entity) {
+    public static String getLongIdsForToString(Collection<? extends LongEntityId> entities) {
+        if (entities == null || entities.isEmpty()) {
+            return EMPTY_COLLECTION;
+        }
+        return entities.stream()
+                .map(LongEntityId::getId)
+                .map(Object::toString)
+                .toList()
+                .toString();
+    }
+
+    /**
+     * Retrieves a string representation of the ID of the given UUID-based entity.
+     *
+     * @param entity the entity whose ID is to be retrieved; can be null
+     * @param <E> the type of the entity that extends EntityId
+     * @return the ID of the entity as a string if the entity is not null, or "null" if the entity is null
+     */
+    public static <E extends UuidEntityId> String getIdForToString(E entity) {
+        return entity == null ? ENTITY_NULL : entity.getId().toString();
+    }
+
+    /**
+     * Retrieves a string representation of the ID of the given Long-based entity.
+     *
+     * @param entity the entity whose ID is to be retrieved; can be null
+     * @param <E> the type of the entity that extends LongEntityId
+     * @return the ID of the entity as a string if the entity is not null, or "null" if the entity is null
+     */
+    public static <E extends LongEntityId> String getLongIdForToString(E entity) {
         return entity == null ? ENTITY_NULL : entity.getId().toString();
     }
 }

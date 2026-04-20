@@ -1,7 +1,7 @@
 package de.upteams.tasktracker.mail.confirmation.code;
 
 import de.upteams.tasktracker.user.entity.AppUser;
-import de.upteams.tasktracker.utils.BaseEntity;
+import de.upteams.tasktracker.utils.BaseUuidEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -17,7 +17,7 @@ import static de.upteams.tasktracker.utils.EntityUtil.getIdForToString;
 @Setter
 @NoArgsConstructor
 @Table(name = "confirm_code")
-public class ConfirmationCode extends BaseEntity {
+public class ConfirmationCode extends BaseUuidEntity {
 
     @Setter
     @NotNull

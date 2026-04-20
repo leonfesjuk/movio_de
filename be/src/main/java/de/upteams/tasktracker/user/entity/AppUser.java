@@ -1,6 +1,6 @@
 package de.upteams.tasktracker.user.entity;
 
-import de.upteams.tasktracker.utils.BaseEntity;
+import de.upteams.tasktracker.utils.BaseUuidEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -18,7 +18,7 @@ import org.hibernate.annotations.ColumnDefault;
 @Setter
 @NoArgsConstructor
 @Table(name = "app_user")
-public class AppUser extends BaseEntity {
+public class AppUser extends BaseUuidEntity {
 
     @NotBlank
     @Column(name = "password", nullable = false)

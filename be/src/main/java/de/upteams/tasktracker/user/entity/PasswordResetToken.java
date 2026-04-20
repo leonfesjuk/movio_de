@@ -1,6 +1,6 @@
 package de.upteams.tasktracker.user.entity;
 
-import de.upteams.tasktracker.utils.BaseEntity;
+import de.upteams.tasktracker.utils.BaseUuidEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
                 @Index(name = "idx_password_reset_token", columnList = "token")
         }
 )
-public class PasswordResetToken extends BaseEntity {
+public class PasswordResetToken extends BaseUuidEntity {
 
     @Column(nullable = false, unique = true)
     private String token;
