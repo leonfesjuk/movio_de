@@ -17,12 +17,15 @@ public class EmailService {
     @Value("${app.base-url}")
     private String baseUrl;
 
+    @Value("${app.frontend-url}")
+    private String frontendUrl;
+
     private final EmailSender emailSender;
     private final TemplateEngine templateEngine;
 
     @Async
     public void sendConfirmationEmail(String sentTo, String confirmationCode) {
-        String confirmationLink = "%s/api/v1/users/confirm/%s".formatted(baseUrl, confirmationCode);
+        String confirmationLink = "%s/#/verify-email?code=%s".formatted(frontendUrl, confirmationCode);
 
         Map<String, Object> model = Map.of(
                 "link", confirmationLink
@@ -30,5 +33,17 @@ public class EmailService {
 
         String htmlContent = templateEngine.generateHtml("confirm_registration_mail.ftlh", model);
         emailSender.sendEmail(sentTo, "Confirm your registration", htmlContent);
+    }
+
+    @Async
+    public void sendResetPasswordEmail(String sentTo, String token) {
+        String resetLink = "%s/#/auth/reset-password?token=%s".formatted(frontendUrl, token);
+
+        Map<String, Object> model = Map.of(
+                "link", resetLink
+        );
+
+        String htmlContent = templateEngine.generateHtml("reset_password_mail.ftlh", model);
+        emailSender.sendEmail(sentTo, "Reset your password", htmlContent);
     }
 }
