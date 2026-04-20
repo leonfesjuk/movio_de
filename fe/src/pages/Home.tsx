@@ -9,9 +9,9 @@ export default function Home() {
     const [status, setStatus] = useState("");
 
     const sessions = [
-        {id: "1", title: "Avatar", time: "18:00", notificationsSent: false},
-        {id: "2", title: "Batman", time: "19:30", notificationsSent: true},
-        {id: "3", title: "Avatar", time: "20:40", notificationsSent: false},
+        {id: "1", title: "Avatar", time: "18:00", date: "2026-04-21", notificationsSent: false},
+        {id: "2", title: "Batman", time: "19:30", date: "2026-04-22", notificationsSent: true},
+        {id: "3", title: "Avatar", time: "20:40", date: "2026-04-23", notificationsSent: false},
     ];
 
     const filteredSessions = sessions.filter((session) => {

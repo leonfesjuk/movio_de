@@ -1,4 +1,3 @@
-
 import type {SessionCardProps} from "@/features/session-card/types.ts";
 import {
     Card,
@@ -11,8 +10,7 @@ import {
 } from "@/components/ui/card.tsx";
 
 
-
-export const SessionCard = ({ session, isAuth }: SessionCardProps) => {
+export const SessionCard = ({session, isAuth}: SessionCardProps) => {
     return (
         <Card className="overflow-hidden">
 
@@ -27,9 +25,11 @@ export const SessionCard = ({ session, isAuth }: SessionCardProps) => {
             <CardHeader>
                 <CardTitle>{session.title}</CardTitle>
                 <CardDescription>
-                    {session.time}
+                    <CardDescription className="flex justify-between">
+                        <span>{session.date}</span>
+                        <span>{session.time}</span>
+                    </CardDescription>
                 </CardDescription>
-
                 <CardAction>
                 </CardAction>
             </CardHeader>
@@ -37,7 +37,8 @@ export const SessionCard = ({ session, isAuth }: SessionCardProps) => {
             {/* CONTENT  */}
             <CardContent>
                 <div className="text-sm text-muted-foreground">
-                    INFO
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed
+                    cursus ante dapibus diam. Sed nisi.
                 </div>
             </CardContent>
 
@@ -52,7 +53,7 @@ export const SessionCard = ({ session, isAuth }: SessionCardProps) => {
                         rel="noreferrer"
                         className="block w-full bg-blue-500 text-white text-center py-3 hover:bg-blue-600 transition"
                     >
-                        LINK
+                        TO POSTER
                     </a>
                 </CardFooter>
             )}

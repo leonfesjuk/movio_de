@@ -1,6 +1,7 @@
 export type Session = {
     id: string
     title: string
+    date: string
     time: string
     notificationsSent: boolean
     imageUrl?: string;
