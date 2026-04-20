@@ -3,17 +3,42 @@ import type { Credentials } from "../types";
 
 // we already added  prefix /api in axios config
 
-const LOGIN_PATH = "/auth/login";
-const REGISTER_PATH = "/users/register";
-
+const API = {
+  AUTH: {
+    LOGIN: "/auth/login",
+    RESET_PASSWORD: "/auth/reset-password",
+    FORGOT_PASSWORD: "/auth/forgot-password",
+  },
+  USERS: {
+    REGISTER: "/users/register",
+    VERIFY_EMAIL: "/users/confirm",
+  },
+} as const;
 
 export const fetchLogin = async (credentials: Credentials) => {
-  const res = await axiosInstance.post(LOGIN_PATH, credentials);
+  const res = await axiosInstance.post(API.AUTH.LOGIN, credentials);
   return res.data;
 };
 
-
 export const fetchRegister = async (credentials: Credentials) => {
-  const res = await axiosInstance.post(REGISTER_PATH, credentials);
+  const res = await axiosInstance.post(API.USERS.REGISTER, credentials);
+  return res.data;
+};
+
+export const fetchVerifyEmail = async (code: string) => {
+  const res = await axiosInstance.get(`${API.USERS.VERIFY_EMAIL}/${code}`);
+  return res.data;
+};
+
+export const fetchForgotPassword = async (email: string) => {
+  const res = await axiosInstance.post(API.AUTH.FORGOT_PASSWORD, { email });
+  return res.data;
+};
+
+export const fetchResetPassword = async (data: {
+  token: string;
+  newPassword: string;
+}) => {
+  const res = await axiosInstance.post(API.AUTH.RESET_PASSWORD, data);
   return res.data;
 };
