@@ -24,6 +24,9 @@ export const SessionCard = ({session, isAuth}: SessionCardProps) => {
             {/* HEADER */}
             <CardHeader>
                 <CardTitle>{session.title}</CardTitle>
+                <div className="text-sm text-muted-foreground">
+                    {session.city}
+                </div>
                 <CardDescription>
                     <CardDescription className="flex justify-between">
                         <span>{session.date}</span>
