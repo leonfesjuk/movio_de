@@ -238,11 +238,21 @@ public class EntityValidationTest {
                 assertEquals(hashCodeMethod.invoke(instance1), hashCodeMethod.invoke(instance2),
                         () -> entityClass.getName() + " hashCode method should not be affected by non-id fields");
 
-                // Change ID and verify hash code change
+                // Change ID and verify hash code behavior depends on entity base class
                 setEntityId(instance2, createDifferentIdValue(idType, entityId), entityClass);
 
-                assertNotEquals(hashCodeMethod.invoke(instance1), hashCodeMethod.invoke(instance2),
-                        () -> entityClass.getName() + " hashCode method should reflect changes in '" + idFieldName + "' field");
+                boolean isUuidEntity = BaseUuidEntity.class.equals(entityClass.getSuperclass());
+                boolean isGeoEntity = GeoBaseEntity.class.equals(entityClass.getSuperclass());
+
+                if (isUuidEntity) {
+                    assertNotEquals(hashCodeMethod.invoke(instance1), hashCodeMethod.invoke(instance2),
+                            () -> entityClass.getName() + " hashCode method should reflect changes in '" + idFieldName + "' field");
+                } else if (isGeoEntity) {
+                    assertEquals(hashCodeMethod.invoke(instance1), hashCodeMethod.invoke(instance2),
+                            () -> entityClass.getName() + " hashCode method should not be affected by changes in '" + idFieldName + "' field");
+                } else {
+                    fail(entityClass.getName() + " must extend BaseUuidEntity or GeoBaseEntity");
+                }
 
             } catch (Exception e) {
                 fail("Test " + entityClass.getName() + " fail!", e);

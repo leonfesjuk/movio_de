@@ -1,20 +1,21 @@
 package de.upteams.tasktracker.geonames.entity;
 
+import de.upteams.tasktracker.utils.GeoBaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
 @Table(name = "geonames_alternate_names")
+@AttributeOverride(
+        name = "id",
+        column = @Column(name = "alternate_name_id", updatable = false, nullable = false)
+)
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class GeonameAlternateNameEntity {
-
-    @Id
-    @Column(name = "alternate_name_id")
-    private Long alternateNameId;
+public class GeonameAlternateNameEntity extends GeoBaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "geonameid", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
@@ -28,4 +29,15 @@ public class GeonameAlternateNameEntity {
 
     @Column(name = "is_preferred")
     private Boolean isPreferred;
+
+    @Override
+    public String toString() {
+        return "GeonameAlternateNameEntity{" +
+                "id=" + getId() +
+                ", geonameId=" + (geoname == null ? "null" : geoname.getId()) +
+                ", isoLanguage='" + isoLanguage + '\'' +
+                ", name='" + name + '\'' +
+                ", isPreferred=" + isPreferred +
+                '}';
+    }
 }

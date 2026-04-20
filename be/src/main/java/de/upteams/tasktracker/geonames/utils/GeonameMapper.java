@@ -17,10 +17,10 @@ import java.util.List;
         unmappedSourcePolicy = ReportingPolicy.IGNORE)
 public interface GeonameMapper {
 
-    @Mapping(source = "geonameId", target = "geonameId")
+    @Mapping(source = "id", target = "geonameId")
     GeonameResponseDto toGeonameResponseDto(GeonameEntity geoname);
 
-    @Mapping(source = "geonameId", target = "geonameId")
+    @Mapping(source = "id", target = "geonameId")
     GeonameDetailsDto toGeonameDetailsDto(GeonameEntity geoname);
 
     // Mapping for alternate names

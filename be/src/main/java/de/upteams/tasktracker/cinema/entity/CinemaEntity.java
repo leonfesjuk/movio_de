@@ -1,6 +1,7 @@
 package de.upteams.tasktracker.cinema.entity;
 
 import de.upteams.tasktracker.geonames.entity.GeonameEntity;
+import de.upteams.tasktracker.utils.BaseUuidEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -11,11 +12,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CinemaEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class CinemaEntity extends BaseUuidEntity {
 
     @Column(nullable = false)
     private String name;
@@ -32,4 +29,16 @@ public class CinemaEntity {
 
     @Column(name = "organization_id")
     private Long organizationId;
+
+    @Override
+    public String toString() {
+        return "CinemaEntity{" +
+                "id=" + getId() +
+                ", name='" + name + '\'' +
+                ", address='" + address + '\'' +
+                ", webLink='" + webLink + '\'' +
+                ", geonameId=" + (geoname == null ? "null" : geoname.getId()) +
+                ", organizationId=" + organizationId +
+                '}';
+    }
 }
