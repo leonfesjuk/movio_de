@@ -86,10 +86,77 @@ export const authSlice = createAppSlice({
       },
     ),
 
+    forgotPassword: create.asyncThunk(
+      async (email: string, { rejectWithValue }) => {
+        try {
+          return await api.fetchForgotPassword(email);
+        } catch (err) {
+          if (isAxiosError(err)) {
+            return rejectWithValue(err.response?.data);
+          }
+
+          return rejectWithValue({
+            message: "Unknown error",
+          });
+        }
+      },
+    ),
+
+    resetPassword: create.asyncThunk(
+      async (
+        data: { token: string; newPassword: string },
+        { rejectWithValue },
+      ) => {
+        try {
+          return await api.fetchResetPassword(data);
+        } catch (err) {
+          if (isAxiosError(err)) {
+            return rejectWithValue(err.response?.data);
+          }
+
+          return rejectWithValue({
+            message: "Unknown error",
+          });
+        }
+      },
+      {
+        fulfilled: (state) => {
+          state.loginErrorMessage = undefined;
+        },
+        rejected: (state, action) => {
+          if (
+            action.payload &&
+            typeof action.payload === "object" &&
+            "message" in action.payload
+          ) {
+            state.loginErrorMessage = String(action.payload.message);
+          } else {
+            state.loginErrorMessage = action.error.message;
+          }
+        },
+      },
+    ),
+
+    verifyEmail: create.asyncThunk(
+      async (code: string, { rejectWithValue }) => {
+        try {
+          return await api.fetchVerifyEmail(code);
+        } catch (err) {
+          if (isAxiosError(err)) {
+            return rejectWithValue(err.response?.data);
+          }
+
+          return rejectWithValue({
+            message: "Unknown error",
+          });
+        }
+      },
+    ),
+
     clearAuthErrors: create.reducer((state) => {
       state.loginErrorMessage = undefined;
       state.registerFieldErrors = undefined;
-    })
+    }),
   }),
   // You can define your selectors here. These selectors receive the slice
   // state as their first argument.
@@ -103,7 +170,8 @@ export const authSlice = createAppSlice({
 });
 
 // // Action creators are generated for each case reducer function.
-export const { login, register, clearAuthErrors } = authSlice.actions;
+export const { login, register, forgotPassword, resetPassword, verifyEmail, clearAuthErrors } =
+  authSlice.actions;
 
 // Selectors returned by `slice.selectors` take the root state as their first argument.
 export const {

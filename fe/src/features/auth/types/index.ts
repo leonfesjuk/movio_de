@@ -36,3 +36,8 @@ export type ValidationErrorResponse = {
   }[];
   path: string;
 };
+
+export interface PasswordResetDto {
+  token: string;
+  newPassword: string;
+}

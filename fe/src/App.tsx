@@ -7,6 +7,11 @@ import Login from "./pages/Login";
 import Projects from "./pages/Projects";
 import TestUI from "@/pages/TestUI";
 import EmailConfirmationPage from "./pages/EmailConfirmationPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
+import NewPasswordConfirmationPage from "./pages/NewPasswordConfirmationPage";
+import VerifyEmailPage from "./pages/VerifyEmailPage";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
+import EmailConfirmationPasswordPage from "./pages/EmailConfirmationPasswordPage";
 
 function App() {
   return (
@@ -21,6 +26,11 @@ function App() {
           <Route path="/projects" element={<Projects />} />
           <Route path="/test-ui" element={<TestUI />} />
           <Route path="/check-email" element={<EmailConfirmationPage />} />
+          <Route path="/verify-email" element={<VerifyEmailPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/check-email-password" element={<EmailConfirmationPasswordPage />} />
+          <Route path="/auth/reset-password" element={<ResetPasswordPage />} />
+          <Route path="/auth/confirm-new-password" element={<NewPasswordConfirmationPage />} />
         </Routes>
       </Layout>
     </div>
