@@ -7,11 +7,12 @@ export default function Home() {
 
     const [search, setSearch] = useState("");
     const [status, setStatus] = useState("");
+    const [city, setCity] = useState("");
 
     const sessions = [
-        {id: "1", title: "Avatar", time: "18:00", notificationsSent: false},
-        {id: "2", title: "Batman", time: "19:30", notificationsSent: true},
-        {id: "3", title: "Avatar", time: "20:40", notificationsSent: false},
+        {id: "1", title: "Avatar", time: "18:00", city: "dresden", notificationsSent: false},
+        {id: "2", title: "Batman", time: "19:30", city: "berlin", notificationsSent: true},
+        {id: "3", title: "Avatar", time: "20:40", city: "berlin", notificationsSent: false},
     ];
 
     const filteredSessions = sessions.filter((session) => {
@@ -25,7 +26,11 @@ export default function Home() {
                 :status === "active"
                 ? !session.notificationsSent
                 :session.notificationsSent;
-        return matchesSearch && matchesStatus;
+
+        const matchesCity =
+            city === "" ? true : session.city === city;
+
+        return matchesSearch && matchesStatus && matchesCity;
     });
 
   return(
@@ -41,6 +46,8 @@ export default function Home() {
               setSearch={setSearch}
               status={status}
               setStatus={setStatus}
+              city={city}
+              setCity={setCity}
               />
           </div>
 
