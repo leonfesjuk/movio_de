@@ -2,7 +2,7 @@ package de.upteams.tasktracker.task.entity;
 
 import de.upteams.tasktracker.collaborator.entity.Collaborator;
 import de.upteams.tasktracker.project.entity.Project;
-import de.upteams.tasktracker.utils.BaseEntity;
+import de.upteams.tasktracker.utils.BaseUuidEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -25,7 +25,7 @@ import static de.upteams.tasktracker.utils.EntityUtil.getIdsForToString;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Task extends BaseEntity {
+public class Task extends BaseUuidEntity {
 
     @NotBlank
     @Column(name = "title", nullable = false)

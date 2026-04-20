@@ -11,10 +11,9 @@ import java.util.UUID;
 
 @MappedSuperclass
 @Getter
-public abstract class BaseEntity implements EntityId {
+public abstract class BaseUuidEntity implements UuidEntityId {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     @UuidGenerator
     @Column(
             name = "id",
@@ -28,7 +27,7 @@ public abstract class BaseEntity implements EntityId {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        BaseEntity that = (BaseEntity) o;
+        BaseUuidEntity that = (BaseUuidEntity) o;
         return id != null && id.equals(that.id);
     }
 

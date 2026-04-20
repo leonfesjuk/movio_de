@@ -1,7 +1,7 @@
 package de.upteams.entity;
 
 import de.upteams.tasktracker.user.entity.AppUser;
-import de.upteams.tasktracker.utils.BaseEntity;
+import de.upteams.tasktracker.utils.BaseUuidEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import org.apache.commons.lang3.StringUtils;
@@ -52,7 +52,7 @@ public class EntityValidationTest {
         for (Class<?> entityClass : entityClasses) {
             assertNotNull(entityClass.getSuperclass(),
                     () -> entityClass.getName() + " does not have a superclass");
-            assertEquals(BaseEntity.class, entityClass.getSuperclass(),
+            assertEquals(BaseUuidEntity.class, entityClass.getSuperclass(),
                     () -> entityClass.getName() + " must extend BaseEntity");
         }
     }
