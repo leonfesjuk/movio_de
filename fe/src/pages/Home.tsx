@@ -1,45 +1,46 @@
 import FilterBar from "@/components/common/FilterBar";
-import {SessionCard} from "@/features/session-card/SessionCard";
-import {useEffect, useState} from "react";
+import { SessionCard } from "@/features/session-card/SessionCard";
+import { useEffect, useState } from "react";
 import { getSessions } from "@/features/services/sessionService";
 
-type Session ={
-    id:string;
-    title:string;
-    time:string;
-    city:string;
+type Session = {
+    id: string;
+    title: string;
+    time: string;
+    city: string;
     notificationsSent: boolean;
 };
 
 export default function Home() {
-
     const [sessions, setSessions] = useState<Session[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
     const [search, setSearch] = useState("");
     const [status, setStatus] = useState("");
-
+    const [city, setCity] = useState("");
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const data = await getSessions();
                 setSessions(data);
-            } catch (e) {   
+            } catch (e) {
                 console.error(e);
 
+                // fallback
                 setSessions([
-                    {id: "1", title: "Avatar", time: "18:00", city: "Berlin", notificationsSent: false},
-                    {id: "2", title: "Batman", time: "19:40", city: "Dresden", notificationsSent: true},
+                    { id: "1", title: "Avatar", time: "18:00", city: "berlin", notificationsSent: false },
+                    { id: "2", title: "Batman", time: "19:40", city: "dresden", notificationsSent: true },
                 ]);
+
                 setError("Failed to load sessions");
             } finally {
                 setLoading(false);
             }
         };
 
-        void fetchData()
+        void fetchData();
     }, []);
 
     if (loading) {
@@ -57,17 +58,20 @@ export default function Home() {
                 : status === "active"
                     ? !session.notificationsSent
                     : session.notificationsSent;
-        return matchesSearch && matchesStatus;
+
+        const matchesCity =
+            city === "" ? true : session.city.toLowerCase() === city;
+
+        return matchesSearch && matchesStatus && matchesCity;
     });
 
     return (
         <div className="p-10">
-
             <h1 className="text-2xl font-bold mb-6">
                 Movie Sessions
             </h1>
 
-            {error &&(
+            {error && (
                 <div className="text-red-500 mb-4">
                     {error}
                 </div>
@@ -79,6 +83,8 @@ export default function Home() {
                     setSearch={setSearch}
                     status={status}
                     setStatus={setStatus}
+                    city={city}
+                    setCity={setCity}
                 />
             </div>
 

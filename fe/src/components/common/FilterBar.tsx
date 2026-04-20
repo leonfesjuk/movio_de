@@ -7,6 +7,8 @@ type FilterBarProps = {
     setSearch: (value: string) => void;
   status: string,
     setStatus: (value: string) => void;
+  city: string;
+  setCity: (value: string) => void;
 };
 
 export default function FilterBar({
@@ -14,17 +16,19 @@ export default function FilterBar({
     setSearch,
     status,
     setStatus,
+    city,
+    setCity,
 }: FilterBarProps){
     return(
         <div className="flex gap-4 items-center mb-6">
 
-            <Select>
+            <Select value={city} onValueChange={setCity}>
                 <SelectTrigger className="w-[200px]">
                     <SelectValue placeholder="All cities"/>
                 </SelectTrigger>
 
                 <SelectContent>
-                    <SelectItem value="essen">Essen</SelectItem>
+                    <SelectItem value="dresden">Dresden</SelectItem>
                     <SelectItem value="berlin">Berlin</SelectItem>
                 </SelectContent>
             </Select>
@@ -36,21 +40,25 @@ export default function FilterBar({
                 onChange={(e) => setSearch(e.target.value)}
             />
 
-            <Select
-                value={status}
-                onValueChange={(value) => setStatus(value)}
-            >
+            <Select value={status} onValueChange={setStatus}>
                 <SelectTrigger className="w-[150px]">
                     <SelectValue placeholder="Status"/>
                 </SelectTrigger>
-
                 <SelectContent>
-                    <SelectItem value="essen">Essen</SelectItem>
-                    <SelectItem value="berlin">Berlin</SelectItem>
+                    <SelectItem value="active">Active</SelectItem>
+                    <SelectItem value="inactive">Inactive</SelectItem>
                 </SelectContent>
             </Select>
 
-            <Button>Apply</Button>
+            <Button variant="outline"
+                    onClick={()=>{
+                        setSearch("");
+                        setStatus("");
+                        setCity("");
+                    }}>
+                Reset
+            </Button>
+
         </div>
     );
 }
