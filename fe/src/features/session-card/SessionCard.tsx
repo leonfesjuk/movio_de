@@ -1,6 +1,6 @@
 import type {SessionCardProps} from "@/features/session-card/types.ts";
-import { ExternalLink } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import {ExternalLink} from "lucide-react";
+import {Button} from "@/components/ui/button";
 import {
     Card,
     CardAction,
@@ -10,7 +10,6 @@ import {
     CardHeader,
     CardTitle
 } from "@/components/ui/card.tsx";
-
 
 
 export const SessionCard = ({session, isAuth}: SessionCardProps) => {
@@ -50,21 +49,22 @@ export const SessionCard = ({session, isAuth}: SessionCardProps) => {
 
             {/* FOOTER */}
             {isAuth && (
-                    <CardFooter className="p-0">
-                        <Button
-                            asChild
-                            className="w-full justify-between rounded-none"
+                <CardFooter className="p-0">
+                    <Button
+                        asChild
+                        className="w-full justify-between rounded-none bg-blue-400 text-blue-50 hover:bg-blue-100">
+
+
+                        <a
+                            href={session.externalUrl}
+                            target="_blank"
+                            rel="noreferrer"
                         >
-                            <a
-                                href={session.externalUrl}
-                                target="_blank"
-                                rel="noreferrer"
-                            >
-                                <span>TO POSTER</span>
-                                <ExternalLink size={16} />
-                            </a>
-                        </Button>
-                    </CardFooter>
+                            <span>TO POSTER</span>
+                            <ExternalLink size={16}/>
+                        </a>
+                    </Button>
+                </CardFooter>
 
             )}
         </Card>
