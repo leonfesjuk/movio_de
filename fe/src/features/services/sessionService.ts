@@ -5,5 +5,6 @@ export const getSessions = async () => {
         throw  new Error("Failed to fetch sessions");
     }
 
-    return response.json();
+    const json = await response.json();
+    return json.data.items;
 };

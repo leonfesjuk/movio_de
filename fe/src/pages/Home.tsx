@@ -7,6 +7,7 @@ type Session ={
     id:string;
     title:string;
     time:string;
+    city:string;
     notificationsSent: boolean;
 };
 
@@ -25,12 +26,12 @@ export default function Home() {
             try {
                 const data = await getSessions();
                 setSessions(data);
-            } catch (e) {
+            } catch (e) {   
                 console.error(e);
 
                 setSessions([
-                    {id: "1", title: "Avatar", time: "18:00", notificationsSent: false},
-                    {id: "2", title: "Batman", time: "19:40", notificationsSent: true},
+                    {id: "1", title: "Avatar", time: "18:00", city: "Berlin", notificationsSent: false},
+                    {id: "2", title: "Batman", time: "19:40", city: "Dresden", notificationsSent: true},
                 ]);
                 setError("Failed to load sessions");
             } finally {
@@ -96,7 +97,6 @@ export default function Home() {
                     ))}
                 </div>
             )}
-
         </div>
     );
 }
