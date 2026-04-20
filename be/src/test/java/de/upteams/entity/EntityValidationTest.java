@@ -2,6 +2,7 @@ package de.upteams.entity;
 
 import de.upteams.tasktracker.user.entity.AppUser;
 import de.upteams.tasktracker.utils.BaseUuidEntity;
+import de.upteams.tasktracker.utils.GeoBaseEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import org.apache.commons.lang3.StringUtils;
@@ -52,8 +53,12 @@ public class EntityValidationTest {
         for (Class<?> entityClass : entityClasses) {
             assertNotNull(entityClass.getSuperclass(),
                     () -> entityClass.getName() + " does not have a superclass");
-            assertEquals(BaseUuidEntity.class, entityClass.getSuperclass(),
-                    () -> entityClass.getName() + " must extend BaseEntity");
+
+            boolean isUuidEntity = BaseUuidEntity.class.equals(entityClass.getSuperclass());
+            boolean isGeoEntity = GeoBaseEntity.class.equals(entityClass.getSuperclass());
+
+            assertTrue(isUuidEntity || isGeoEntity,
+                    () -> entityClass.getName() + " must extend BaseUuidEntity or GeoBaseEntity");
         }
     }
 
@@ -151,14 +156,15 @@ public class EntityValidationTest {
 
         private void validateEqualsMethod(Class<?> entityClass) {
             String idFieldName = getIdFieldName(entityClass);
+            Class<?> idType = getIdField(entityClass).getType();
 
             try {
                 Object instance1 = entityClass.getConstructor().newInstance();
                 Object instance2 = entityClass.getConstructor().newInstance();
 
-                UUID entityId = UUID.randomUUID();
-                setEntityId(instance1, entityId, idFieldName);
-                setEntityId(instance2, entityId, idFieldName);
+                Object entityId = createIdValue(idType);
+                setEntityId(instance1, entityId, entityClass);
+                setEntityId(instance2, entityId, entityClass);
 
                 Method equalsMethod = entityClass.getMethod("equals", Object.class);
 
@@ -179,7 +185,7 @@ public class EntityValidationTest {
                         () -> entityClass.getName() + " equals method should not be affected by non-id fields");
 
                 // Change ID and verify inequality
-                setEntityId(instance2, UUID.randomUUID(), idFieldName);
+                setEntityId(instance2, createDifferentIdValue(idType, entityId), entityClass);
 
                 assertFalse((boolean) equalsMethod.invoke(instance1, instance2),
                         () -> entityClass.getName() + " equals method should reflect changes in '" + idFieldName + "' field");
@@ -204,14 +210,15 @@ public class EntityValidationTest {
 
         private void validateHashCodeMethod(Class<?> entityClass) {
             String idFieldName = getIdFieldName(entityClass);
+            Class<?> idType = getIdField(entityClass).getType();
 
             try {
                 Object instance1 = entityClass.getConstructor().newInstance();
                 Object instance2 = entityClass.getConstructor().newInstance();
 
-                UUID entityId = UUID.randomUUID();
-                setEntityId(instance1, entityId, idFieldName);
-                setEntityId(instance2, entityId, idFieldName);
+                Object entityId = createIdValue(idType);
+                setEntityId(instance1, entityId, entityClass);
+                setEntityId(instance2, entityId, entityClass);
 
                 Method hashCodeMethod = entityClass.getMethod("hashCode");
 
@@ -232,7 +239,7 @@ public class EntityValidationTest {
                         () -> entityClass.getName() + " hashCode method should not be affected by non-id fields");
 
                 // Change ID and verify hash code change
-                setEntityId(instance2, UUID.randomUUID(), idFieldName);
+                setEntityId(instance2, createDifferentIdValue(idType, entityId), entityClass);
 
                 assertNotEquals(hashCodeMethod.invoke(instance1), hashCodeMethod.invoke(instance2),
                         () -> entityClass.getName() + " hashCode method should reflect changes in '" + idFieldName + "' field");
@@ -313,33 +320,78 @@ public class EntityValidationTest {
         }
     }
 
-    private void setEntityId(Object instance, UUID id, String idFieldName) throws NoSuchFieldException, IllegalAccessException {
-        Field idField = instance.getClass().getSuperclass().getDeclaredField(idFieldName);
+    private void setEntityId(Object instance, Object id, Class<?> entityClass) throws NoSuchFieldException, IllegalAccessException {
+        Field idField = getIdField(entityClass);
         idField.setAccessible(true);
         idField.set(instance, id);
     }
 
     private void setDummyValue(Field field, Object instance) throws IllegalAccessException, NoSuchFieldException {
         field.setAccessible(true);
+
         if (field.getType().equals(String.class)) {
             field.set(instance, "TestString");
-        } else if (field.getType().equals(int.class) || field.getType().equals(Integer.class)) {
+            return;
+        }
+
+        if (field.getType().equals(int.class) || field.getType().equals(Integer.class)) {
             field.set(instance, 123);
-        } else if (field.getType().equals(AppUser.class)) {
+            return;
+        }
+
+        if (field.getType().equals(Long.class) || field.getType().equals(long.class)) {
+            field.set(instance, 123L);
+            return;
+        }
+
+        if (field.getType().equals(AppUser.class)) {
             AppUser appUser = new AppUser();
-            Field appUserIdField = AppUser.class.getSuperclass().getDeclaredField("id");
+            Field appUserIdField = getIdField(AppUser.class);
             appUserIdField.setAccessible(true);
             appUserIdField.set(appUser, UUID.randomUUID());
             field.set(instance, appUser);
         }
     }
 
+    private Object createIdValue(Class<?> idType) {
+        if (UUID.class.equals(idType)) {
+            return UUID.randomUUID();
+        }
+        if (Long.class.equals(idType) || long.class.equals(idType)) {
+            return 1L;
+        }
+        throw new IllegalArgumentException("Unsupported id type: " + idType.getName());
+    }
+
+    private Object createDifferentIdValue(Class<?> idType, Object currentId) {
+        if (UUID.class.equals(idType)) {
+            return UUID.randomUUID();
+        }
+        if (Long.class.equals(idType) || long.class.equals(idType)) {
+            long value = currentId instanceof Long ? (Long) currentId : 1L;
+            return value + 1;
+        }
+        throw new IllegalArgumentException("Unsupported id type: " + idType.getName());
+    }
+
+    private Field getIdField(Class<?> entityClass) {
+        Class<?> currentClass = entityClass;
+        while (currentClass != null && currentClass != Object.class) {
+            Optional<Field> idField = Arrays.stream(currentClass.getDeclaredFields())
+                    .filter(field -> field.isAnnotationPresent(Id.class))
+                    .findFirst();
+
+            if (idField.isPresent()) {
+                return idField.get();
+            }
+            currentClass = currentClass.getSuperclass();
+        }
+
+        throw new AssertionError("Entity " + entityClass.getName() + " does not have annotation for ID field");
+    }
+
     private String getIdFieldName(Class<?> entityClass) {
-        return Arrays.stream(entityClass.getSuperclass().getDeclaredFields())
-                .filter(field -> field.isAnnotationPresent(Id.class))
-                .map(Field::getName)
-                .findFirst()
-                .orElseThrow(() -> new AssertionError("Entity " + entityClass.getName() + " does not have annotation for ID field"));
+        return getIdField(entityClass).getName();
     }
 
     private String capitalize(String str) {
