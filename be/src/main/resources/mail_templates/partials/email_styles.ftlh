@@ -55,6 +55,14 @@
         margin-bottom: 14px;
     }
 
+    .brand-logo {
+        display: block;
+        margin: 0 auto 14px;
+        max-width: 160px;
+        width: 100%;
+        height: auto;
+    }
+
     .header h1 {
         margin: 0;
         font-size: 30px;
@@ -167,6 +175,10 @@
 
         .content h2 {
             font-size: 22px;
+        }
+
+        .brand-logo {
+            max-width: 130px;
         }
     }
 </style>
