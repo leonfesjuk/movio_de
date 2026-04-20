@@ -1,4 +1,6 @@
 import type {SessionCardProps} from "@/features/session-card/types.ts";
+import { ExternalLink } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
     Card,
     CardAction,
@@ -8,6 +10,7 @@ import {
     CardHeader,
     CardTitle
 } from "@/components/ui/card.tsx";
+
 
 
 export const SessionCard = ({session, isAuth}: SessionCardProps) => {
@@ -47,18 +50,22 @@ export const SessionCard = ({session, isAuth}: SessionCardProps) => {
 
             {/* FOOTER */}
             {isAuth && (
-                <CardFooter className="flex justify-between">
+                    <CardFooter className="p-0">
+                        <Button
+                            asChild
+                            className="w-full justify-between rounded-none"
+                        >
+                            <a
+                                href={session.externalUrl}
+                                target="_blank"
+                                rel="noreferrer"
+                            >
+                                <span>TO POSTER</span>
+                                <ExternalLink size={16} />
+                            </a>
+                        </Button>
+                    </CardFooter>
 
-
-                    <a
-                        href={session.externalUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="block w-full bg-blue-500 text-white text-center py-3 hover:bg-blue-600 transition"
-                    >
-                        TO POSTER
-                    </a>
-                </CardFooter>
             )}
         </Card>
     );
