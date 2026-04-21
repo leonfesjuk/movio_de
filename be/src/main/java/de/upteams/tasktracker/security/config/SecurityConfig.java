@@ -83,6 +83,10 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/v1/users/register").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/users/confirm/{code}").permitAll()
 
+                        // Публічний доступ до подій та кінотеатрів (лише читання)
+                        .requestMatchers(HttpMethod.GET, "/api/events/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/cinemas/**").permitAll()
+
                         // авторизация пользователя
                         .requestMatchers(HttpMethod.POST, "/api/v1/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/auth/refresh-token").permitAll()
