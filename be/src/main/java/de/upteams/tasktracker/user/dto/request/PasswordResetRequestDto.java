@@ -1,6 +1,6 @@
 package de.upteams.tasktracker.user.dto.request;
 
-import de.upteams.tasktracker.validation.password.ValidPassword;
+import de.upteams.tasktracker.user.util.validation.password.ValidPassword;
 import jakarta.validation.constraints.NotBlank;
 
 public record PasswordResetRequestDto(

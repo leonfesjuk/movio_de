@@ -2,6 +2,7 @@ package de.upteams.tasktracker.user.entity;
 
 import de.upteams.tasktracker.utils.BaseUuidEntity;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -25,13 +26,28 @@ public class AppUser extends BaseUuidEntity {
     private String password;
 
     @NotBlank(message = "{user.email.notBlank}")
+    @Email(message = "{user.email.invalid}")
     @Column(
             name = "email",
             unique = true,
-            nullable = false,
-            columnDefinition = "VARCHAR(255)"
+            nullable = false
     )
     private String email;
+
+    @NotBlank(message = "{user.name.notBlank}")
+    @Column(
+            name = "name",
+            unique = true,
+            nullable = false
+    )
+    private String name;
+
+    @NotBlank(message = "{user.webLink.notBlank}")
+    @Column(
+            name = "web_link",
+            nullable = false
+    )
+    private String webLink;
 
     @NotNull(message = "{field.notNull}")
     @Column(name = "confirm_status", nullable = false)
@@ -44,10 +60,12 @@ public class AppUser extends BaseUuidEntity {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    public AppUser(String password, String email) {
+    public AppUser(String password, String email, String name, String webLink) {
         this.password = password;
         this.email = email;
-        role = Role.ROLE_USER;
+        this.name = name;
+        this.webLink = webLink;
+        this.role = Role.ROLE_USER;
     }
 
     @Override
@@ -57,6 +75,8 @@ public class AppUser extends BaseUuidEntity {
                 ", confirmationStatus=" + confirmationStatus +
                 ", password='" + (StringUtils.isBlank(password) ? "null" : "*hidden*") + '\'' +
                 ", email='" + email + '\'' +
+                ", name='" + name + '\'' +
+                ", webLink='" + webLink + '\'' +
                 ", role=" + role +
                 '}';
     }

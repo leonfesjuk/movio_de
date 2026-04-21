@@ -19,5 +19,7 @@ public interface UserService {
 
     AppUser getByIdOrThrow(String id);
 
+    boolean existsByName(String name);
+
     List<UserResponseDto> getAll();
 }

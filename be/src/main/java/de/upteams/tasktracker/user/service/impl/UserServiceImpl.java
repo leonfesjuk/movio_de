@@ -30,7 +30,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional
     public Optional<AppUser> getByEmail(String email) {
         return repository.findByEmailIgnoreCase(email);
     }
@@ -48,6 +47,11 @@ public class UserServiceImpl implements UserService {
         return repository
                 .findById(UUID.fromString(id))
                 .orElseThrow(UserNotFoundException::new);
+    }
+
+    @Override
+    public boolean existsByName(String name) {
+        return repository.existsByNameIgnoreCase(name);
     }
 
     @Override
