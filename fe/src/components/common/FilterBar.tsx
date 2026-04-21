@@ -19,7 +19,10 @@ export default function FilterBar({
     city,
     setCity,
 }: FilterBarProps){
-    const cities = ["berlin", "dresden"];
+    const cities = [
+        {value: "berlin", label:"Berlin"},
+        {value: "dresden", label: "Dresden"}
+        ];
 
     return(
         <div className="flex gap-4 items-center mb-6">
@@ -31,8 +34,8 @@ export default function FilterBar({
 
                 <SelectContent>
                     {cities.map((c) =>(
-                        <SelectItem key={c} value={c}>
-                            {c}
+                        <SelectItem key={c.value} value={c.value}>
+                            {c.label}
                         </SelectItem>
                     ))}
                 </SelectContent>
