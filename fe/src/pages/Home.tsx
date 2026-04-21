@@ -56,11 +56,11 @@ export default function Home() {
             status === ""
                 ? true
                 : status === "active"
-                    ? !session.notificationsSent
-                    : session.notificationsSent;
+                ? !session.notificationsSent
+                : session.notificationsSent;
 
         const matchesCity =
-            city === "" ? true : session.city.toLowerCase() === city;
+            city === "" ? true : session.city.toLowerCase() === city.toLowerCase();
 
         return matchesSearch && matchesStatus && matchesCity;
     });
