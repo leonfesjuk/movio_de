@@ -2,7 +2,6 @@ package de.upteams.tasktracker.project.entity;
 
 import de.upteams.tasktracker.collaborator.entity.Collaborator;
 import de.upteams.tasktracker.project.constants.ProjectValidationConstats;
-import de.upteams.tasktracker.task.entity.Task;
 import de.upteams.tasktracker.user.entity.AppUser;
 import de.upteams.tasktracker.utils.BaseUuidEntity;
 import jakarta.persistence.*;
@@ -18,7 +17,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static de.upteams.tasktracker.utils.EntityUtil.getIdForToString;
-import static de.upteams.tasktracker.utils.EntityUtil.getIdsForToString;
 
 /**
  * Project entity
@@ -54,9 +52,6 @@ public class Project extends BaseUuidEntity {
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
     private Set<Collaborator> projectTeam = new HashSet<>();
 
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
-    private final Set<Task> tasks = new HashSet<>();
-
     public Project(String title, String description, AppUser owner) {
         this.title = title;
         this.description = description;
@@ -70,7 +65,6 @@ public class Project extends BaseUuidEntity {
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
                 ", authorId=" + getIdForToString(owner) +
-                ", tasksIds=" + getIdsForToString(tasks) +
                 '}';
     }
 }

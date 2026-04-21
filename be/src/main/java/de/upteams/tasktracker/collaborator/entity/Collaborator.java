@@ -1,7 +1,6 @@
 package de.upteams.tasktracker.collaborator.entity;
 
 import de.upteams.tasktracker.project.entity.Project;
-import de.upteams.tasktracker.task.entity.Task;
 import de.upteams.tasktracker.user.entity.AppUser;
 import de.upteams.tasktracker.utils.BaseUuidEntity;
 import jakarta.persistence.*;
@@ -34,14 +33,10 @@ public class Collaborator extends BaseUuidEntity {
     @Enumerated(EnumType.STRING)
     private final Set<ProjectRoles> projectRolesSet = new HashSet<>();
 
-    @ManyToMany
-    private final Set<Task> tasks = new HashSet<>();
-
     @Override
     public String toString() {
         return "Collaborator{" +
                 "id=" + id +
-                ", tasks=" + getIdsForToString(tasks) +
                 ", projectRolesSet=" + projectRolesSet +
                 ", project=" + getIdForToString(project) +
                 ", appUserId=" + getIdForToString(appUser) +
