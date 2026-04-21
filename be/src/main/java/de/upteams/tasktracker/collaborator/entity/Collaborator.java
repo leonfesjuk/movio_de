@@ -1,6 +1,5 @@
 package de.upteams.tasktracker.collaborator.entity;
 
-import de.upteams.tasktracker.project.entity.Project;
 import de.upteams.tasktracker.user.entity.AppUser;
 import de.upteams.tasktracker.utils.BaseUuidEntity;
 import jakarta.persistence.*;
@@ -25,9 +24,6 @@ public class Collaborator extends BaseUuidEntity {
     @ManyToOne
     private AppUser appUser;
 
-    @NotNull
-    @ManyToOne
-    private Project project;
 
     @NotNull
     @Enumerated(EnumType.STRING)
@@ -38,7 +34,6 @@ public class Collaborator extends BaseUuidEntity {
         return "Collaborator{" +
                 "id=" + id +
                 ", projectRolesSet=" + projectRolesSet +
-                ", project=" + getIdForToString(project) +
                 ", appUserId=" + getIdForToString(appUser) +
                 '}';
     }

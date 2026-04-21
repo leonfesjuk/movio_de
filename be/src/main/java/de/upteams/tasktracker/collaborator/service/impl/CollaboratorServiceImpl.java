@@ -4,7 +4,6 @@ import de.upteams.tasktracker.collaborator.entity.Collaborator;
 import de.upteams.tasktracker.collaborator.entity.ProjectRoles;
 import de.upteams.tasktracker.collaborator.persistence.CollaboratorRepository;
 import de.upteams.tasktracker.collaborator.service.interfaces.CollaboratorService;
-import de.upteams.tasktracker.project.entity.Project;
 import de.upteams.tasktracker.user.entity.AppUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,23 +21,23 @@ public class CollaboratorServiceImpl implements CollaboratorService {
     private final CollaboratorRepository collaboratorRepository;
 
     @Override
-    public boolean isUserInProject(AppUser user, Project project) {
-        return getCollaborator(user, project).isPresent();
+    public boolean isUserInProject(AppUser user) {
+        return getCollaborator(user).isPresent();
     }
 
     @Override
-    public Optional<Collaborator> getCollaborator(AppUser user, Project project) {
-        return collaboratorRepository.findCollaborator(user, project);
+    public Optional<Collaborator> getCollaborator(AppUser user) {
+        return collaboratorRepository.findByAppUser(user);
     }
 
     @Override
-    public boolean hasUserPermission(AppUser user, Project project, ProjectRoles requiredRole) {
-        return hasUserPermission(user, project, Collections.singletonList(requiredRole));
+    public boolean hasUserPermission(AppUser user, ProjectRoles requiredRole) {
+        return hasUserPermission(user, Collections.singletonList(requiredRole));
     }
 
     @Override
-    public boolean hasUserPermission(AppUser user, Project project, Collection<ProjectRoles> requiredRoles) {
-        return getCollaborator(user, project)
+    public boolean hasUserPermission(AppUser user, Collection<ProjectRoles> requiredRoles) {
+        return getCollaborator(user)
                 .map(collaborator -> hasAnyRequiredRole(collaborator, requiredRoles))
                 .orElse(false);
     }
