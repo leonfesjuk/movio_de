@@ -1,4 +1,4 @@
-package de.upteams.tasktracker.validation.url;
+package de.upteams.tasktracker.user.util.validation.url;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;

@@ -1,6 +1,6 @@
 package de.upteams.tasktracker.validator;
 
-import de.upteams.tasktracker.validation.password.ValidPassword;
+import de.upteams.tasktracker.user.util.validation.password.ValidPassword;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;

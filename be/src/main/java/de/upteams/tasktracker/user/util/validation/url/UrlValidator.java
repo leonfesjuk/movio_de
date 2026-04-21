@@ -1,4 +1,4 @@
-package de.upteams.tasktracker.validation.url;
+package de.upteams.tasktracker.user.util.validation.url;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
@@ -13,14 +13,19 @@ public class UrlValidator implements ConstraintValidator<ValidUrl, String> {
             return true; // @NotBlank проверит отдельно
         }
 
+        String normalized = value.trim();
+
+        // временно добавляем схему для парсинга
+        if (!normalized.startsWith("http://") && !normalized.startsWith("https://")) {
+            normalized = "https://" + normalized;
+        }
+
         try {
-            URI uri = new URI(value);
+            URI uri = new URI(normalized);
 
-            String scheme = uri.getScheme();
+            String host = uri.getHost();
 
-            return scheme != null &&
-                    (scheme.equalsIgnoreCase("http") || scheme.equalsIgnoreCase("https")) &&
-                    uri.getHost() != null;
+            return host != null && host.contains(".");
 
         } catch (Exception e) {
             return false;

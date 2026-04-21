@@ -1,11 +1,10 @@
-package de.upteams.tasktracker.validation.password;
+package de.upteams.tasktracker.user.util.validation.password;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import static de.upteams.tasktracker.user.constants.UserValidationConstants.SPECIAL_SYMBOLS;
 

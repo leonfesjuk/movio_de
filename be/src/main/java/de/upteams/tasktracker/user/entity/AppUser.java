@@ -1,12 +1,10 @@
 package de.upteams.tasktracker.user.entity;
 
 import de.upteams.tasktracker.utils.BaseEntity;
-import de.upteams.tasktracker.validation.url.ValidUrl;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -45,7 +43,6 @@ public class AppUser extends BaseEntity {
     private String name;
 
     @NotBlank(message = "{user.webLink.notBlank}")
-    @ValidUrl
     @Column(
             name = "web_link",
             nullable = false

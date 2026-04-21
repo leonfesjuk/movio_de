@@ -1,11 +1,10 @@
 package de.upteams.tasktracker.user.dto.request;
 
-import de.upteams.tasktracker.validation.password.ValidPassword;
+import de.upteams.tasktracker.user.util.validation.password.ValidPassword;
+import de.upteams.tasktracker.user.util.validation.url.ValidUrl;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 
 public record UserCreateDto(
         @Schema(
@@ -36,6 +35,7 @@ public record UserCreateDto(
                 example = "https://cinemaxx.com"
         )
         @NotBlank(message = "{user.webLink.notBlank}")
+        @ValidUrl
         String webLink
 ) {
 }
