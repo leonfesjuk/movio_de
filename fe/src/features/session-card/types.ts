@@ -4,6 +4,7 @@ export type Session = {
     city:string
     date: string
     time: string
+    datetime?: string // for API
     description?: string
     notificationsSent: boolean
     imageUrl?: string;
