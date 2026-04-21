@@ -19,6 +19,8 @@ export default function FilterBar({
     city,
     setCity,
 }: FilterBarProps){
+    const cities = ["berlin", "dresden"];
+
     return(
         <div className="flex gap-4 items-center mb-6">
 
@@ -28,8 +30,11 @@ export default function FilterBar({
                 </SelectTrigger>
 
                 <SelectContent>
-                    <SelectItem value="dresden">Dresden</SelectItem>
-                    <SelectItem value="berlin">Berlin</SelectItem>
+                    {cities.map((c) =>(
+                        <SelectItem key={c} value={c}>
+                            {c}
+                        </SelectItem>
+                    ))}
                 </SelectContent>
             </Select>
 
