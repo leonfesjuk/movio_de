@@ -24,23 +24,28 @@ export const SessionCard = ({session, isAuth}: SessionCardProps) => {
             />
 
             {/* HEADER */}
-            <CardHeader>
-                <CardTitle>{session.title}</CardTitle>
+            <CardHeader className="space-y-2">
+                <CardTitle className="text-lg leading-tight">{session.title}</CardTitle>
                 <div className="text-sm text-muted-foreground">
                     {session.city}
                 </div>
+
                 <CardDescription>
-                    <CardDescription className="flex justify-between">
+                    <div className="flex justify-between">
                         <span>{session.date}</span>
                         <span>{session.time}</span>
-                    </CardDescription>
+                    </div>
                 </CardDescription>
+
                 <CardAction>
                 </CardAction>
             </CardHeader>
 
             {/* CONTENT  */}
             <CardContent>
+                <p className="text-sm font-medium text-foreground">
+                    Description:
+                </p>
                 <div className="text-sm text-muted-foreground">
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed
                     cursus ante dapibus diam. Sed nisi.
@@ -49,7 +54,7 @@ export const SessionCard = ({session, isAuth}: SessionCardProps) => {
 
             {/* FOOTER */}
             {isAuth && (
-                <CardFooter className="p-0">
+                <CardFooter className="p-0 mt-auto">
                     <Button
                         asChild
                         className="w-full justify-between rounded-none bg-blue-400 text-blue-50 hover:bg-blue-100">
