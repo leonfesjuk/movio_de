@@ -14,7 +14,7 @@ import {
 
 export const SessionCard = ({session, isAuth}: SessionCardProps) => {
     return (
-        <Card className="overflow-hidden">
+        <Card className="overflow-hidden flex flex-col h-full">
 
             {/* IMAGE */}
             <img
