@@ -22,14 +22,15 @@ const RegistrationForm = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [serverFormError, setServerFormError] = useState<string | null>(null);
-  const [serverPasswordErrors, setServerPasswordErrors] = useState<
+  const [serverFieldErrors, setServerFieldErrors] = useState<
     Record<string, string[]>
   >({});
-  // const registerFieldErrors = useAppSelector(selectRegisterError);
   const formik = useFormik({
     initialValues: {
       email: "",
       password: "",
+      name: "",
+      webLink: "",
     },
     validationSchema: Yup.object({
       email: Yup.string()
@@ -38,9 +39,11 @@ const RegistrationForm = () => {
       password: Yup.string()
         .min(8, "Password must be at least 8 characters")
         .required("Password is required"),
+      name: Yup.string().required("Organization name is required"),
+      webLink: Yup.string().required("Web-link is required"),
     }),
     onSubmit: async (values, { setSubmitting }) => {
-      setServerPasswordErrors({});
+      setServerFieldErrors({});
       setServerFormError(null);
 
       try {
@@ -67,7 +70,7 @@ const RegistrationForm = () => {
               fieldErrors[e.field] = e.messages;
             });
 
-            setServerPasswordErrors(fieldErrors);
+            setServerFieldErrors(fieldErrors);
           } else {
             setServerFormError("Registration failed");
           }
@@ -78,12 +81,27 @@ const RegistrationForm = () => {
     },
   });
 
-  const passwordFormikError = formik.touched.password && formik.errors.password;
-  const passwordServerErrors = serverPasswordErrors.password ?? [];
-  const emailFormikError = formik.touched.email && formik.errors.email;
+  const getFieldError = (field: string) => {
+    const formikError =
+      formik.touched[field as keyof typeof formik.touched] &&
+      formik.errors[field as keyof typeof formik.errors];
+
+    const serverErrors = serverFieldErrors[field] ?? [];
+
+    if (!formikError && serverErrors.length === 0) return null;
+
+    return (
+      <ul className="pl-6 list-disc text-red-500">
+        {formikError && <li>{formikError}</li>}
+        {serverErrors.map((e, i) => (
+          <li key={i}>{e}</li>
+        ))}
+      </ul>
+    );
+  };
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     formik.handleChange(e);
-    setServerPasswordErrors({});
+    setServerFieldErrors({});
     setServerFormError(null);
   };
 
@@ -119,8 +137,9 @@ const RegistrationForm = () => {
             type="email"
             label="Email"
             placeholder="Enter your email"
+            required
             {...formik.getFieldProps("email")}
-            error={emailFormikError}
+            error={getFieldError("email")}
           />
 
           {/* Password Field */}
@@ -130,25 +149,42 @@ const RegistrationForm = () => {
             isViewSwitcher
             label="Password"
             placeholder="Create a password"
+            required
             {...formik.getFieldProps("password")}
             onChange={handlePasswordChange}
-            error={
-              passwordFormikError || passwordServerErrors.length > 0 ? (
-                <ul className="pl-6 list-disc text-red-500">
-                  {passwordFormikError && <li>{passwordFormikError}</li>}
-
-                  {passwordServerErrors.map((error, index) => (
-                    <li key={index}>{error}</li>
-                  ))}
-                </ul>
-              ) : null
-            }
+            error={getFieldError("password")}
             description={
               <ul className="pl-6 list-disc text-muted-foreground">
                 <li>Password must contain at least 8 characters</li>
-                <li>Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 number and 1 special character, and only Latin letters.</li>
+                <li>
+                  Password must contain at least 1 uppercase letter, 1 lowercase
+                  letter, 1 number and 1 special character, and only Latin
+                  letters.
+                </li>
               </ul>
             }
+          />
+
+          {/* Name Field */}
+          <CustomInput
+            id="name"
+            type="text"
+            label="Organization name"
+            placeholder="Enter your organization name"
+            required
+            {...formik.getFieldProps("name")}
+            error={getFieldError("name")}
+          />
+
+          {/* Web-link Field */}
+          <CustomInput
+            id="webLink"
+            type="text"
+            label="Link to the site"
+            placeholder="Enter link to the your organization site"
+            required
+            {...formik.getFieldProps("webLink")}
+            error={getFieldError("webLink")}
           />
 
           {/* Submit Button */}
