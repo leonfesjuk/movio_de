@@ -46,9 +46,8 @@ export const SessionCard = ({session, isAuth}: SessionCardProps) => {
                 <p className="text-sm font-medium text-foreground">
                     Description:
                 </p>
-                <div className="text-sm text-muted-foreground">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed
-                    cursus ante dapibus diam. Sed nisi.
+                <div className="text-sm text-muted-foreground line-clamp-3">
+                    {session.description || "No description"}
                 </div>
             </CardContent>
 
