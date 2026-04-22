@@ -20,6 +20,7 @@ export default function Home() {
     const [status, setStatus] = useState("");
     const [city, setCity] = useState("");
 
+
     useEffect(() => {
         const fetchData = async () => {
             try {
