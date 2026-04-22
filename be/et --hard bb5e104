@@ -1,0 +1,41 @@
+[33mbb5e104[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32meventsTests[m[33m)[m getById test added
+[33m605764d[m create DTO to entity Test
+[33m7860ea0[m[33m ([m[1;32mdevelop[m[33m)[m Merge pull request #17 from upteam-edu/feature/events-cinema-v1
+[33m885b6aa[m Merge pull request #18 from upteam-edu/BE-82-extension_appuser
+[33m25e84f7[m BE-82 Added new lields for AppUser + Tests
+[33ma9089bf[m[33m ([m[1;31morigin/feature/events-cinema-v1[m[33m, [m[1;32mfeature/events-cinema-v1[m[33m)[m feat(api): implement Events and Cinemas management API
+[33m440a49a[m Merge pull request #14 from upteam-edu/mysql-remove
+[33mdd3da68[m[33m ([m[1;31morigin/mysql-remove[m[33m)[m #100 Removed old docker configuration for MySQL
+[33m8c0d9d6[m Added in AppUser new fields
+[33m8636c37[m Merge pull request #12 from upteam-edu/rl2_geonames_entity_revorks
+[33md2271f4[m Merge pull request #13 from upteam-edu/mail_update_reset_password
+[33m48ea092[m[33m ([m[1;31morigin/mail_update_reset_password[m[33m)[m Refactor email templates: introduce shared base layout with common header/footer partials, extract CSS into reusable Freemarker include, and separate email content from structure. Rework registration and password reset emails to use new modular architecture and fix Freemarker include paths.
+[33m8e754b5[m feat(email): update email templates and extract styles
+[33mab3947e[m[33m ([m[1;31morigin/rl2_geonames_entity_revorks[m[33m)[m refactor(core): refactor inheritance of base entities (BaseUuidEntity, GeoBaseEntity)
+[33m2971e6a[m Implement Geoname Repository and Service, update DTOs with Swagger\n- Created GeonameRepository with JPQL for role-based city searching.\n-Implemented GeonameService and GeonameServiceImpl with logic for g1 and g2 tasks.\n- Updated all Geoname DTOs with Swagger @Schema annotations fordocumentation.\n- Fixed compilation error by replacing UserRole with the c orrect Role enum.\n- Project boots successfully; EntityValidationTest failure is acknowledged due to ID type incompatibility.
+[33m648f4ab[m Implement Geoname Repository and Service, update DTOs with Swagger\n- Created GeonameRepository with JPQL for role-based city searching.\n-Implemented GeonameService and GeonameServiceImpl with logic for g1 and g2 tasks.\n- Updated all Geoname DTOs with Swagger @Schema annotations fordocumentation.\n- Fixed compilation error by replacing UserRole with the c orrect Role enum.\n- Project boots successfully; EntityValidationTest failure is acknowledged due to ID type incompatibility.
+[33m0ca27a5[m  Add Geonames DTOs and Mapper, add Swagger annotations, adapt entities for tests\n- Implemented DTOs: GeonameResponseDto, GeonameDetailsDto, GeonameSearchListResponseDto, GeonameAlternateNameDto with Swagger @Schema annotations.\n- Created GeonameMapper interface for Entity <-> DTO conversion.\n- Explicitly implemented getters, setters, equals, hashCode, toString in GeonameEntity, GeonameAlternateNameEntity, CinemaEntity to meet EntityValidationTest requirements (excluding the BaseEntity inheritance test).\n- Note: New entities do not extend BaseEntity due to differing ID types (Long/Integer vs UUID). EntityValidationTest cases relying on UUID ID handling via setEntityId cannot be passed for our entities.\n- AppUserMapperTest continues to fail independently and is not addressed in this commit.
+[33mda8792a[m feat: Add Geonames DTOs and Mapper, adapt entities for validation\n- Implemented DTOs: GeonameResponseDto, GeonameDetailsDto,
+[33m4267cd2[m Create GeonameEntity, CinemaEntity, and   GeonameAlternateNameEntity for tasks g1 and g2\n- Configure NO_CONSTRAINT for foreign keys to prevent startup errors   due to partial data\n- Remove accidental 'c' character from .gitignore
+[33meb4e533[m Update EntityValidationTest to support new GeoBaseEntity hierarchy.
+[33me8f4013[m Refactor base entity naming and extend identity model for GeoNames reference data.
+[33m802dff7[m Merge pull request #11 from upteam-edu/FE-220-forgot_password
+[33mf6e84b3[m Fixed error
+[33m2dc24c6[m Fixed mail link
+[33m24c0463[m Added Forgot/Reset Password
+[33m48fceb9[m Merge pull request #9 from upteam-edu/email_update
+[33m7554f8e[m[33m ([m[1;31morigin/email_update[m[33m)[m #92 FIX refactor: rename expired to expiresAt
+[33mbcb127a[m #92 feat(email): update email confirmation template
+[33m5901f48[m Merge pull request #8 from upteam-edu/BE-19-add_password_validator
+[33m6c7eaa7[m Merge branch 'develop' into BE-19-add_password_validator
+[33m2bc7ecf[m Added PasswordValidator + Unit-tests
+[33m248eea2[m Merge pull request #7 from upteam-edu/feature/78-check-postgresql-tables
+[33m21c6e4d[m[33m ([m[1;31morigin/feature/78-check-postgresql-tables[m[33m, [m[1;32mfeature/78-check-postgresql-tables[m[33m)[m feat: Switch to PostgreSQL and secure secrets with dotenv
+[33mfa27bdd[m Fix class name
+[33m7e557ee[m[33m ([m[1;32mfeature/77-check-postgresql-docker[m[33m)[m Merge pull request #4 from upteam-edu/BUG-15-email_confirmation
+[33me9658b9[m Fix email confirmation
+[33m380d46c[m Merge pull request #2 from upteam-edu/docker_postgresql
+[33m800ae2b[m #76 add PostgreSQL docker setup with docker-compose
+[33mff534b7[m Merge pull request #1 from upteam-edu/gitgnore
+[33m27a96b6[m #74 fix .gitignore to exclude .gradle and .idea directories
+[33m51c85fa[m Initial commit

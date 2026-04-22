@@ -3,6 +3,7 @@ package de.upteams.tasktracker.event.service.impl;
 import de.upteams.tasktracker.cinema.dto.response.CinemaResponseDto;
 import de.upteams.tasktracker.cinema.entity.Cinema;
 import de.upteams.tasktracker.cinema.persistence.CinemaRepository;
+import de.upteams.tasktracker.event.dto.response.EventListDto;
 import de.upteams.tasktracker.event.dto.response.EventResponseDto;
 import de.upteams.tasktracker.event.entity.Event;
 import de.upteams.tasktracker.event.entity.TimeFlag;
@@ -19,9 +20,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -130,5 +137,115 @@ class EventServiceImplTest {
 
         verify(eventRepository, times(1)).findById(eventId);
         verifyNoInteractions(timeFlagRepository, cinemaRepository, eventMappingService, timeFlagMappingService);
+    }
+
+    @Test
+    void getAll_shouldFilterByCinemaId() {
+        UUID cinemaId = UUID.randomUUID();
+        int page = 0;
+        int size = 10;
+
+        Event mockEvent = createMockEvent();
+        Page<Event> eventPage = new PageImpl<>(List.of(mockEvent), PageRequest.of(page, size), 1);
+
+        when(eventRepository.findUpcomingEventsByCinema(eq(cinemaId), any(Pageable.class))).thenReturn(eventPage);
+
+        EventListDto result = eventService.getAll(cinemaId, null, page, size, null);
+
+        assertNotNull(result);
+        assertEquals(1, result.getItems().size());
+        verify(eventRepository).findUpcomingEventsByCinema(eq(cinemaId), any(Pageable.class));
+    }
+
+    @Test
+    void getAll_shouldFilterByCityId() {
+        Long cityId = 12345L;
+        int page = 0;
+        int size = 10;
+
+        Event mockEvent = createMockEvent();
+        Page<Event> eventPage = new PageImpl<>(List.of(mockEvent), PageRequest.of(page, size), 1);
+
+        when(eventRepository.findUpcomingEventsByCity(eq(cityId), any(Pageable.class))).thenReturn(eventPage);
+
+        EventListDto result = eventService.getAll(null, cityId, page, size, null);
+
+        assertNotNull(result);
+        assertEquals(1, result.getItems().size());
+        verify(eventRepository).findUpcomingEventsByCity(eq(cityId), any(Pageable.class));
+    }
+
+    @Test
+    void getAll_shouldFilterByOrganizationId() {
+        UUID orgId = UUID.randomUUID();
+        int page = 0;
+        int size = 10;
+
+        Event mockEvent = createMockEvent();
+        Page<Event> eventPage = new PageImpl<>(List.of(mockEvent), PageRequest.of(page, size), 1);
+
+        when(eventRepository.findByOrganizationIdWithDateCheck(eq(orgId), any(Pageable.class))).thenReturn(eventPage);
+
+        EventListDto result = eventService.getAll(null, null, page, size, orgId);
+
+        assertNotNull(result);
+        assertEquals(1, result.getItems().size());
+        verify(eventRepository).findByOrganizationIdWithDateCheck(eq(orgId), any(Pageable.class));
+    }
+
+    @Test
+    void getAll_shouldReturnAllUpcomingEventsWhenNoFilters() {
+        int page = 0;
+        int size = 10;
+
+        Event mockEvent = createMockEvent();
+        Page<Event> eventPage = new PageImpl<>(List.of(mockEvent), PageRequest.of(page, size), 1);
+
+        when(eventRepository.findUpcomingEvents(any(Pageable.class))).thenReturn(eventPage);
+
+        EventListDto result = eventService.getAll(null, null, page, size, null);
+
+        assertNotNull(result);
+        assertEquals(1, result.getItems().size());
+        assertFalse(result.getPagination().getHasMore());
+        verify(eventRepository).findUpcomingEvents(any(Pageable.class));
+    }
+
+    @Test
+    void getAll_shouldReturnEmptyListWhenNoEvents() {
+        int page = 0;
+        int size = 10;
+
+        Page<Event> emptyPage = new PageImpl<>(Collections.emptyList(), PageRequest.of(page, size), 0);
+
+        when(eventRepository.findUpcomingEvents(any(Pageable.class))).thenReturn(emptyPage);
+
+        EventListDto result = eventService.getAll(null, null, page, size, null);
+
+        assertNotNull(result);
+        assertTrue(result.getItems().isEmpty());
+        assertFalse(result.getPagination().getHasMore());
+    }
+
+    private Event createMockEvent() {
+        UUID eventId = UUID.randomUUID();
+        UUID cinemaId = UUID.randomUUID();
+
+        Event event = new Event();
+        setEntityId(event, eventId);
+        event.setTitle("Test Event");
+        event.setDescription("Description");
+        event.setImageUrl("http://example.com/image.jpg");
+        event.setSeanceLink("http://example.com/seance");
+        event.setDatetime(LocalDateTime.now().plusDays(1));
+
+        Cinema cinema = new Cinema();
+        setEntityId(cinema, cinemaId);
+        cinema.setName("Test Cinema");
+        cinema.setAddress("Test Address");
+        cinema.setOrganizationId(UUID.randomUUID());
+
+        event.setCinema(cinema);
+        return event;
     }
 }
