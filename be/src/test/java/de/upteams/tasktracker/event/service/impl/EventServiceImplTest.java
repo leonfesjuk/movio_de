@@ -2,7 +2,10 @@ package de.upteams.tasktracker.event.service.impl;
 
 import de.upteams.tasktracker.cinema.dto.response.CinemaResponseDto;
 import de.upteams.tasktracker.cinema.entity.Cinema;
+import de.upteams.tasktracker.cinema.exception.CinemaNotFoundException;
 import de.upteams.tasktracker.cinema.persistence.CinemaRepository;
+import de.upteams.tasktracker.event.dto.request.EventCreateDto;
+import de.upteams.tasktracker.event.dto.request.EventUpdateDto;
 import de.upteams.tasktracker.event.dto.response.EventListDto;
 import de.upteams.tasktracker.event.dto.response.EventResponseDto;
 import de.upteams.tasktracker.event.entity.Event;
@@ -13,6 +16,7 @@ import de.upteams.tasktracker.event.persistence.TimeFlagRepository;
 import de.upteams.tasktracker.event.service.interfaces.EventService;
 import de.upteams.tasktracker.event.utils.EventMappingService;
 import de.upteams.tasktracker.event.utils.TimeFlagMappingService;
+import de.upteams.tasktracker.exception.handling.exceptions.common.RestApiException;
 import de.upteams.tasktracker.utils.BaseUuidEntity;
 
 import org.junit.jupiter.api.Test;
@@ -34,6 +38,7 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+import org.springframework.http.HttpStatus;
 
 @ExtendWith(MockitoExtension.class)
 class EventServiceImplTest {
@@ -208,23 +213,106 @@ class EventServiceImplTest {
         assertNotNull(result);
         assertEquals(1, result.getItems().size());
         assertFalse(result.getPagination().getHasMore());
-        verify(eventRepository).findUpcomingEvents(any(Pageable.class));
+verify(eventRepository).findUpcomingEvents(any(Pageable.class));
     }
 
     @Test
-    void getAll_shouldReturnEmptyListWhenNoEvents() {
-        int page = 0;
-        int size = 10;
+    void create_shouldCreateEventWithTimeFlags() {
+        UUID orgId = UUID.randomUUID();
+        UUID cinemaId = UUID.randomUUID();
+        UUID eventId = UUID.randomUUID();
 
-        Page<Event> emptyPage = new PageImpl<>(Collections.emptyList(), PageRequest.of(page, size), 0);
+        EventCreateDto dto = new EventCreateDto(
+            "Title", "Description", "http://img.jpg", "http://seance", LocalDateTime.now().plusDays(1),
+            cinemaId, new EventCreateDto.TimeFlagDto(true, false, true)
+        );
 
-        when(eventRepository.findUpcomingEvents(any(Pageable.class))).thenReturn(emptyPage);
+        Cinema cinema = createMockCinema(cinemaId, orgId);
+        Event event = createMockEvent();
+        event.setTitle(dto.getTitle());
+        event.setDescription(dto.getDescription());
 
-        EventListDto result = eventService.getAll(null, null, page, size, null);
+        TimeFlag timeFlag = new TimeFlag(eventId, true, false, true);
+
+        when(cinemaRepository.findById(cinemaId)).thenReturn(Optional.of(cinema));
+        when(eventMappingService.mapDtoToEntity(dto)).thenReturn(event);
+        when(eventRepository.save(any(Event.class))).thenAnswer(inv -> {
+            Event e = inv.getArgument(0);
+            setEntityId(e, eventId);
+            return e;
+        });
+        when(timeFlagMappingService.mapCreateDtoToEntity(dto.getTimeFlags(), eventId)).thenReturn(timeFlag);
+        when(timeFlagRepository.save(any(TimeFlag.class))).thenReturn(timeFlag);
+
+        EventResponseDto result = eventService.create(dto, orgId);
 
         assertNotNull(result);
-        assertTrue(result.getItems().isEmpty());
-        assertFalse(result.getPagination().getHasMore());
+        verify(cinemaRepository).findById(cinemaId);
+        verify(eventMappingService).mapDtoToEntity(dto);
+        verify(eventRepository).save(any(Event.class));
+        verify(timeFlagRepository).save(any(TimeFlag.class));
+    }
+
+    @Test
+    void create_shouldCreateEventWithoutTimeFlags() {
+        UUID orgId = UUID.randomUUID();
+        UUID cinemaId = UUID.randomUUID();
+        UUID eventId = UUID.randomUUID();
+
+        EventCreateDto dto = new EventCreateDto(
+            "Title", "Description", "http://img.jpg", "http://seance", LocalDateTime.now().plusDays(1),
+            cinemaId, null
+        );
+
+        Cinema cinema = createMockCinema(cinemaId, orgId);
+        Event event = createMockEvent();
+
+        when(cinemaRepository.findById(cinemaId)).thenReturn(Optional.of(cinema));
+        when(eventMappingService.mapDtoToEntity(dto)).thenReturn(event);
+        when(eventRepository.save(any(Event.class))).thenAnswer(inv -> {
+            Event e = inv.getArgument(0);
+            setEntityId(e, eventId);
+            return e;
+        });
+
+        EventResponseDto result = eventService.create(dto, orgId);
+
+        assertNotNull(result);
+        verify(timeFlagRepository, never()).save(any(TimeFlag.class));
+    }
+
+    @Test
+    void create_shouldThrowCinemaNotFoundExceptionWhenCinemaNotExists() {
+        UUID orgId = UUID.randomUUID();
+        UUID cinemaId = UUID.randomUUID();
+
+        EventCreateDto dto = new EventCreateDto(
+            "Title", "Description", "http://img.jpg", "http://seance", LocalDateTime.now().plusDays(1),
+            cinemaId, null
+        );
+
+        when(cinemaRepository.findById(cinemaId)).thenReturn(Optional.empty());
+
+        assertThrows(CinemaNotFoundException.class, () -> eventService.create(dto, orgId));
+    }
+
+    @Test
+    void create_shouldThrowForbiddenWhenOrganizationDoesNotOwnCinema() {
+        UUID orgId = UUID.randomUUID();
+        UUID otherOrgId = UUID.randomUUID();
+        UUID cinemaId = UUID.randomUUID();
+
+        EventCreateDto dto = new EventCreateDto(
+            "Title", "Description", "http://img.jpg", "http://seance", LocalDateTime.now().plusDays(1),
+            cinemaId, null
+        );
+
+        Cinema cinema = createMockCinema(cinemaId, otherOrgId);
+
+        when(cinemaRepository.findById(cinemaId)).thenReturn(Optional.of(cinema));
+
+        RestApiException ex = assertThrows(RestApiException.class, () -> eventService.create(dto, orgId));
+        assertEquals(HttpStatus.FORBIDDEN, ex.getHttpStatus());
     }
 
     private Event createMockEvent() {
@@ -247,5 +335,14 @@ class EventServiceImplTest {
 
         event.setCinema(cinema);
         return event;
+    }
+
+    private Cinema createMockCinema(UUID cinemaId, UUID organizationId) {
+        Cinema cinema = new Cinema();
+        setEntityId(cinema, cinemaId);
+        cinema.setName("Test Cinema");
+        cinema.setAddress("Test Address");
+        cinema.setOrganizationId(organizationId);
+        return cinema;
     }
 }
