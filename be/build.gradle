@@ -53,9 +53,6 @@ dependencies {
     // JAXB API для JJWT (из-за удаления в Java 9+)
     implementation 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.2'
 
-
-    implementation 'software.amazon.awssdk:s3:2.31.28'
-
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testImplementation 'org.reflections:reflections:0.10.2'
