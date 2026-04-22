@@ -315,6 +315,132 @@ verify(eventRepository).findUpcomingEvents(any(Pageable.class));
         assertEquals(HttpStatus.FORBIDDEN, ex.getHttpStatus());
     }
 
+    @Test
+    void update_shouldUpdateAllFields() {
+        UUID eventId = UUID.randomUUID();
+        UUID orgId = UUID.randomUUID();
+        UUID cinemaId = UUID.randomUUID();
+
+        EventUpdateDto dto = new EventUpdateDto(
+            "New Title", "New Description", "http://newimg.jpg", "http://newseance",
+            LocalDateTime.now().plusDays(2), null,
+            new EventUpdateDto.TimeFlagDto(false, true, false)
+        );
+
+        Cinema cinema = createMockCinema(cinemaId, orgId);
+        Event existingEvent = createMockEvent();
+        existingEvent.setCinema(cinema);
+        existingEvent.setTitle("Old Title");
+        existingEvent.setDescription("Old Description");
+
+        TimeFlag existingTimeFlag = new TimeFlag(eventId, true, true, true);
+
+        when(eventRepository.findById(eventId)).thenReturn(Optional.of(existingEvent));
+        when(timeFlagRepository.findByEventId(eventId)).thenReturn(Optional.of(existingTimeFlag));
+        lenient().when(cinemaRepository.findById(cinemaId)).thenReturn(Optional.of(cinema));
+        when(eventRepository.save(any(Event.class))).thenReturn(existingEvent);
+        when(timeFlagRepository.save(any(TimeFlag.class))).thenReturn(existingTimeFlag);
+
+        EventResponseDto result = eventService.update(eventId, dto, orgId);
+
+        assertNotNull(result);
+        assertEquals("New Title", existingEvent.getTitle());
+        assertEquals("New Description", existingEvent.getDescription());
+        verify(eventRepository).save(existingEvent);
+        verify(timeFlagRepository).save(any(TimeFlag.class));
+    }
+
+    @Test
+    void update_shouldCreateNewTimeFlagWhenNotExists() {
+        UUID eventId = UUID.randomUUID();
+        UUID orgId = UUID.randomUUID();
+        UUID cinemaId = UUID.randomUUID();
+
+        EventUpdateDto dto = new EventUpdateDto(
+            null, null, null, null, null, null,
+            new EventUpdateDto.TimeFlagDto(true, false, true)
+        );
+
+        Cinema cinema = createMockCinema(cinemaId, orgId);
+        Event existingEvent = createMockEvent();
+        existingEvent.setCinema(cinema);
+        TimeFlag newTimeFlag = new TimeFlag(eventId, true, false, true);
+
+        when(eventRepository.findById(eventId)).thenReturn(Optional.of(existingEvent));
+        when(timeFlagRepository.findByEventId(eventId)).thenReturn(Optional.empty());
+        lenient().when(cinemaRepository.findById(cinemaId)).thenReturn(Optional.of(cinema));
+        when(eventRepository.save(any(Event.class))).thenReturn(existingEvent);
+        when(timeFlagRepository.save(any(TimeFlag.class))).thenReturn(newTimeFlag);
+
+        eventService.update(eventId, dto, orgId);
+
+        verify(timeFlagRepository).save(argThat(tf ->
+            tf.getTimeFlag1() && !tf.getTimeFlag2() && tf.getTimeFlag3()
+        ));
+    }
+
+    @Test
+    void update_shouldThrowEventNotFoundExceptionWhenEventNotExists() {
+        UUID eventId = UUID.randomUUID();
+        UUID orgId = UUID.randomUUID();
+
+        EventUpdateDto dto = new EventUpdateDto(null, null, null, null, null, null, null);
+
+        when(eventRepository.findById(eventId)).thenReturn(Optional.empty());
+
+        assertThrows(EventNotFoundException.class, () -> eventService.update(eventId, dto, orgId));
+    }
+
+    @Test
+    void update_shouldThrowForbiddenWhenOrganizationDoesNotOwnEvent() {
+        UUID eventId = UUID.randomUUID();
+        UUID orgId = UUID.randomUUID();
+        UUID otherOrgId = UUID.randomUUID();
+        UUID cinemaId = UUID.randomUUID();
+
+        EventUpdateDto dto = new EventUpdateDto(null, null, null, null, null, null, null);
+
+        Cinema cinema = createMockCinema(cinemaId, otherOrgId);
+        Event existingEvent = createMockEvent();
+        existingEvent.setCinema(cinema);
+
+        when(eventRepository.findById(eventId)).thenReturn(Optional.of(existingEvent));
+        lenient().when(cinemaRepository.findById(cinemaId)).thenReturn(Optional.of(cinema));
+        lenient().when(timeFlagRepository.findByEventId(eventId)).thenReturn(Optional.empty());
+
+        RestApiException ex = assertThrows(RestApiException.class, () -> eventService.update(eventId, dto, orgId));
+        assertEquals(HttpStatus.FORBIDDEN, ex.getHttpStatus());
+    }
+
+    @Test
+    void delete_shouldThrowEventNotFoundExceptionWhenEventNotExists() {
+        UUID eventId = UUID.randomUUID();
+        UUID orgId = UUID.randomUUID();
+
+        when(eventRepository.findById(eventId)).thenReturn(Optional.empty());
+
+        assertThrows(EventNotFoundException.class, () -> eventService.delete(eventId, orgId));
+    }
+
+    @Test
+    void delete_shouldThrowForbiddenWhenOrganizationDoesNotOwnEvent() {
+        UUID eventId = UUID.randomUUID();
+        UUID orgId = UUID.randomUUID();
+        UUID otherOrgId = UUID.randomUUID();
+        UUID cinemaId = UUID.randomUUID();
+
+        Cinema cinema = createMockCinema(cinemaId, otherOrgId);
+        Event existingEvent = createMockEvent();
+        existingEvent.setCinema(cinema);
+
+        when(eventRepository.findById(eventId)).thenReturn(Optional.of(existingEvent));
+        when(cinemaRepository.findById(cinemaId)).thenReturn(Optional.of(cinema));
+        lenient().when(timeFlagRepository.findByEventId(eventId)).thenReturn(Optional.empty());
+
+        RestApiException ex = assertThrows(RestApiException.class, () -> eventService.delete(eventId, orgId));
+        assertEquals(HttpStatus.FORBIDDEN, ex.getHttpStatus());
+    }
+
     private Event createMockEvent() {
         UUID eventId = UUID.randomUUID();
         UUID cinemaId = UUID.randomUUID();
