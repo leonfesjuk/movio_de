@@ -6,6 +6,8 @@ export default function AdminPage() {
     const [sessions, setSessions] = useState<Session[]>([]);
 
     const [showForm, setShowForm] = useState(false);
+    const [editingId, setEditingId] = useState<string | null>(null);
+
     const [title, setTitle] = useState("");
     const [time, setTime] = useState("");
     const [city, setCity] = useState("");
@@ -29,30 +31,50 @@ export default function AdminPage() {
     }, []);
 
     const handleDelete = (id: string) => {
-        setSessions((prev) => prev.filter((session) => session.id !== id));
+        setSessions((prev) => prev.filter((s) => s.id !== id));
     };
 
-    const handleCreate = () => {
+    const resetForm = () => {
+        setTitle("");
+        setTime("");
+        setCity("");
+        setEditingId(null);
+        setShowForm(false);
+    };
+
+    const handleCreateOrEdit = () => {
         if (!title || !time || !city) {
             alert("Please fill all fields");
             return;
         }
 
-        const newSession: Session = {
-            id: Date.now().toString(),
-            title,
-            time,
-            city,
-            notificationsSent: false,
-        };
+        if (editingId) {
+            setSessions((prev) =>
+                prev.map((s) =>
+                    s.id === editingId ? { ...s, title, time, city } : s
+                )
+            );
+        } else {
+            const newSession: Session = {
+                id: Date.now().toString(),
+                title,
+                time,
+                city,
+                notificationsSent: false,
+            };
 
-        setSessions((prev) => [newSession, ...prev]);
+            setSessions((prev) => [newSession, ...prev]);
+        }
 
-        // очистка
-        setTitle("");
-        setTime("");
-        setCity("");
-        setShowForm(false);
+        resetForm();
+    };
+
+    const handleEdit = (session: Session) => {
+        setTitle(session.title);
+        setTime(session.time);
+        setCity(session.city);
+        setEditingId(session.id);
+        setShowForm(true);
     };
 
     return (
@@ -60,7 +82,10 @@ export default function AdminPage() {
             <h1 className="text-2xl font-bold mb-6">Admin Panel</h1>
 
             <button
-                onClick={() => setShowForm((prev) => !prev)}
+                onClick={() => {
+                    setShowForm((prev) => !prev);
+                    setEditingId(null);
+                }}
                 className="mb-4 px-4 py-2 bg-green-600 text-white rounded"
             >
                 Add session
@@ -91,19 +116,14 @@ export default function AdminPage() {
 
                     <div className="flex gap-2">
                         <button
-                            onClick={handleCreate}
+                            onClick={handleCreateOrEdit}
                             className="px-3 py-1 bg-blue-500 text-white rounded"
                         >
-                            Save
+                            {editingId ? "Update" : "Save"}
                         </button>
 
                         <button
-                            onClick={() => {
-                                setShowForm(false);
-                                setTitle("");
-                                setTime("");
-                                setCity("");
-                            }}
+                            onClick={resetForm}
                             className="px-3 py-1 bg-gray-300 rounded"
                         >
                             Cancel
@@ -129,7 +149,10 @@ export default function AdminPage() {
                             </div>
 
                             <div className="flex gap-2">
-                                <button className="px-3 py-1 bg-blue-500 text-white rounded">
+                                <button
+                                    onClick={() => handleEdit(session)}
+                                    className="px-3 py-1 bg-blue-500 text-white rounded"
+                                >
                                     Edit
                                 </button>
 
