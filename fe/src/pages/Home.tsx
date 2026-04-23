@@ -21,11 +21,6 @@ export default function Home() {
     const [city, setCity] = useState("");
     const [date, setDate] = useState("");
 
-    const sessions = [
-        {id: "1", title: "Avatar",city:"Berlin", time: "18:00", date: "2026-04-21", notificationsSent: false},
-        {id: "2", title: "Batman",city:"Bremen",  time: "19:30", date: "2026-04-22", notificationsSent: true},
-        {id: "3", title: "Avatar",city:"Essen",  time: "20:40", date: "2026-04-23", notificationsSent: false},
-    ];
     useEffect(() => {
         const fetchData = async () => {
             try {
