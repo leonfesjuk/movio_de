@@ -1,20 +1,36 @@
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { register } from "../slice/authSlice";
-import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useAppDispatch } from "../../../app/hooks";
+import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { CustomInput } from "@/components/common/input/CustomInput";
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { ValidationErrorResponse } from "../types";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AlertCircleIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const RegistrationForm = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const registerFieldErrors = useAppSelector(
-    (state) => state.auth.registerFieldErrors,
-  );
+  const [serverFormError, setServerFormError] = useState<string | null>(null);
+  const [serverFieldErrors, setServerFieldErrors] = useState<
+    Record<string, string[]>
+  >({});
   const formik = useFormik({
     initialValues: {
       email: "",
       password: "",
+      name: "",
+      webLink: "",
     },
     validationSchema: Yup.object({
       email: Yup.string()
@@ -23,108 +39,166 @@ const RegistrationForm = () => {
       password: Yup.string()
         .min(8, "Password must be at least 8 characters")
         .required("Password is required"),
+      name: Yup.string().required("Organization name is required"),
+      webLink: Yup.string().required("Web-link is required"),
     }),
-    onSubmit: async (values) => {
-      console.log("registration");
-      const dispatchResult = await dispatch(register(values));
-      if (register.fulfilled.match(dispatchResult)) {
-        // if successful, it wiil navigate to login page
-        navigate("/login");
+    onSubmit: async (values, { setSubmitting }) => {
+      setServerFieldErrors({});
+      setServerFormError(null);
+
+      try {
+        const dispatchResult = await dispatch(register(values));
+
+        if (register.fulfilled.match(dispatchResult)) {
+          navigate("/check-email", {
+            state: { email: values.email },
+          });
+          return;
+        }
+
+        if (register.rejected.match(dispatchResult)) {
+          const payload = dispatchResult.payload as
+            | ValidationErrorResponse
+            | undefined;
+
+          if (payload) {
+            setServerFormError(payload.message || "Registration failed");
+
+            const fieldErrors: Record<string, string[]> = {};
+
+            payload.errors?.forEach((e) => {
+              fieldErrors[e.field] = e.messages;
+            });
+
+            setServerFieldErrors(fieldErrors);
+          } else {
+            setServerFormError("Registration failed");
+          }
+        }
+      } finally {
+        setSubmitting(false);
       }
     },
   });
 
-  useEffect(() => {
-    return () => {
-      formik.setErrors({});
-    };
-  }, []);
+  const getFieldError = (field: string) => {
+    const formikError =
+      formik.touched[field as keyof typeof formik.touched] &&
+      formik.errors[field as keyof typeof formik.errors];
 
-  useEffect(() => {
-    if (!registerFieldErrors) return;
+    const serverErrors = serverFieldErrors[field] ?? [];
 
-    const formatted = Object.fromEntries(
-      Object.entries(registerFieldErrors).map(([field, messages]) => [
-        field,
-        messages.join("\n"), // или " • " или просто перенос строки
-      ]),
+    if (!formikError && serverErrors.length === 0) return null;
+
+    return (
+      <ul className="pl-6 list-disc text-red-500">
+        {formikError && <li>{formikError}</li>}
+        {serverErrors.map((e, i) => (
+          <li key={i}>{e}</li>
+        ))}
+      </ul>
     );
-
-    formik.setErrors(formatted);
-  }, [registerFieldErrors]);
+  };
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    formik.handleChange(e);
+    setServerFieldErrors({});
+    setServerFormError(null);
+  };
 
   return (
-    <div className="mx-auto max-w-sm space-y-6 p-6 rounded-lg border bg-white shadow-sm mt-10">
-      <div className="space-y-2 text-center">
-        <h1 className="text-2xl font-semibold tracking-tight">
-          Create an account
-        </h1>
-        <p className="text-sm text-muted-foreground text-gray-500">
-          Enter your email and password to register
-        </p>
-      </div>
-      <form onSubmit={formik.handleSubmit} className="space-y-4">
-        {/* Email Field */}
-        <div className="space-y-2">
-          <label
-            htmlFor="email"
-            className="block text-sm font-medium text-gray-700"
+    <Card className="w-full max-w-sm mx-auto mt-10">
+      <CardHeader>
+        <CardTitle>Create an account</CardTitle>
+        <CardDescription>
+          Enter your email address below, which will be used to log in to your
+          account.
+        </CardDescription>
+        <CardAction>
+          <Link
+            to="/login"
+            className="text-sm font-medium text-gray-500 hover:text-black transition-colors"
           >
-            Email
-          </label>
-          <input
+            Login
+          </Link>
+        </CardAction>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={formik.handleSubmit} className="flex flex-col gap-6">
+          {serverFormError && (
+            <Alert variant="destructive" className="max-w-md">
+              <AlertCircleIcon />
+              <AlertTitle>Registration failed</AlertTitle>
+              <AlertDescription>{serverFormError}</AlertDescription>
+            </Alert>
+          )}
+          {/* Email Field */}
+          <CustomInput
             id="email"
             type="email"
+            label="Email"
+            placeholder="Enter your email"
+            required
             {...formik.getFieldProps("email")}
-            className={`w-full px-3 py-2 text-sm border rounded-md shadow-sm transition placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring ${
-              formik.touched.email && formik.errors.email
-                ? "border-red-500 focus:ring-red-500"
-                : "border-input"
-            }`}
-            placeholder="you@example.com"
+            error={getFieldError("email")}
           />
-          {formik.touched.email && formik.errors.email && (
-            <p className="text-sm text-red-500">{formik.errors.email}</p>
-          )}
-        </div>
 
-        {/* Password Field */}
-        <div className="space-y-2">
-          <label
-            htmlFor="password"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Password
-          </label>
-          <input
+          {/* Password Field */}
+          <CustomInput
             id="password"
             type="password"
+            isViewSwitcher
+            label="Password"
+            placeholder="Create a password"
+            required
             {...formik.getFieldProps("password")}
-            className={`w-full px-3 py-2 text-sm border rounded-md shadow-sm transition placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring ${
-              formik.touched.password && formik.errors.password
-                ? "border-red-500 focus:ring-red-500"
-                : "border-input"
-            }`}
-            placeholder="••••••••"
+            onChange={handlePasswordChange}
+            error={getFieldError("password")}
+            description={
+              <ul className="pl-6 list-disc text-muted-foreground">
+                <li>Password must contain at least 8 characters</li>
+                <li>
+                  Password must contain at least 1 uppercase letter, 1 lowercase
+                  letter, 1 number and 1 special character, and only Latin
+                  letters.
+                </li>
+              </ul>
+            }
           />
-          {formik.errors.password && (
-            <ul className="text-sm text-red-500 list-disc ml-5">
-              {formik.errors.password.split("\n").map((msg, i) => (
-                <li key={i}>{msg}</li>
-              ))}
-            </ul>
-          )}
-        </div>
 
-        {/* Submit Button */}
-        <button
-          type="submit"
-          className="w-full inline-flex items-center justify-center rounded-md bg-black px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black"
-        >
-          Register
-        </button>
-      </form>
-    </div>
+          {/* Name Field */}
+          <CustomInput
+            id="name"
+            type="text"
+            label="Organization name"
+            placeholder="Enter your organization name"
+            required
+            {...formik.getFieldProps("name")}
+            error={getFieldError("name")}
+          />
+
+          {/* Web-link Field */}
+          <CustomInput
+            id="webLink"
+            type="text"
+            label="Link to the site"
+            placeholder="Enter link to the your organization site"
+            required
+            {...formik.getFieldProps("webLink")}
+            error={getFieldError("webLink")}
+          />
+
+          {/* Submit Button */}
+          <Button
+            type="submit"
+            className="w-full hover:bg-zinc-800 focus:outline-none"
+            size="lg"
+            disabled={formik.isSubmitting}
+          >
+            Register
+          </Button>
+        </form>
+      </CardContent>
+    </Card>
   );
 };
 

@@ -1,10 +1,25 @@
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { login, selectLoginError } from "../slice/authSlice";
+import { clearAuthErrors, login, selectLoginError } from "../slice/authSlice";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
+import { CustomInput } from "@/components/common/input/CustomInput";
+import { Button } from "@/components/ui/button";
+import { Link, useNavigate } from "react-router-dom";
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AlertCircleIcon } from "lucide-react";
+import { useEffect } from "react";
 
 const LoginForm = () => {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const loginError = useAppSelector(selectLoginError);
   const formik = useFormik({
     initialValues: {
@@ -19,84 +34,83 @@ const LoginForm = () => {
         .min(8, "Password must be at least 8 characters")
         .required("Password is required"),
     }),
-    onSubmit: (values) => {
-      dispatch(login(values));
-
-      // см в форме регистрации как сделать редирект в случае успешного выполнения запроса
+    onSubmit: async (values) => {
+      const result = await dispatch(login(values));
+      if (login.fulfilled.match(result)) {
+        navigate("/");
+      }
     },
   });
 
+  useEffect(() => {
+    dispatch(clearAuthErrors());
+  }, [dispatch]);
+
   return (
-    <div className="mx-auto max-w-sm space-y-6 p-6 rounded-lg border bg-white shadow-sm mt-10">
-      <div className="space-y-2 text-center">
-        <h1 className="text-2xl font-semibold tracking-tight">Sign in</h1>
-        <p className="text-sm text-muted-foreground text-gray-500">
+    <Card className="w-full max-w-sm mx-auto mt-10">
+      <CardHeader>
+        <CardTitle>Login</CardTitle>
+        <CardDescription>
           Enter your email and password to sign in
-        </p>
-        {loginError && (
-          <div className="rounded-md bg-red-50 p-3 text-sm text-red-700 border border-red-200">
-            {loginError}
-          </div>
-        )}
-      </div>
-      <form onSubmit={formik.handleSubmit} className="space-y-4">
-        {/* Email Field */}
-        <div className="space-y-2">
-          <label
-            htmlFor="email"
-            className="block text-sm font-medium text-gray-700"
+        </CardDescription>
+        <CardAction>
+          <Link
+            to="/register"
+            className="text-sm font-medium text-gray-500 hover:text-black transition-colors"
           >
-            Email
-          </label>
-          <input
+            Register
+          </Link>
+        </CardAction>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={formik.handleSubmit} className="flex flex-col gap-6">
+          {loginError && (
+            <Alert variant="destructive" className="max-w-md">
+              <AlertCircleIcon />
+              <AlertTitle>Login failed</AlertTitle>
+              <AlertDescription>{loginError}</AlertDescription>
+            </Alert>
+          )}
+          {/* Email Field */}
+          <CustomInput
             id="email"
             type="email"
+            label="Email"
+            placeholder="Enter your email"
             {...formik.getFieldProps("email")}
-            className={`w-full px-3 py-2 text-sm border rounded-md shadow-sm transition placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring ${
-              formik.touched.email && formik.errors.email
-                ? "border-red-500 focus:ring-red-500"
-                : "border-input"
-            }`}
-            placeholder="you@example.com"
+            error={formik.errors.email}
           />
-          {formik.touched.email && formik.errors.email && (
-            <p className="text-sm text-red-500">{formik.errors.email}</p>
-          )}
-        </div>
 
-        {/* Password Field */}
-        <div className="space-y-2">
-          <label
-            htmlFor="password"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Password
-          </label>
-          <input
+          {/* Password Field */}
+          <CustomInput
             id="password"
             type="password"
+            isViewSwitcher
+            label="Password"
+            placeholder="Enter your password"
             {...formik.getFieldProps("password")}
-            className={`w-full px-3 py-2 text-sm border rounded-md shadow-sm transition placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring ${
-              formik.touched.password && formik.errors.password
-                ? "border-red-500 focus:ring-red-500"
-                : "border-input"
-            }`}
-            placeholder="••••••••"
+            error={formik.errors.password}
           />
-          {formik.touched.password && formik.errors.password && (
-            <p className="text-sm text-red-500">{formik.errors.password}</p>
-          )}
-        </div>
 
-        {/* Submit Button */}
-        <button
-          type="submit"
-          className="w-full inline-flex items-center justify-center rounded-md bg-black px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black"
-        >
-          Sign in
-        </button>
-      </form>
-    </div>
+          {/* Submit Button */}
+          <Button
+            type="submit"
+            className="w-full hover:bg-zinc-800 focus:outline-none"
+            size="lg"
+          >
+            Login
+          </Button>
+          <div className="text-center">
+            <Link
+              to="/forgot-password"
+              className="text-sm font-medium text-gray-500 hover:text-black transition-colors"
+            >
+              Forgot password?
+            </Link>
+          </div>
+        </form>
+      </CardContent>
+    </Card>
   );
 };
 

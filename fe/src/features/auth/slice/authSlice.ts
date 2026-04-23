@@ -3,7 +3,6 @@ import type {
   AuthSliceState,
   Credentials,
   UserRegistrationDto,
-  ValidationErrorResponse,
 } from "../types";
 import * as api from "../services/api";
 import { isAxiosError } from "axios";
@@ -40,7 +39,6 @@ export const authSlice = createAppSlice({
         rejected: (state, action) => {
           state.isAuthenticated = false;
           state.user = undefined;
-          console.log(action.error);
           state.loginErrorMessage = action.error.message;
         },
       },
@@ -69,24 +67,96 @@ export const authSlice = createAppSlice({
         fulfilled: (state, action) => {
           state.isAuthenticated = true;
           state.user = action.payload;
+          state.registerFieldErrors = undefined;
         },
         rejected: (state, action) => {
           state.isAuthenticated = false;
           state.user = undefined;
 
-          const payload = action.payload as ValidationErrorResponse | undefined;
-
-          if (payload?.errors) {
-            state.registerFieldErrors = payload.errors.reduce<
-              Record<string, string[]>
-            >((acc, err) => {
-              acc[err.field] = err.messages;
-              return acc;
-            }, {});
+          if (
+            action.payload &&
+            typeof action.payload === "object" &&
+            "message" in action.payload
+          ) {
+            state.loginErrorMessage = String(action.payload.message);
+          } else {
+            state.loginErrorMessage = action.error.message;
           }
         },
       },
     ),
+
+    forgotPassword: create.asyncThunk(
+      async (email: string, { rejectWithValue }) => {
+        try {
+          return await api.fetchForgotPassword(email);
+        } catch (err) {
+          if (isAxiosError(err)) {
+            return rejectWithValue(err.response?.data);
+          }
+
+          return rejectWithValue({
+            message: "Unknown error",
+          });
+        }
+      },
+    ),
+
+    resetPassword: create.asyncThunk(
+      async (
+        data: { token: string; newPassword: string },
+        { rejectWithValue },
+      ) => {
+        try {
+          return await api.fetchResetPassword(data);
+        } catch (err) {
+          if (isAxiosError(err)) {
+            return rejectWithValue(err.response?.data);
+          }
+
+          return rejectWithValue({
+            message: "Unknown error",
+          });
+        }
+      },
+      {
+        fulfilled: (state) => {
+          state.loginErrorMessage = undefined;
+        },
+        rejected: (state, action) => {
+          if (
+            action.payload &&
+            typeof action.payload === "object" &&
+            "message" in action.payload
+          ) {
+            state.loginErrorMessage = String(action.payload.message);
+          } else {
+            state.loginErrorMessage = action.error.message;
+          }
+        },
+      },
+    ),
+
+    verifyEmail: create.asyncThunk(
+      async (code: string, { rejectWithValue }) => {
+        try {
+          return await api.fetchVerifyEmail(code);
+        } catch (err) {
+          if (isAxiosError(err)) {
+            return rejectWithValue(err.response?.data);
+          }
+
+          return rejectWithValue({
+            message: "Unknown error",
+          });
+        }
+      },
+    ),
+
+    clearAuthErrors: create.reducer((state) => {
+      state.loginErrorMessage = undefined;
+      state.registerFieldErrors = undefined;
+    }),
   }),
   // You can define your selectors here. These selectors receive the slice
   // state as their first argument.
@@ -95,11 +165,13 @@ export const authSlice = createAppSlice({
     selectUser: (state) => state.user,
     selectRole: (state) => state.user?.role,
     selectLoginError: (state) => state?.loginErrorMessage,
+    selectRegisterError: (state) => state?.registerFieldErrors,
   },
 });
 
 // // Action creators are generated for each case reducer function.
-export const { login, register } = authSlice.actions;
+export const { login, register, forgotPassword, resetPassword, verifyEmail, clearAuthErrors } =
+  authSlice.actions;
 
 // Selectors returned by `slice.selectors` take the root state as their first argument.
 export const {
@@ -107,4 +179,5 @@ export const {
   selectUser,
   selectRole,
   selectLoginError,
+  selectRegisterError,
 } = authSlice.selectors;
