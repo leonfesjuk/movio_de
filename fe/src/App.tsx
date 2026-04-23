@@ -12,6 +12,7 @@ import NewPasswordConfirmationPage from "./pages/NewPasswordConfirmationPage";
 import VerifyEmailPage from "./pages/VerifyEmailPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import EmailConfirmationPasswordPage from "./pages/EmailConfirmationPasswordPage";
+import AdminPage from "@/pages/AdminPage.tsx";
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
           <Route path="/check-email-password" element={<EmailConfirmationPasswordPage />} />
           <Route path="/auth/reset-password" element={<ResetPasswordPage />} />
           <Route path="/auth/confirm-new-password" element={<NewPasswordConfirmationPage />} />
+          <Route path="/admin" element={<AdminPage/>}/>
         </Routes>
       </Layout>
     </div>

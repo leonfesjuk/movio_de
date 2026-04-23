@@ -21,6 +21,7 @@ export default function Home() {
     const [city, setCity] = useState("");
     const [date, setDate] = useState("");
 
+
     useEffect(() => {
         const fetchData = async () => {
             try {
