@@ -44,6 +44,17 @@ export const authSlice = createAppSlice({
       },
     ),
 
+    me: create.asyncThunk(
+      async () => {
+        return await api.fetchMe();
+      },
+      {
+        fulfilled: (state, action) => {
+          state.user = action.payload;
+        },
+      },
+    ),
+
     register: create.asyncThunk(
       async (dto: UserRegistrationDto, { rejectWithValue }) => {
         try {
@@ -170,8 +181,15 @@ export const authSlice = createAppSlice({
 });
 
 // // Action creators are generated for each case reducer function.
-export const { login, register, forgotPassword, resetPassword, verifyEmail, clearAuthErrors } =
-  authSlice.actions;
+export const {
+  login,
+  me,
+  register,
+  forgotPassword,
+  resetPassword,
+  verifyEmail,
+  clearAuthErrors,
+} = authSlice.actions;
 
 // Selectors returned by `slice.selectors` take the root state as their first argument.
 export const {

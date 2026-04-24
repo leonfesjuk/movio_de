@@ -1,6 +1,11 @@
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { clearAuthErrors, login, selectLoginError } from "../slice/authSlice";
+import {
+  clearAuthErrors,
+  login,
+  me,
+  selectLoginError,
+} from "../slice/authSlice";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { CustomInput } from "@/components/common/input/CustomInput";
 import { Button } from "@/components/ui/button";
@@ -37,6 +42,11 @@ const LoginForm = () => {
     onSubmit: async (values) => {
       const result = await dispatch(login(values));
       if (login.fulfilled.match(result)) {
+        try {
+          await dispatch(me());
+        } catch (e) {
+          console.error("Failed to load user", e);
+        }
         navigate("/");
       }
     },

@@ -1,5 +1,5 @@
 import axiosInstance from "../../../lib/axiosInstance";
-import type { Credentials } from "../types";
+import type { Credentials, User } from "../types";
 
 // we already added  prefix /api in axios config
 
@@ -8,6 +8,7 @@ const API = {
     LOGIN: "/auth/login",
     RESET_PASSWORD: "/auth/reset-password",
     FORGOT_PASSWORD: "/auth/forgot-password",
+    ME: "/auth/me",
   },
   USERS: {
     REGISTER: "/users/register",
@@ -17,6 +18,13 @@ const API = {
 
 export const fetchLogin = async (credentials: Credentials) => {
   const res = await axiosInstance.post(API.AUTH.LOGIN, credentials);
+  return res.data;
+};
+
+export const fetchMe = async (): Promise<User> => {
+  const res = await axiosInstance.get(API.AUTH.ME, {
+    withCredentials: true,
+  });
   return res.data;
 };
 
