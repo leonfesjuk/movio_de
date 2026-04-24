@@ -1,5 +1,7 @@
 package de.upteams.tasktracker.user.entity;
 
+import de.upteams.tasktracker.invitetoken.entity.InviteToken;
+import de.upteams.tasktracker.mail.confirmation.code.ConfirmationCode;
 import de.upteams.tasktracker.utils.BaseUuidEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -10,6 +12,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.ColumnDefault;
+
+import java.util.List;
 
 /**
  * Application User entity
@@ -34,6 +38,10 @@ public class AppUser extends BaseUuidEntity {
     )
     private String email;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "invite_token_id", nullable = false)
+    private InviteToken inviteToken;
+
     @NotBlank(message = "{user.name.notBlank}")
     @Column(
             name = "name",
@@ -55,6 +63,9 @@ public class AppUser extends BaseUuidEntity {
     @Enumerated(EnumType.STRING)
     private ConfirmationStatus confirmationStatus = ConfirmationStatus.UNCONFIRMED;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ConfirmationCode> confirmationCodes;
+
     @NotNull(message = "{field.notNull}")
     @Column(name = "role", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -73,7 +84,6 @@ public class AppUser extends BaseUuidEntity {
         return "AppUser{" +
                 "id=" + id +
                 ", confirmationStatus=" + confirmationStatus +
-                ", password='" + (StringUtils.isBlank(password) ? "null" : "*hidden*") + '\'' +
                 ", email='" + email + '\'' +
                 ", name='" + name + '\'' +
                 ", webLink='" + webLink + '\'' +

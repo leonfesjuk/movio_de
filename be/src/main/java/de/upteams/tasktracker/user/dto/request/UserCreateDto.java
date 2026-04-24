@@ -36,6 +36,13 @@ public record UserCreateDto(
         )
         @NotBlank(message = "{user.webLink.notBlank}")
         @ValidUrl
-        String webLink
+        String webLink,
+
+        @Schema(
+                description = "Invite token",
+                example = "YL54pkRF6BUUUwngIKKLG5NxAWSq2ie3t4APKeXjM5A"
+        )
+        @NotBlank(message = "{user.inviteToken.notBlank}")
+        String inviteToken
 ) {
 }

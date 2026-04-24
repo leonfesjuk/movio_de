@@ -5,6 +5,7 @@ import de.upteams.tasktracker.security.entities.RefreshRequestDto;
 import de.upteams.tasktracker.security.entities.TokenResponseDto;
 import de.upteams.tasktracker.security.service.AuthService;
 import de.upteams.tasktracker.security.service.CookieService;
+import de.upteams.tasktracker.user.dto.response.UserResponseDto;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -57,5 +58,10 @@ public class AuthController implements AuthApi {
         response.addCookie(refreshCookie);
 
         return new TokenResponseDto(null, null);
+    }
+
+    @Override
+    public UserResponseDto me() {
+        return service.getCurrentUser();
     }
 }
