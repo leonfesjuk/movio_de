@@ -14,6 +14,7 @@ import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import EmailConfirmationPasswordPage from "./pages/EmailConfirmationPasswordPage";
 import InviteTokensPage from "./pages/InviteTokensPage";
 import RequireRole from "./components/auth/RequireRole";
+import AdminPage from "@/pages/AdminPage.tsx";
 
 function App() {
   return (
@@ -47,6 +48,7 @@ function App() {
               </RequireRole>
             }
           />
+          <Route path="/admin" element={<AdminPage/>}/>
         </Routes>
       </Layout>
     </div>

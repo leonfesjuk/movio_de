@@ -9,6 +9,8 @@ type FilterBarProps = {
     setStatus: (value: string) => void;
   city: string;
   setCity: (value: string) => void;
+  date: string;
+  setDate: (value: string) => void;
 };
 
 export default function FilterBar({
@@ -18,6 +20,8 @@ export default function FilterBar({
     setStatus,
     city,
     setCity,
+    date,
+    setDate,
 }: FilterBarProps){
     const cities = [
         {value: "berlin", label:"Berlin"},
@@ -27,6 +31,11 @@ export default function FilterBar({
     return(
         <div className="flex gap-4 items-center mb-6">
 
+            <Input
+            type="date"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+            />
             <Select value={city} onValueChange={setCity}>
                 <SelectTrigger className="w-[200px]">
                     <SelectValue placeholder="All cities"/>
@@ -63,6 +72,7 @@ export default function FilterBar({
                         setSearch("");
                         setStatus("");
                         setCity("");
+                        setDate("");
                     }}>
                 Reset
             </Button>

@@ -19,6 +19,8 @@ export default function Home() {
     const [search, setSearch] = useState("");
     const [status, setStatus] = useState("");
     const [city, setCity] = useState("");
+    const [date, setDate] = useState("");
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -30,8 +32,8 @@ export default function Home() {
 
                 // fallback
                 setSessions([
-                    { id: "1", title: "Avatar", time: "18:00", city: "berlin", notificationsSent: false },
-                    { id: "2", title: "Batman", time: "19:40", city: "dresden", notificationsSent: true },
+                    { id: "1", title: "Avatar", time: "2026-04-21T18:00:00", city: "berlin", notificationsSent: false },
+                    { id: "2", title: "Batman", time: "2026-04-22T19:40:00", city: "dresden", notificationsSent: true },
                 ]);
 
                 setError("Failed to load sessions");
@@ -60,9 +62,16 @@ export default function Home() {
                 : session.notificationsSent;
 
         const matchesCity =
-            city === "" ? true : session.city.toLowerCase() === city.toLowerCase();
+            city === ""
+                ? true
+                : session.city.toLowerCase() === city.toLowerCase();
 
-        return matchesSearch && matchesStatus && matchesCity;
+        const matchesDate =
+            date === ""
+                ? true
+                : session.time.startsWith(date);
+
+        return matchesSearch && matchesStatus && matchesCity && matchesDate;
     });
 
     return (
@@ -85,6 +94,8 @@ export default function Home() {
                     setStatus={setStatus}
                     city={city}
                     setCity={setCity}
+                    date={date}
+                    setDate={setDate}
                 />
             </div>
 

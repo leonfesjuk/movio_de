@@ -1,5 +1,6 @@
-
 import type {SessionCardProps} from "@/features/session-card/types.ts";
+import {ExternalLink} from "lucide-react";
+import {Button} from "@/components/ui/button";
 import {
     Card,
     CardAction,
@@ -11,10 +12,9 @@ import {
 } from "@/components/ui/card.tsx";
 
 
-
-export const SessionCard = ({ session, isAuth }: SessionCardProps) => {
+export const SessionCard = ({session, isAuth}: SessionCardProps) => {
     return (
-        <Card className="overflow-hidden">
+        <Card className="overflow-hidden flex flex-col h-full">
 
             {/* IMAGE */}
             <img
@@ -24,10 +24,17 @@ export const SessionCard = ({ session, isAuth }: SessionCardProps) => {
             />
 
             {/* HEADER */}
-            <CardHeader>
-                <CardTitle>{session.title}</CardTitle>
+            <CardHeader className="space-y-2">
+                <CardTitle className="text-lg leading-tight">{session.title}</CardTitle>
+                <div className="text-sm text-muted-foreground">
+                    {session.city}
+                </div>
+
                 <CardDescription>
-                    {session.time}
+                    <div className="flex justify-between">
+                        <span>{session.date}</span>
+                        <span>{session.time}</span>
+                    </div>
                 </CardDescription>
 
                 <CardAction>
@@ -36,25 +43,33 @@ export const SessionCard = ({ session, isAuth }: SessionCardProps) => {
 
             {/* CONTENT  */}
             <CardContent>
-                <div className="text-sm text-muted-foreground">
-                    INFO
+                <p className="text-sm font-medium text-foreground">
+                    Description:
+                </p>
+                <div className="text-sm text-muted-foreground line-clamp-3">
+                    {session.description || "No description"}
                 </div>
             </CardContent>
 
             {/* FOOTER */}
             {isAuth && (
-                <CardFooter className="flex justify-between">
+                <CardFooter className="p-0 mt-auto">
+                    <Button
+                        asChild
+                        className="w-full justify-between rounded-none bg-blue-400 text-blue-50 hover:bg-blue-100">
 
 
-                    <a
-                        href={session.externalUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="block w-full bg-blue-500 text-white text-center py-3 hover:bg-blue-600 transition"
-                    >
-                        LINK
-                    </a>
+                        <a
+                            href={session.externalUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                        >
+                            <span>TO POSTER</span>
+                            <ExternalLink size={16}/>
+                        </a>
+                    </Button>
                 </CardFooter>
+
             )}
         </Card>
     );
