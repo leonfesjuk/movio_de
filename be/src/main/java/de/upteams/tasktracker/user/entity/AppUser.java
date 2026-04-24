@@ -13,6 +13,7 @@ import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.ColumnDefault;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -64,7 +65,7 @@ public class AppUser extends BaseUuidEntity {
     private ConfirmationStatus confirmationStatus = ConfirmationStatus.UNCONFIRMED;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ConfirmationCode> confirmationCodes;
+    private List<ConfirmationCode> confirmationCodes  = new ArrayList<>();;
 
     @NotNull(message = "{field.notNull}")
     @Column(name = "role", nullable = false)
