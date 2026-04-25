@@ -1,16 +1,17 @@
+import { useAppSelector } from "@/app/hooks";
+import { selectUser } from "@/features/auth/slice/authSlice";
 import { Link } from "react-router-dom";
 
 export default function Header() {
+  const user = useAppSelector(selectUser);
+  const isAdmin = user?.role === "ROLE_ADMIN";
+
   return (
     <header className="w-full border-b bg-white shadow-sm">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4">
         {/* Logo / Brand */}
         <Link to="/" className="flex items-center gap-2">
-          <img
-              src="/movio_logo_2.png"
-              alt="MOVIO"
-              className="h-8 w-auto"
-          />
+          <img src="/movio_logo_2.png" alt="MOVIO" className="h-8 w-auto" />
         </Link>
 
         {/* Navigation Links */}
@@ -27,12 +28,14 @@ export default function Header() {
           >
             About
           </Link>
-          {/*<Link*/}
-          {/*  to="/projects"*/}
-          {/*  className="text-sm font-medium text-gray-600 hover:text-black transition-colors"*/}
-          {/*>*/}
-          {/*  Projects*/}
-          {/*</Link>*/}
+          {isAdmin && (
+            <Link
+              to="/invite-tokens"
+              className="text-sm font-medium text-gray-600 hover:text-black transition-colors"
+            >
+              Invite tokens
+            </Link>
+          )}
           <Link
             to="/register"
             className="rounded border border-gray-300 px-4 py-1.5 text-sm font-medium text-gray-700 hover:border-gray-500 hover:text-black transition"

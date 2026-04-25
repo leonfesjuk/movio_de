@@ -27,20 +27,30 @@ const RegistrationForm = () => {
   >({});
   const formik = useFormik({
     initialValues: {
+      inviteToken: "",
       email: "",
       password: "",
       name: "",
       webLink: "",
     },
     validationSchema: Yup.object({
+      inviteToken: Yup.string()
+        .trim()
+        .required("Invite token is required"),
       email: Yup.string()
+        .trim()
         .email("Invalid email address")
         .required("Email is required"),
       password: Yup.string()
+        .trim()
         .min(8, "Password must be at least 8 characters")
         .required("Password is required"),
-      name: Yup.string().required("Organization name is required"),
-      webLink: Yup.string().required("Web-link is required"),
+      name: Yup.string()
+        .trim()
+        .required("Organization name is required"),
+      webLink: Yup.string()
+        .trim()
+        .required("Web-link is required"),
     }),
     onSubmit: async (values, { setSubmitting }) => {
       setServerFieldErrors({});
@@ -57,9 +67,7 @@ const RegistrationForm = () => {
         }
 
         if (register.rejected.match(dispatchResult)) {
-          const payload = dispatchResult.payload as
-            | ValidationErrorResponse
-            | undefined;
+          const payload = dispatchResult.payload as ValidationErrorResponse;
 
           if (payload) {
             setServerFormError(payload.message || "Registration failed");
@@ -131,6 +139,18 @@ const RegistrationForm = () => {
               <AlertDescription>{serverFormError}</AlertDescription>
             </Alert>
           )}
+          {/* Invite token Field */}
+          <CustomInput
+            id="invite_token"
+            type="text"
+            label="Invite Token"
+            placeholder="Enter your invite token"
+            description="You should have received this token from the administrator"
+            required
+            {...formik.getFieldProps("inviteToken")}
+            error={getFieldError("inviteToken")}
+          />
+
           {/* Email Field */}
           <CustomInput
             id="email"
