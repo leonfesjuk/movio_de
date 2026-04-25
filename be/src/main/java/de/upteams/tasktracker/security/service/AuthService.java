@@ -3,6 +3,9 @@ package de.upteams.tasktracker.security.service;
 import de.upteams.tasktracker.exception.handling.exceptions.common.RestApiException;
 import de.upteams.tasktracker.security.dto.LoginRequest;
 import de.upteams.tasktracker.security.entities.TokenResponseDto;
+import de.upteams.tasktracker.user.dto.response.UserResponseDto;
+import de.upteams.tasktracker.user.entity.AppUser;
+import de.upteams.tasktracker.user.persistence.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -21,6 +24,7 @@ public class AuthService {
     private final JwtTokenService jwtTokenService;
     private final AuthenticationManager authenticationManager;
     private final CustomUserDetailsService userDetailsService;
+    private final UserRepository userRepository;
 
     public TokenResponseDto login(LoginRequest loginRequest) {
         String userEmail = loginRequest.email();
@@ -65,5 +69,20 @@ public class AuthService {
             return jwtTokenService.generateAccessToken(username);
         }
         throw new RestApiException(HttpStatus.UNAUTHORIZED, "Invalid refresh token");
+    }
+
+    public UserResponseDto getCurrentUser() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        String email = auth.getName();
+
+        AppUser user = userRepository.findByEmailIgnoreCase(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        return new UserResponseDto(
+                user.getEmail(),
+                user.getRole().name(),
+                user.getConfirmationStatus()
+        );
     }
 }

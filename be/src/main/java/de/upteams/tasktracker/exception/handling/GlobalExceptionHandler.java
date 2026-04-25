@@ -1,5 +1,6 @@
 package de.upteams.tasktracker.exception.handling;
 
+import de.upteams.tasktracker.exception.handling.exceptions.common.FieldValidationException;
 import de.upteams.tasktracker.exception.handling.exceptions.common.RestApiException;
 import de.upteams.tasktracker.exception.handling.response.ErrorResponseDto;
 import de.upteams.tasktracker.exception.handling.response.ValidationErrorDto;
@@ -79,6 +80,26 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(new ApiErrorResponse(ex.getMessage(), null));
+    }
+
+    @ExceptionHandler(FieldValidationException.class)
+    public ResponseEntity<ErrorResponseDto> handleFieldValidation(
+            FieldValidationException ex,
+            HttpServletRequest request
+    ) {
+        ValidationErrorDto validationError =
+                new ValidationErrorDto(ex.getField(), List.of(ex.getMessage()));
+
+        ErrorResponseDto response = new ErrorResponseDto(
+                LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                "Validation failed",
+                List.of(validationError),
+                request.getRequestURI()
+        );
+
+        return ResponseEntity.badRequest().body(response);
     }
 
 //    *
