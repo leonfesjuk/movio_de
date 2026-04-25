@@ -86,6 +86,7 @@ public class SecurityConfig {
                         // Публічний доступ до подій та кінотеатрів (лише читання)
                         .requestMatchers(HttpMethod.GET, "/api/events/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/cinemas/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/geonames/**").permitAll()
 
                         // авторизация пользователя
                         .requestMatchers(HttpMethod.POST, "/api/v1/auth/login").permitAll()
