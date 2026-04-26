@@ -12,6 +12,8 @@ import NewPasswordConfirmationPage from "./pages/NewPasswordConfirmationPage";
 import VerifyEmailPage from "./pages/VerifyEmailPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import EmailConfirmationPasswordPage from "./pages/EmailConfirmationPasswordPage";
+import InviteTokensPage from "./pages/InviteTokensPage";
+import RequireRole from "./components/auth/RequireRole";
 import AdminPage from "@/pages/AdminPage.tsx";
 
 function App() {
@@ -29,9 +31,23 @@ function App() {
           <Route path="/check-email" element={<EmailConfirmationPage />} />
           <Route path="/verify-email" element={<VerifyEmailPage />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-          <Route path="/check-email-password" element={<EmailConfirmationPasswordPage />} />
+          <Route
+            path="/check-email-password"
+            element={<EmailConfirmationPasswordPage />}
+          />
           <Route path="/auth/reset-password" element={<ResetPasswordPage />} />
-          <Route path="/auth/confirm-new-password" element={<NewPasswordConfirmationPage />} />
+          <Route
+            path="/auth/confirm-new-password"
+            element={<NewPasswordConfirmationPage />}
+          />
+          <Route
+            path="/invite-tokens"
+            element={
+              <RequireRole role="ROLE_ADMIN">
+                <InviteTokensPage />
+              </RequireRole>
+            }
+          />
           <Route path="/admin" element={<AdminPage/>}/>
         </Routes>
       </Layout>
