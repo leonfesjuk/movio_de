@@ -21,8 +21,18 @@ export default function AdminPage() {
                 console.error(e);
 
                 setSessions([
-                    { id: "1", title: "Avatar", time: "2026-04-21T18:00:00", city: "berlin", notificationsSent: false },
-                    { id: "2", title: "Batman", time: "2026-04-22T19:40:00", city: "dresden", notificationsSent: false },
+                    { id: "1",
+                      title: "Avatar",
+                      time: "2026-04-21T18:00:00",
+                      date: "2026-04-21T18:00:00",
+                      city: "berlin",
+                      notificationsSent: false },
+                    { id: "2",
+                        title: "Batman",
+                        time: "2026-04-21T19:40:00",
+                        date: "2026-04-21T19:40:00",
+                        city: "dresden",
+                        notificationsSent: false },
                 ]);
             }
         };
@@ -59,6 +69,7 @@ export default function AdminPage() {
                 id: Date.now().toString(),
                 title,
                 time,
+                date: time,
                 city,
                 notificationsSent: false,
             };

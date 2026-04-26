@@ -2,14 +2,7 @@ import FilterBar from "@/components/common/FilterBar";
 import { SessionCard } from "@/features/session-card/SessionCard";
 import { useEffect, useState } from "react";
 import { getSessions } from "@/features/services/sessionService";
-
-type Session = {
-    id: string;
-    title: string;
-    time: string;
-    city: string;
-    notificationsSent: boolean;
-};
+import type {Session} from "@/features/session-card/types"
 
 export default function Home() {
     const [sessions, setSessions] = useState<Session[]>([]);
@@ -32,8 +25,18 @@ export default function Home() {
 
                 // fallback
                 setSessions([
-                    { id: "1", title: "Avatar", time: "2026-04-21T18:00:00", city: "berlin", notificationsSent: false },
-                    { id: "2", title: "Batman", time: "2026-04-22T19:40:00", city: "dresden", notificationsSent: true },
+                    { id: "1",
+                        title: "Avatar",
+                        time: "2026-04-21T18:00:00",
+                        date: "2026-04-21T18:00:00",
+                        city: "berlin",
+                        notificationsSent: false },
+                    { id: "2",
+                        title: "Batman",
+                        time: "2026-04-21T19:40:00",
+                        date: "2026-04-21T19:40:00",
+                        city: "dresden",
+                        notificationsSent: false },
                 ]);
 
                 setError("Failed to load sessions");

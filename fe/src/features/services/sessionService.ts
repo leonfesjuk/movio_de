@@ -1,8 +1,9 @@
 import type {ApiSession, Session} from "@/features/session-card/types";
 
 type ApiResponse = {
-    data: {
-        items:ApiSession[];
+    items: ApiSession[];
+    pagination:{
+        hasMore: boolean;
     };
 };
 
@@ -15,10 +16,11 @@ export const getSessions = async (): Promise<Session[]> => {
 
     const json: ApiResponse = await response.json();
 
-    return json.data.items.map((item) =>({
+    return json.items.map((item: ApiSession) =>({
         id:String(item.id),
         title: item.title || "",
         time: item.datetime,
+        date: item.datetime,
         city: item.cinema?.cityName?.toLowerCase() || "",
         notificationsSent: false,
         imageUrl: item.imageUrl,
