@@ -1,102 +1,130 @@
-# 📦 PostgreSQL через Docker Compose — Быстрый гайд
+# 📦 PostgreSQL через Docker Compose — Актуальный гайд
 
-## 📁 Структура
-
-В проекте используется папка:
+## 📁 Структура проекта
 
 ```
-docker_postgresql/
+backend/
+  .env                     ← основной файл переменных
+  postgresql-docker-compose.yml
+  docker_postgresql/
+    postgres/
 ```
-
-Внутри должны находиться:
-
-* `docker-compose.yml`
-* `.env`
 
 ---
 
 ## ⚙️ Настройка `.env`
 
-Создайте файл `.env` в папке `docker_postgresql` со следующим содержимым:
+Создайте файл `.env` в **корне проекта (`backend/`)**:
 
 ```
 ENV=dev
 
 DB_USER=postgres
-DB_PASSWORD=movio2188
+DB_PASSWORD=your_password_here
 DB_HOST=localhost
 DB_PORT=5432
-DB_NAME=movio_web_main
+DB_NAME=movio_main_db
 
 DB_PORT_TEST=5433
-DB_NAME_TEST=movio_web_test
+DB_NAME_TEST=movio_test_db
 ```
 
 ### ⚠️ Важно:
 
-* Будут подняты **2 контейнера базы данных**:
+* Используется **один общий `.env` файл**
+* Не храните реальные пароли в репозитории
+* `.env` автоматически подхватывается Docker Compose при запуске из корня проекта
 
-    * Основная БД → порт **5432**
-    * Тестовая БД → порт **5433**
+---
+
+## 🐳 Как это работает
+
+В проекте поднимаются **2 контейнера PostgreSQL**:
+
+| Контейнер     | Назначение  | Порт |
+| ------------- | ----------- | ---- |
+| postgres      | основная БД | 5432 |
+| postgres_test | тестовая БД | 5433 |
 
 ---
 
 ## 🚀 Запуск
 
-### 1. ✅ Проверь, запущен ли Docker Desktop
+### 1. ✅ Убедитесь, что запущен Docker Desktop
 
-### 2. Перейдите в папку:
+---
 
-```
-cd .\docker_postgresql\
-```
-
-### 3. Запуск контейнеров:
+### 2. Перейдите в корень проекта:
 
 ```
-docker compose up --build -d
+cd backend
+```
+
+---
+
+### 3. Запустите контейнеры:
+
+```
+docker compose -f docker_postgresql/docker-compose.yml up --build -d
 ```
 
 ---
 
 ## 🛑 Остановка
 
-Обычная остановка:
-
 ```
-docker compose down
+docker compose -f docker_postgresql/docker-compose.yml down
 ```
 
 ---
 
-## 🧹 Полная очистка (включая данные БД)
-
-Если нужно полностью удалить контейнеры **и данные**:
+## 🧹 Полная очистка (включая данные)
 
 ```
-docker compose down -v
+docker compose -f docker_postgresql/docker-compose.yml down -v
 ```
+
+⚠️ Это удалит все данные баз данных
 
 ---
 
 ## 🔌 Подключение к базе данных
 
-Для подключения используйте значения из `.env`:
+Используйте значения из `.env`:
 
-* Host: `localhost`
-* Port:
+**Host:** `localhost`
 
-    * `5432` — основная БД
-    * `5433` — тестовая БД
-* User: `postgres`
-* Password: `movio2188`
-* Database:
+### Основная БД
 
-    * `movio_web_main`
-    * `movio_web_test`
+* Port: `5432`
+* Database: `movio_main_db`
+
+### Тестовая БД
+
+* Port: `5433`
+* Database: `movio_test_db`
+
+**User:** `postgres`
+**Password:** (значение из `.env`)
 
 ---
 
-## 💡 Примечание
+## 💡 Важные моменты
 
-После удаления с флагом `-v` все данные баз будут безвозвратно удалены. Используйте эту команду только при необходимости полной очистки.
+* `.env` должен находиться **в корне проекта**, а не в `docker_postgresql`
+* Запуск должен выполняться **из корня (`backend/`)**
+* Docker Compose использует `.env` для подстановки переменных `${...}`
+
+---
+
+## 📌 Итог
+
+* один `.env` → в корне проекта
+* один compose → в `docker_postgresql`
+* запуск → из корня
+
+```
+docker compose -f docker_postgresql/docker-compose.yml up --build -d
+```
+
+---

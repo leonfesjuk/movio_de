@@ -2,7 +2,7 @@
 services:
   postgres:
     build:
-      context: ./postgres
+      context: docker_postgresql/postgres
 
     container_name: movio-postgres-lh
     restart: always
@@ -15,7 +15,7 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD}
 
     ports:
-      - "5432:5432"
+      - "${DB_PORT}:5432"
 
     volumes:
       - pgdata:/var/lib/postgresql
@@ -29,7 +29,7 @@ services:
 
   postgres_test:
     build:
-      context: ./postgres
+      context: docker_postgresql/postgres
 
     container_name: movio-postgres-test-lh
     restart: always
@@ -42,7 +42,7 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD}
 
     ports:
-      - "5433:5432"
+      - "${DB_PORT_TEST}:5432"
 
     volumes:
       - pgdata_test:/var/lib/postgresql
