@@ -11,7 +11,7 @@ public interface InviteTokenService {
 
     List<InviteTokenResponse> getAllTokens();
 
-    InviteToken validateToken(String rawToken);
+    InviteToken validateToken(String token);
 
-    void markTokenAsUsed(String rawToken);
+    void markTokenAsUsed(String token);
 }

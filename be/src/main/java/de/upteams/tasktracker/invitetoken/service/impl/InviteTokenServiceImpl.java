@@ -6,7 +6,6 @@ import de.upteams.tasktracker.invitetoken.exception.InvalidInviteTokenException;
 import de.upteams.tasktracker.invitetoken.persistence.InviteTokenRepository;
 import de.upteams.tasktracker.invitetoken.service.interfaces.InviteTokenService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,7 +22,6 @@ public class InviteTokenServiceImpl implements InviteTokenService {
     private static final int TOKEN_BYTE_LENGTH = 32;
 
     private final InviteTokenRepository inviteTokenRepository;
-    private final PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional
@@ -65,25 +63,30 @@ public class InviteTokenServiceImpl implements InviteTokenService {
 
     @Override
     @Transactional(readOnly = true)
-    public InviteToken validateToken(String rawToken) {
-        return inviteTokenRepository.findAll().stream()
-                .filter(t -> !t.isUsed())
-                .filter(t -> passwordEncoder.matches(rawToken, t.getToken()))
-                .findFirst()
-                .orElseThrow(() -> new InvalidInviteTokenException("Invite token is invalid or has already been used"));
+    public InviteToken validateToken(String token) {
+        InviteToken inviteToken = inviteTokenRepository.findByToken(token)
+                .orElseThrow(() -> new InvalidInviteTokenException(
+                        "Invite token is invalid or has already been used"
+                ));
+
+        if (inviteToken.isUsed()) {
+            throw new InvalidInviteTokenException("Invite token is invalid or has already been used");
+        }
+
+        return inviteToken;
     }
 
     @Override
     @Transactional
-    public void markTokenAsUsed(String rawToken) {
-        InviteToken token = validateToken(rawToken);
+    public void markTokenAsUsed(String token) {
+        InviteToken inviteToken = validateToken(token);
 
-        if (token.isUsed()) {
+        if (inviteToken.isUsed()) {
             throw new InvalidInviteTokenException("Token has already been used");
         }
 
-        token.setUsedAt(Instant.now());
-        inviteTokenRepository.save(token);
+        inviteToken.setUsedAt(Instant.now());
+        inviteTokenRepository.save(inviteToken);
     }
 
     private String generateSecureToken() {
