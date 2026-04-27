@@ -11,7 +11,7 @@ type Props = {
 
 export const AdminSessionCard = ({session, onDelete, onEdit}: Props) => {
     return (
-        <div className="relative">
+        <div className="relative group hover:scale-[1.01] transition-transform">
 
             {/* BASE CARD */}
             <SessionCard session={session} isAuth/>
@@ -32,6 +32,7 @@ export const AdminSessionCard = ({session, onDelete, onEdit}: Props) => {
                 <Button
                     size="icon"
                     variant="destructive"
+                    className="bg-red-600 hover:bg-red-700 text-white"
                     onClick={() => onDelete(session.id)}
                 >
                     <Trash2 size={16}/>
