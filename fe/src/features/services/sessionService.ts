@@ -16,14 +16,21 @@ export const getSessions = async (): Promise<Session[]> => {
 
     const json: ApiResponse = await response.json();
 
+    if (!json.items){
+        return [];
+    }
+
     return json.items.map((item: ApiSession) =>{
-        const dateObj = new Date(item.datetime);
+        const dateObj = new Date(item.datetime || "");
+
+        const date = dateObj.toISOString().split("T")[0];
+        const time = dateObj.toISOString().slice(11,16);
 
         return{
             id:String(item.id),
             title: item.title || "",
-            time: dateObj.toISOString(),
-            date: dateObj.toDateString().split("T")[0],
+            date,
+            time,
             city: item.cinema?.cityName?.toLowerCase() || "",
             notificationsSent: false,
             imageUrl: item.imageUrl,
