@@ -26,4 +26,7 @@ public interface GeonameRepository extends JpaRepository<GeonameEntity, Long> {
            "OR LOWER(g.asciiName) LIKE LOWER(CONCAT(:q, '%'))) " +
            "ORDER BY g.population DESC")
     List<GeonameEntity> searchWithCinemas(@Param("q") String query, Pageable pageable);
+
+    @Query("SELECT DISTINCT g.countryCode FROM GeonameEntity g WHERE g.countryCode IS NOT NULL ORDER BY g.countryCode")
+    List<String> findDistinctCountries();
 }

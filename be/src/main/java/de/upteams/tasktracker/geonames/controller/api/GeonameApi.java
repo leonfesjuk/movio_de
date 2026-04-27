@@ -1,5 +1,7 @@
 package de.upteams.tasktracker.geonames.controller.api;
 
+import de.upteams.tasktracker.geonames.dto.GeonameAlternateNamesResponseDto;
+import de.upteams.tasktracker.geonames.dto.GeonameCountryDto;
 import de.upteams.tasktracker.geonames.dto.GeonameDetailsDto;
 import de.upteams.tasktracker.geonames.dto.GeonameSearchListResponseDto;
 import de.upteams.tasktracker.geonames.dto.GeonameStandardResponseDto;
@@ -16,6 +18,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
 
 @Tag(name = "Geonames Controller", description = "Endpoints for searching and getting details of geonames (cities)")
 @RequestMapping("/api/geonames")
@@ -62,5 +66,28 @@ public interface GeonameApi {
             @AuthenticationPrincipal
             @Parameter(hidden = true)
             AuthUserDetails currentUser
+    );
+
+    @Operation(summary = "Get list of countries", description = "Returns a list of unique country codes available in geonames.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Countries found",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = GeonameStandardResponseDto.class)))
+    })
+    @GetMapping("/countries")
+    GeonameStandardResponseDto<List<GeonameCountryDto>> getCountries();
+
+    @Operation(summary = "Get alternate names for a location", description = "Returns alternate names for a geoname by its ID.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Alternate names found",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = GeonameStandardResponseDto.class))),
+            @ApiResponse(responseCode = "404", description = "Location not found")
+    })
+    @GetMapping("/{geonameId}/alternate-names")
+    GeonameStandardResponseDto<GeonameAlternateNamesResponseDto> getAlternateNames(
+            @PathVariable("geonameId")
+            @Parameter(description = "Unique ID of the geoname")
+            Long geonameId
     );
 }
