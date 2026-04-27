@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { getSessions } from "@/features/services/sessionService";
 import type { Session } from "@/features/session-card/types";
+import {AdminSessionCard} from "@/features/admin-session-card/adminSessionCard";
 
 export default function AdminPage() {
     const [sessions, setSessions] = useState<Session[]>([]);
@@ -147,35 +148,15 @@ export default function AdminPage() {
                 <div className="text-gray-500">No sessions</div>
             ) : (
                 <div className="space-y-4">
-                    {sessions.map((session) => (
-                        <div
-                            key={session.id}
-                            className="border p-4 rounded-lg flex justify-between items-center"
-                        >
-                            <div>
-                                <div className="font-semibold">{session.title}</div>
-                                <div className="text-sm text-gray-500">
-                                    {session.city} — {new Date(session.time).toLocaleString()}
-                                </div>
-                            </div>
 
-                            <div className="flex gap-2">
-                                <button
-                                    onClick={() => handleEdit(session)}
-                                    className="px-3 py-1 bg-blue-500 text-white rounded"
-                                >
-                                    Edit
-                                </button>
-
-                                <button
-                                    onClick={() => handleDelete(session.id)}
-                                    className="px-3 py-1 bg-red-500 text-white rounded"
-                                >
-                                    Delete
-                                </button>
-                            </div>
-                        </div>
-                    ))}
+                            {sessions.map((session) => (
+                                <AdminSessionCard
+                                    key={session.id}
+                                    session={session}
+                                    onEdit={handleEdit}
+                                    onDelete={handleDelete}
+                                />
+                            ))}
                 </div>
             )}
         </div>
