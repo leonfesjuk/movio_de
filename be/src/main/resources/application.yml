@@ -5,7 +5,7 @@ spring:
     name: Task Tracker
   datasource:
     url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:movio_web_main}
-    username: ${DB_USERNAME:postgres}
+    username: ${DB_USER:postgres}
     password: ${DB_PASSWORD:changeme}
     driver-class-name: org.postgresql.Driver
 
