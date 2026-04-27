@@ -16,14 +16,18 @@ export const getSessions = async (): Promise<Session[]> => {
 
     const json: ApiResponse = await response.json();
 
-    return json.items.map((item: ApiSession) =>({
-        id:String(item.id),
-        title: item.title || "",
-        time: item.datetime,
-        date: item.datetime,
-        city: item.cinema?.cityName?.toLowerCase() || "",
-        notificationsSent: false,
-        imageUrl: item.imageUrl,
-        externalUrl: item.seanceLink,
-    }));
+    return json.items.map((item: ApiSession) =>{
+        const dateObj = new Date(item.datetime);
+
+        return{
+            id:String(item.id),
+            title: item.title || "",
+            time: dateObj.toISOString(),
+            date: dateObj.toDateString().split("T")[0],
+            city: item.cinema?.cityName?.toLowerCase() || "",
+            notificationsSent: false,
+            imageUrl: item.imageUrl,
+            externalUrl: item.seanceLink,
+        };
+    });
 };
