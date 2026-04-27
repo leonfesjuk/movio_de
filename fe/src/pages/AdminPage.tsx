@@ -147,7 +147,7 @@ export default function AdminPage() {
             {sessions.length === 0 ? (
                 <div className="text-gray-500">No sessions</div>
             ) : (
-                <div className="space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
 
                             {sessions.map((session) => (
                                 <AdminSessionCard
