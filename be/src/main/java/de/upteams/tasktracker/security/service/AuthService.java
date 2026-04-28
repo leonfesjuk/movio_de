@@ -82,6 +82,8 @@ public class AuthService {
         return new UserResponseDto(
                 user.getEmail(),
                 user.getRole().name(),
+                user.getName(),
+                user.getWebLink(),
                 user.getConfirmationStatus()
         );
     }

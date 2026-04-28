@@ -116,6 +116,8 @@ public class UserRegisterService {
         return new UserResponseDto(
                 registeredUser.getEmail(),
                 registeredUser.getRole().name(),
+                registeredUser.getName(),
+                registeredUser.getWebLink(),
                 registeredUser.getConfirmationStatus()
         );
     }
