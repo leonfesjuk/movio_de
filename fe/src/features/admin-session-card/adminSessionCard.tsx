@@ -14,7 +14,10 @@ export const AdminSessionCard = ({session, onDelete, onEdit}: Props) => {
         <div className="relative group hover:scale-[1.01] transition-transform">
 
             {/* BASE CARD */}
-            <SessionCard session={session} isAuth/>
+            <SessionCard session={session}
+                         isAuth
+                         showNotificationStatus
+            />
 
             {/* ADMIN ACTIONS */}
 
