@@ -2,26 +2,21 @@ package de.upteams.tasktracker.testdata.cinema;
 
 import de.upteams.tasktracker.cinema.entity.Cinema;
 import de.upteams.tasktracker.cinema.persistence.CinemaRepository;
-import de.upteams.tasktracker.geonames.entity.GeonameEntity;
-import de.upteams.tasktracker.geonames.persistence.GeonameRepository;
 import de.upteams.tasktracker.testdata.core.SeedCommand;
 import de.upteams.tasktracker.testdata.core.SeedResult;
 import de.upteams.tasktracker.testdata.core.TestDataSeeder;
 import de.upteams.tasktracker.user.entity.AppUser;
 import de.upteams.tasktracker.user.persistence.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -29,7 +24,7 @@ public class CinemaSeedService implements TestDataSeeder {
 
     private final CinemaRepository cinemaRepository;
     private final UserRepository userRepository;
-    private final GeonameRepository geonameRepository;
+    private final TestCityGeonameDirectoryService cityGeonameDirectoryService;
 
     private static final String[] CINEMA_PREFIXES = {
             "Nova", "Prime", "Grand", "Sky", "Star", "City", "Galaxy", "Aurora"
@@ -60,10 +55,7 @@ public class CinemaSeedService implements TestDataSeeder {
             return new SeedResult(name(), "skipped", 0, cinemaRepository.count(), "no test users found");
         }
 
-        List<Long> geonameIds = geonameRepository.searchAll("", PageRequest.of(0, geonamePoolLimit)).stream()
-                .filter(g -> Boolean.TRUE.equals(g.getIsActive()))
-                .map(GeonameEntity::getId)
-                .collect(Collectors.toList());
+        List<Long> geonameIds = cityGeonameDirectoryService.getCityGeonameIds(geonamePoolLimit);
 
         if (geonameIds.isEmpty()) {
             return new SeedResult(name(), "skipped", 0, cinemaRepository.count(), "no active geonames found");
