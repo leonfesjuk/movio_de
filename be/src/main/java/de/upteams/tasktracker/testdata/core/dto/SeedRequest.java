@@ -29,6 +29,12 @@ public record SeedRequest(
                 description = "Seeder-specific options map",
                 example = "{\"markSomeAsUsed\":\"true\"}"
         )
-        Map<String, String> options
+        Map<String, String> options,
+
+        @Schema(
+                description = "Preset key for /seed/all. Supported names: smoke, mvp, full. Also numbers: 1, 2, 3",
+                example = "mvp"
+        )
+        String preset
 ) {
 }

@@ -4,8 +4,8 @@ import de.upteams.tasktracker.cinema.entity.Cinema;
 import de.upteams.tasktracker.cinema.persistence.CinemaRepository;
 import de.upteams.tasktracker.event.entity.Event;
 import de.upteams.tasktracker.event.persistence.EventRepository;
+import de.upteams.tasktracker.testdata.core.dto.SeedAllPresetRequest;
 import de.upteams.tasktracker.testdata.core.dto.SeedAllResponse;
-import de.upteams.tasktracker.testdata.core.dto.SeedRequest;
 import de.upteams.tasktracker.user.entity.AppUser;
 import de.upteams.tasktracker.user.persistence.UserRepository;
 import io.swagger.v3.oas.annotations.Operation;
@@ -43,10 +43,11 @@ public class TestDataController {
     private final UserRepository userRepository;
     private final CinemaRepository cinemaRepository;
     private final EventRepository eventRepository;
+    private final SeedDefaultsFactory seedDefaultsFactory;
 
     @Operation(
             summary = "Generate test data for all seeders",
-            description = "Runs all registered test-data seeders with common input parameters."
+            description = "Runs all registered test-data seeders by centralized preset."
     )
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Test data generated successfully"),
@@ -54,17 +55,17 @@ public class TestDataController {
     })
     @PostMapping("/seed/all")
     public ResponseEntity<SeedAllResponse> seedAll(
-            @Parameter(description = "Common seeding parameters (optional). If omitted, defaults are used.")
-            @Valid @RequestBody(required = false) SeedRequest request
+            @Parameter(description = "Preset-only request body. Example: {\"preset\":\"mvp\"}")
+            @RequestBody(required = false) SeedAllPresetRequest request
     ) {
-        SeedCommand command = toCommand(request);
+        String preset = seedDefaultsFactory.resolvePreset(request == null ? null : request.preset());
 
         List<SeedResult> rawResults = seeders.stream()
                 .sorted(seederExecutionOrder())
-                .map(seeder -> seeder.seed(command))
+                .map(seeder -> seeder.seed(seedDefaultsFactory.toAllSeederCommand(seeder.name(), preset)))
                 .toList();
 
-        String summary = buildSummary(rawResults);
+        String summary = buildSummary(rawResults, preset);
 
         List<SeedResult> resultsWithSummary = rawResults.stream()
                 .map(r -> new SeedResult(
@@ -126,7 +127,7 @@ public class TestDataController {
         return new SeedAllResponse.GeneratedStructure(userNodes);
     }
 
-    private String buildSummary(List<SeedResult> results) {
+    private String buildSummary(List<SeedResult> results, String preset) {
         Map<String, Integer> createdByKey = results.stream()
                 .collect(Collectors.toMap(
                         SeedResult::key,
@@ -138,7 +139,7 @@ public class TestDataController {
         int cinemas = createdByKey.getOrDefault("cinema", 0);
         int events = createdByKey.getOrDefault("event", 0);
 
-        return "users=" + users + ", cinemas=" + cinemas + ", events=" + events;
+        return "preset=" + preset + ", users=" + users + ", cinemas=" + cinemas + ", events=" + events;
     }
 
     private Comparator<TestDataSeeder> seederExecutionOrder() {
@@ -152,16 +153,5 @@ public class TestDataController {
         return Comparator
                 .comparingInt((TestDataSeeder s) -> priority.getOrDefault(s.name(), 1_000))
                 .thenComparing(TestDataSeeder::name);
-    }
-
-    private SeedCommand toCommand(SeedRequest request) {
-        if (request == null) {
-            return new SeedCommand(20, false, Map.of());
-        }
-        return new SeedCommand(
-                request.count() == null ? 20 : request.count(),
-                request.skipIfNotEmpty() != null && request.skipIfNotEmpty(),
-                request.options() == null ? Map.of() : request.options()
-        );
     }
 }
