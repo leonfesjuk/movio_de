@@ -6,7 +6,6 @@ export type Session = {
     time: string
     datetime?: string // for API
     description?: string
-    city: string
     notificationsSent: boolean
     imageUrl?: string;
     externalUrl?: string;
