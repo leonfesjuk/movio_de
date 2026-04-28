@@ -22,6 +22,7 @@ export type SessionCardContentProps = {
 export type SessionCardProps = {
     session: Session;
     isAuth: boolean;
+    showNotificationStatus?: boolean;
 };
 
 export type ApiSession = {
