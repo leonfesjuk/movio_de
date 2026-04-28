@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/card.tsx";
 
 
-export const SessionCard = ({session, isAuth}: SessionCardProps) => {
+export const SessionCard = ({session, isAuth,showNotificationStatus}: SessionCardProps) => {
     return (
         <Card className="overflow-hidden flex flex-col h-full">
 
@@ -51,6 +51,7 @@ export const SessionCard = ({session, isAuth}: SessionCardProps) => {
                 </div>
             </CardContent>
 
+            {showNotificationStatus && (
             <div className="px-6 pb-4 mt-2">
                 <div className="flex items-center justify-between">
                     <span className="text-sm font-medium">Notification status:</span>
@@ -69,6 +70,7 @@ export const SessionCard = ({session, isAuth}: SessionCardProps) => {
                     </div>
                 </div>
             </div>
+            )}
 
             {/* FOOTER */}
             {isAuth && (
