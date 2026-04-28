@@ -15,8 +15,37 @@ import EmailConfirmationPasswordPage from "./pages/EmailConfirmationPasswordPage
 import InviteTokensPage from "./pages/InviteTokensPage";
 import RequireRole from "./components/auth/RequireRole";
 import AdminPage from "@/pages/AdminPage.tsx";
+import Profile from "./pages/Profile";
+import { useAppDispatch } from "./app/hooks";
+import type { AppDispatch, RootState } from "./app/store";
+import { useSelector } from "react-redux";
+import { useEffect } from "react";
+import { checkAuth, me } from "./features/auth/slice/authSlice";
+const AUTH_STORAGE_KEY = "is_authenticated";
 
 function App() {
+  const dispatch = useAppDispatch<AppDispatch>();
+  const isAuthenticated: boolean = useSelector(
+    (state: RootState) => state.auth.isAuthenticated,
+  );
+
+  // Sync authentication state with localStorage
+  useEffect(() => {
+    localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(isAuthenticated));
+  }, [isAuthenticated]);
+
+  // Check authentication on app load
+  useEffect(() => {
+    const initAuth = async () => {
+      const result = await dispatch(checkAuth());
+
+      if (checkAuth.fulfilled.match(result)) {
+        await dispatch(me());
+      }
+    };
+
+    initAuth();
+  }, [dispatch]);
   return (
     <div>
       <nav></nav>
@@ -49,6 +78,7 @@ function App() {
             }
           />
           <Route path="/admin" element={<AdminPage/>}/>
+          <Route path="/profile" element={<Profile />}/>
         </Routes>
       </Layout>
     </div>

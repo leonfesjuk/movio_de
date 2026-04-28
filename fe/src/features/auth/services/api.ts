@@ -9,10 +9,12 @@ const API = {
     RESET_PASSWORD: "/auth/reset-password",
     FORGOT_PASSWORD: "/auth/forgot-password",
     ME: "/auth/me",
+    LOGOUT: "/auth/logout"
   },
   USERS: {
     REGISTER: "/users/register",
     VERIFY_EMAIL: "/users/confirm",
+    PROFILE: "/users/profile/me",
   },
 } as const;
 
@@ -22,9 +24,12 @@ export const fetchLogin = async (credentials: Credentials) => {
 };
 
 export const fetchMe = async (): Promise<User> => {
-  const res = await axiosInstance.get(API.AUTH.ME, {
-    withCredentials: true,
-  });
+  const res = await axiosInstance.get(API.AUTH.ME);
+  return res.data;
+};
+
+export const fetchUpdateProfile = async (dto: Partial<User>) => {
+  const res = await axiosInstance.put(API.USERS.PROFILE, dto);
   return res.data;
 };
 
@@ -48,5 +53,10 @@ export const fetchResetPassword = async (data: {
   newPassword: string;
 }) => {
   const res = await axiosInstance.post(API.AUTH.RESET_PASSWORD, data);
+  return res.data;
+};
+
+export const fetchLogout = async () => {
+  const res = await axiosInstance.post(API.AUTH.LOGOUT);
   return res.data;
 };

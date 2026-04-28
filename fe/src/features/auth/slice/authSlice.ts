@@ -1,14 +1,21 @@
 import { createAppSlice } from "../../../app/createAppSlice";
 import type {
+  AuthResponse,
   AuthSliceState,
   Credentials,
+  User,
   UserRegistrationDto,
 } from "../types";
 import * as api from "../services/api";
 import { isAxiosError } from "axios";
 
+function checkToken() {
+  const token = localStorage.getItem("accessToken");
+  return !!token; // returns true if the token exists
+}
+
 const initialState: AuthSliceState = {
-  isAuthenticated: false,
+  isAuthenticated: checkToken(),
   user: undefined,
   loginErrorMessage: undefined,
   registerFieldErrors: undefined,
@@ -19,14 +26,21 @@ export const authSlice = createAppSlice({
   initialState,
   reducers: (create) => ({
     login: create.asyncThunk(
-      async (credentials: Credentials) => {
-        return api.fetchLogin(credentials).catch((err) => {
-          if (isAxiosError(err)) {
-            throw new Error(
-              err.response?.data?.message || "Internal Server Error",
-            );
-          }
-        });
+      async (credentials: Credentials, { dispatch }) => {
+        const response = (await api.fetchLogin(credentials)) as AuthResponse;
+
+        // Save tokens on successful login
+        if (response.accessToken) {
+          localStorage.setItem("accessToken", response.accessToken);
+        }
+        if (response.refreshToken) {
+          localStorage.setItem("refreshToken", response.refreshToken);
+        }
+        // Save the authentication flag
+        localStorage.setItem("is_authenticated", "true");
+
+        await dispatch(me());
+        return response;
       },
       {
         pending: (state) => {
@@ -40,6 +54,33 @@ export const authSlice = createAppSlice({
           state.isAuthenticated = false;
           state.user = undefined;
           state.loginErrorMessage = action.error.message;
+        },
+      },
+    ),
+
+    checkAuth: create.asyncThunk(
+      async () => {
+        const token = localStorage.getItem("accessToken");
+        if (!token) {
+          throw new Error("No token found");
+        }
+        // We just check that the token is valid.
+        await api.fetchMe();
+        return { success: true };
+      },
+      {
+        pending: () => {
+        },
+        fulfilled: (state) => {
+          state.isAuthenticated = true;
+          localStorage.setItem("is_authenticated", "true");
+        },
+        rejected: (state) => {
+          state.isAuthenticated = false;
+          state.user = undefined;
+          localStorage.removeItem("accessToken");
+          localStorage.removeItem("refreshToken");
+          localStorage.removeItem("is_authenticated");
         },
       },
     ),
@@ -164,10 +205,41 @@ export const authSlice = createAppSlice({
       },
     ),
 
+    updateProfile: create.asyncThunk(
+      async (dto: Partial<User>) => {
+        return api.fetchUpdateProfile(dto);
+      },
+      {
+        fulfilled: (state, action) => {
+          state.user = action.payload;
+        }
+      },
+    ),
+
     clearAuthErrors: create.reducer((state) => {
       state.loginErrorMessage = undefined;
       state.registerFieldErrors = undefined;
     }),
+
+    logout: create.asyncThunk(
+      async () => {
+        try {
+          await api.fetchLogout();
+        } finally {
+          // Always remove tokens on logout
+          localStorage.removeItem("accessToken");
+          localStorage.removeItem("refreshToken");
+          localStorage.removeItem("is_authenticated");
+        }
+      },
+      {
+        fulfilled: (state) => {
+          state.isAuthenticated = false;
+          state.user = undefined;
+          state.loginErrorMessage = undefined;
+        },
+      },
+    ),
   }),
   // You can define your selectors here. These selectors receive the slice
   // state as their first argument.
@@ -183,12 +255,15 @@ export const authSlice = createAppSlice({
 // // Action creators are generated for each case reducer function.
 export const {
   login,
+  checkAuth,
   me,
   register,
   forgotPassword,
   resetPassword,
   verifyEmail,
   clearAuthErrors,
+  updateProfile,
+  logout,
 } = authSlice.actions;
 
 // Selectors returned by `slice.selectors` take the root state as their first argument.
