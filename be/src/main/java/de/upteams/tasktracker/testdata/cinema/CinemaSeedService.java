@@ -26,6 +26,9 @@ public class CinemaSeedService implements TestDataSeeder {
     private final UserRepository userRepository;
     private final TestCityGeonameDirectoryService cityGeonameDirectoryService;
 
+    private static final String GEONAME_POOL_LIMIT_KEY = "geonamePoolLimit";
+    private static final int DEFAULT_GEONAME_POOL_LIMIT = 500;
+
     private static final String[] CINEMA_PREFIXES = {
             "Nova", "Prime", "Grand", "Sky", "Star", "City", "Galaxy", "Aurora"
     };
@@ -39,7 +42,7 @@ public class CinemaSeedService implements TestDataSeeder {
     @Transactional
     public SeedResult seed(SeedCommand command) {
         Map<String, String> options = command.options() == null ? Map.of() : command.options();
-        int geonamePoolLimit = parseIntOption(options, "geonamePoolLimit", 500);
+        int geonamePoolLimit = parseGeonamePoolLimit(options);
 
         if (command.skipIfNotEmpty() && cinemaRepository.count() > 0) {
             return new SeedResult(name(), "skipped", 0, cinemaRepository.count(), "table is not empty");
@@ -85,11 +88,13 @@ public class CinemaSeedService implements TestDataSeeder {
         return new SeedResult(name(), "ok", cinemas.size(), cinemaRepository.count(), "created (1-3 cinemas per user)");
     }
 
-    private int parseIntOption(Map<String, String> options, String key, int defaultValue) {
+    private int parseGeonamePoolLimit(Map<String, String> options) {
         try {
-            return Integer.parseInt(options.getOrDefault(key, String.valueOf(defaultValue)));
+            return Integer.parseInt(
+                    options.getOrDefault(GEONAME_POOL_LIMIT_KEY, String.valueOf(DEFAULT_GEONAME_POOL_LIMIT))
+            );
         } catch (Exception ignored) {
-            return defaultValue;
+            return DEFAULT_GEONAME_POOL_LIMIT;
         }
     }
 }
