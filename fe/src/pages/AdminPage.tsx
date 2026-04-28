@@ -1,6 +1,11 @@
 import { useEffect, useState } from "react";
-import { getSessions } from "@/features/services/sessionService";
 import type { Session } from "@/features/session-card/types";
+import {
+    getSessions,
+    deleteSession,
+    createSession,
+    updateSession,
+} from "@/features/services/sessionService";
 
 export default function AdminPage() {
     const [sessions, setSessions] = useState<Session[]>([]);
@@ -40,8 +45,14 @@ export default function AdminPage() {
         void fetchData();
     }, []);
 
-    const handleDelete = (id: string) => {
-        setSessions((prev) => prev.filter((s) => s.id !== id));
+    const handleDelete = async (id:string)=>{
+        try {
+            await deleteSession(id);
+            setSessions((prev)=> prev.filter((s)=> s.id !== id));
+        }catch (e){
+            console.error(e);
+            alert("Delete failed");
+        }
     };
 
     const resetForm = () => {
@@ -52,37 +63,44 @@ export default function AdminPage() {
         setShowForm(false);
     };
 
-    const handleCreateOrEdit = () => {
+    const handleCreateOrEdit = async () => {
         if (!title || !time || !city) {
             alert("Please fill all fields");
             return;
         }
 
-        if (editingId) {
-            setSessions((prev) =>
-                prev.map((s) =>
-                    s.id === editingId ? { ...s, title, time, city } : s
-                )
-            );
-        } else {
-            const newSession: Session = {
-                id: Date.now().toString(),
-                title,
-                time,
-                date: time,
-                city,
-                notificationsSent: false,
-            };
+        try {
+            if (editingId) {
+                await updateSession(editingId, {
+                    title,
+                    datetime: time,
+                    cinema: {
+                        cityName: city,
+                    },
+                });
+            } else {
+                await createSession({
+                    title,
+                    datetime: time,
+                    cinema: {
+                        cityName: city,
+                    },
+                });
+            }
+            const data = await getSessions();
+            setSessions(data);
 
-            setSessions((prev) => [newSession, ...prev]);
+            resetForm();
+
+        } catch (e){
+            console.error(e);
+            alert("Save failed");
         }
-
-        resetForm();
     };
 
     const handleEdit = (session: Session) => {
         setTitle(session.title);
-        setTime(session.time);
+        setTime(`${session.date}T${session.time}`);
         setCity(session.city);
         setEditingId(session.id);
         setShowForm(true);
@@ -155,7 +173,7 @@ export default function AdminPage() {
                             <div>
                                 <div className="font-semibold">{session.title}</div>
                                 <div className="text-sm text-gray-500">
-                                    {session.city} — {new Date(session.time).toLocaleString()}
+                                    {session.city} — {session.date} {session.time}
                                 </div>
                             </div>
 
