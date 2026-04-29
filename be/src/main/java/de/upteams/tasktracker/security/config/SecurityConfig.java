@@ -84,6 +84,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/v1/users/confirm/{code}").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/user/profile/me").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/api/v1/user/profile/me").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/user/profile/change-password").authenticated()
 
                         // Публічний доступ до подій та кінотеатрів (лише читання)
                         .requestMatchers(HttpMethod.GET, "/api/events/**").permitAll()
