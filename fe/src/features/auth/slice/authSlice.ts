@@ -2,6 +2,7 @@ import { createAppSlice } from "../../../app/createAppSlice";
 import type {
   AuthResponse,
   AuthSliceState,
+  ChangePasswordDto,
   Credentials,
   User,
   UserRegistrationDto,
@@ -19,6 +20,7 @@ const initialState: AuthSliceState = {
   user: undefined,
   loginErrorMessage: undefined,
   registerFieldErrors: undefined,
+  changePasswordError: undefined,
 };
 
 export const authSlice = createAppSlice({
@@ -69,8 +71,7 @@ export const authSlice = createAppSlice({
         return { success: true };
       },
       {
-        pending: () => {
-        },
+        pending: () => {},
         fulfilled: (state) => {
           state.isAuthenticated = true;
           localStorage.setItem("is_authenticated", "true");
@@ -212,8 +213,43 @@ export const authSlice = createAppSlice({
       {
         fulfilled: (state, action) => {
           state.user = action.payload;
+        },
+      },
+    ),
+
+    changePassword: create.asyncThunk(
+      async (dto: ChangePasswordDto, { rejectWithValue }) => {
+        try {
+          return await api.fetchChangePassword(dto);
+        } catch (err) {
+          if (isAxiosError(err)) {
+            return rejectWithValue(err.response?.data);
+          }
+
+          return rejectWithValue({
+            message: "Unknown error",
+          });
         }
       },
+      {
+        pending: (state) => {
+          state.changePasswordError = undefined;
+        },
+        fulfilled: (state) => {
+          state.changePasswordError = undefined;
+        },
+        rejected: (state, action) => {
+          if (
+            action.payload &&
+            typeof action.payload === "object" &&
+            "message" in action.payload
+          ) {
+            state.changePasswordError = String(action.payload.message);
+          } else {
+            state.changePasswordError = action.error.message;
+          }
+        }
+      }
     ),
 
     clearAuthErrors: create.reducer((state) => {
@@ -249,6 +285,7 @@ export const authSlice = createAppSlice({
     selectRole: (state) => state.user?.role,
     selectLoginError: (state) => state?.loginErrorMessage,
     selectRegisterError: (state) => state?.registerFieldErrors,
+    selectChangePasswordError: (state) => state?.changePasswordError,
   },
 });
 
@@ -263,6 +300,7 @@ export const {
   verifyEmail,
   clearAuthErrors,
   updateProfile,
+  changePassword,
   logout,
 } = authSlice.actions;
 
@@ -273,4 +311,5 @@ export const {
   selectRole,
   selectLoginError,
   selectRegisterError,
+  selectChangePasswordError,
 } = authSlice.selectors;

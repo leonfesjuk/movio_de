@@ -21,6 +21,7 @@ import type { AppDispatch, RootState } from "./app/store";
 import { useSelector } from "react-redux";
 import { useEffect } from "react";
 import { checkAuth, me } from "./features/auth/slice/authSlice";
+import ChangePassword from "./pages/ChangePassword";
 const AUTH_STORAGE_KEY = "is_authenticated";
 
 function App() {
@@ -79,6 +80,7 @@ function App() {
           />
           <Route path="/admin" element={<AdminPage/>}/>
           <Route path="/profile" element={<Profile />}/>
+          <Route path="/profile/change-password" element={<ChangePassword />}/>
         </Routes>
       </Layout>
     </div>
