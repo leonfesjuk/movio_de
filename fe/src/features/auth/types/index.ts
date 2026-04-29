@@ -16,6 +16,8 @@ export interface User {
   email: string;
   role: ROLE;
   confirmationResent: boolean;
+  name: string;
+  webLink: string;
 }
 
 export interface AuthSliceState {
@@ -40,4 +42,10 @@ export type ValidationErrorResponse = {
 export interface PasswordResetDto {
   token: string;
   newPassword: string;
+}
+
+export interface AuthResponse {
+  accessToken: string;
+  refreshToken: string;
+  user: User;
 }

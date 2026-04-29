@@ -53,6 +53,7 @@ export default function TestUI(){
                 id="id_password"
                 placeholder="Entry password"
                 required
+                readOnly
                 isViewSwitcher
                 description={
                 <ul className="ml-6 list-disc">

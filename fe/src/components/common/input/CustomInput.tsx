@@ -16,6 +16,7 @@ export type CustomInputProps = React.InputHTMLAttributes<HTMLInputElement> & {
   id?: string;
   required?: boolean;
   disabled?: boolean;
+  readonly?: boolean;
   isViewSwitcher?: boolean;
   error?: ReactNode | boolean;
   description?: ReactNode;
@@ -29,6 +30,7 @@ export const CustomInput: React.FC<CustomInputProps> = ({
   id,
   required = false,
   disabled = false,
+  readonly = false,
   isViewSwitcher = false,
   error,
   description,
@@ -55,6 +57,7 @@ export const CustomInput: React.FC<CustomInputProps> = ({
           name={name}
           required={required}
           disabled={disabled}
+          readOnly={readonly}
           className={className}
           aria-invalid={!!error}
           {...props}
