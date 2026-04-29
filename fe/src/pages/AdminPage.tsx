@@ -1,7 +1,12 @@
 import { useEffect, useState } from "react";
-import { getSessions } from "@/features/services/sessionService";
 import type { Session } from "@/features/session-card/types";
 import {AdminSessionCard} from "@/features/admin-session-card/adminSessionCard";
+import {
+    getSessions,
+    deleteSession,
+    createSession,
+    updateSession,
+} from "@/features/services/sessionService";
 
 export default function AdminPage() {
     const [sessions, setSessions] = useState<Session[]>([]);
@@ -41,8 +46,14 @@ export default function AdminPage() {
         void fetchData();
     }, []);
 
-    const handleDelete = (id: string) => {
-        setSessions((prev) => prev.filter((s) => s.id !== id));
+    const handleDelete = async (id:string)=>{
+        try {
+            await deleteSession(id);
+            setSessions((prev)=> prev.filter((s)=> s.id !== id));
+        }catch (e){
+            console.error(e);
+            alert("Delete failed");
+        }
     };
 
     const resetForm = () => {
@@ -53,37 +64,44 @@ export default function AdminPage() {
         setShowForm(false);
     };
 
-    const handleCreateOrEdit = () => {
+    const handleCreateOrEdit = async () => {
         if (!title || !time || !city) {
             alert("Please fill all fields");
             return;
         }
 
-        if (editingId) {
-            setSessions((prev) =>
-                prev.map((s) =>
-                    s.id === editingId ? { ...s, title, time, city } : s
-                )
-            );
-        } else {
-            const newSession: Session = {
-                id: Date.now().toString(),
-                title,
-                time,
-                date: time,
-                city,
-                notificationsSent: false,
-            };
+        try {
+            if (editingId) {
+                await updateSession(editingId, {
+                    title,
+                    datetime: time,
+                    cinema: {
+                        cityName: city,
+                    },
+                });
+            } else {
+                await createSession({
+                    title,
+                    datetime: time,
+                    cinema: {
+                        cityName: city,
+                    },
+                });
+            }
+            const data = await getSessions();
+            setSessions(data);
 
-            setSessions((prev) => [newSession, ...prev]);
+            resetForm();
+
+        } catch (e){
+            console.error(e);
+            alert("Save failed");
         }
-
-        resetForm();
     };
 
     const handleEdit = (session: Session) => {
         setTitle(session.title);
-        setTime(session.time);
+        setTime(`${session.date}T${session.time}`);
         setCity(session.city);
         setEditingId(session.id);
         setShowForm(true);
@@ -147,6 +165,7 @@ export default function AdminPage() {
             {sessions.length === 0 ? (
                 <div className="text-gray-500">No sessions</div>
             ) : (
+ features/adminSessionCard
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
 
                             {sessions.map((session) => (
@@ -157,6 +176,7 @@ export default function AdminPage() {
                                     onDelete={handleDelete}
                                 />
                             ))}
+
                 </div>
             )}
         </div>
