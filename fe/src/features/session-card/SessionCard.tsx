@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/card.tsx";
 
 
-export const SessionCard = ({session, isAuth}: SessionCardProps) => {
+export const SessionCard = ({session, isAuth,showNotificationStatus}: SessionCardProps) => {
     return (
         <Card className="overflow-hidden flex flex-col h-full">
 
@@ -50,6 +50,27 @@ export const SessionCard = ({session, isAuth}: SessionCardProps) => {
                     {session.description || "No description"}
                 </div>
             </CardContent>
+
+            {showNotificationStatus && (
+            <div className="px-6 pb-4 mt-2">
+                <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium">Notification status:</span>
+
+                    <div className="flex items-center gap-2">
+                        {[1, 2, 3].map((i) => (
+                            <span
+                                key={i}
+                                className={`w-3 h-3 rounded-full ${
+                                    session.notificationsSent
+                                        ? "bg-green-400"
+                                        : "bg-red-400"
+                                }`}
+                            />
+                        ))}
+                    </div>
+                </div>
+            </div>
+            )}
 
             {/* FOOTER */}
             {isAuth && (

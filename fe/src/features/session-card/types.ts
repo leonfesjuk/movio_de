@@ -4,7 +4,7 @@ export type Session = {
     city:string
     date: string
     time: string
-    datetime?: string // for API
+    datetime?: string
     description?: string
     notificationsSent: boolean
     imageUrl?: string;
@@ -22,6 +22,7 @@ export type SessionCardContentProps = {
 export type SessionCardProps = {
     session: Session;
     isAuth: boolean;
+    showNotificationStatus?: boolean;
 };
 
 export type ApiSession = {

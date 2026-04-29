@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import type { Session } from "@/features/session-card/types";
+import {AdminSessionCard} from "@/features/admin-session-card/adminSessionCard";
 import {
     getSessions,
     deleteSession,
@@ -164,36 +165,18 @@ export default function AdminPage() {
             {sessions.length === 0 ? (
                 <div className="text-gray-500">No sessions</div>
             ) : (
-                <div className="space-y-4">
-                    {sessions.map((session) => (
-                        <div
-                            key={session.id}
-                            className="border p-4 rounded-lg flex justify-between items-center"
-                        >
-                            <div>
-                                <div className="font-semibold">{session.title}</div>
-                                <div className="text-sm text-gray-500">
-                                    {session.city} — {session.date} {session.time}
-                                </div>
-                            </div>
+ 
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
 
-                            <div className="flex gap-2">
-                                <button
-                                    onClick={() => handleEdit(session)}
-                                    className="px-3 py-1 bg-blue-500 text-white rounded"
-                                >
-                                    Edit
-                                </button>
+                            {sessions.map((session) => (
+                                <AdminSessionCard
+                                    key={session.id}
+                                    session={session}
+                                    onEdit={handleEdit}
+                                    onDelete={handleDelete}
+                                />
+                            ))}
 
-                                <button
-                                    onClick={() => handleDelete(session.id)}
-                                    className="px-3 py-1 bg-red-500 text-white rounded"
-                                >
-                                    Delete
-                                </button>
-                            </div>
-                        </div>
-                    ))}
                 </div>
             )}
         </div>
