@@ -91,7 +91,6 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/cinemas/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/geonames/**").permitAll()
 
-                        // авторизация пользователя
                         .requestMatchers(HttpMethod.POST, "/api/v1/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/auth/refresh-token").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/auth/logout").permitAll()
@@ -99,10 +98,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/v1/auth/reset-password").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/auth/me").authenticated()
 
-                        // Admin pages
-                        // Invite-token
-                        .requestMatchers("/api/v1/invite-tokens/**").hasRole("ADMIN")
+                        .requestMatchers("/internal/test-data/**").permitAll()
 
+                        .requestMatchers("/api/v1/invite-tokens/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(ex -> ex
