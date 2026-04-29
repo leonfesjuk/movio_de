@@ -5,6 +5,7 @@ import de.upteams.tasktracker.exception.handling.exceptions.common.RestApiExcept
 import de.upteams.tasktracker.exception.handling.response.ErrorResponseDto;
 import de.upteams.tasktracker.exception.handling.response.ValidationErrorDto;
 import de.upteams.tasktracker.user.dto.response.ApiErrorResponse;
+import de.upteams.tasktracker.user.dto.response.MessageResponseDto;
 import de.upteams.tasktracker.user.exception.InvalidTokenException;
 import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.servlet.http.HttpServletRequest;
@@ -12,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -100,6 +102,20 @@ public class GlobalExceptionHandler {
         );
 
         return ResponseEntity.badRequest().body(response);
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<MessageResponseDto> handleBadCredentials(BadCredentialsException ex) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new MessageResponseDto(ex.getMessage()));
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<MessageResponseDto> handleIllegalArgument(IllegalArgumentException ex) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new MessageResponseDto(ex.getMessage()));
     }
 
 //    *

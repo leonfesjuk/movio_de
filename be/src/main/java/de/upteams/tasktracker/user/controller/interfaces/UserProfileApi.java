@@ -1,7 +1,9 @@
 package de.upteams.tasktracker.user.controller.interfaces;
 
 import de.upteams.tasktracker.security.service.AuthUserDetails;
+import de.upteams.tasktracker.user.dto.request.PasswordChangeDto;
 import de.upteams.tasktracker.user.dto.request.ProfileUpdateDto;
+import de.upteams.tasktracker.user.dto.response.MessageResponseDto;
 import de.upteams.tasktracker.user.dto.response.UserResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -35,4 +37,9 @@ public interface UserProfileApi {
             @AuthenticationPrincipal AuthUserDetails principal,
             @RequestBody @Valid ProfileUpdateDto updateDto
     );
+
+    @Operation(summary = "Change user password")
+    @PostMapping("/change-password")
+    @PreAuthorize("isAuthenticated()")
+    MessageResponseDto changePassword(@RequestBody @Valid PasswordChangeDto requestDto);
 }
