@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import type { Session } from "@/features/session-card/types";
+import {useEffect, useState} from "react";
+import type {Session} from "@/features/session-card/types";
 import {AdminSessionCard} from "@/features/admin-session-card/adminSessionCard";
 import {
     getSessions,
@@ -7,6 +7,7 @@ import {
     createSession,
     updateSession,
 } from "@/features/services/sessionService";
+import {SessionTable} from "@/features/session-card/CinemaTable";
 
 export default function AdminPage() {
     const [sessions, setSessions] = useState<Session[]>([]);
@@ -27,18 +28,22 @@ export default function AdminPage() {
                 console.error(e);
 
                 setSessions([
-                    { id: "1",
-                      title: "Avatar",
-                      time: "2026-04-21T18:00:00",
-                      date: "2026-04-21T18:00:00",
-                      city: "berlin",
-                      notificationsSent: false },
-                    { id: "2",
+                    {
+                        id: "1",
+                        title: "Avatar",
+                        time: "2026-04-21T18:00:00",
+                        date: "2026-04-21T18:00:00",
+                        city: "berlin",
+                        notificationsSent: false
+                    },
+                    {
+                        id: "2",
                         title: "Batman",
                         time: "2026-04-21T19:40:00",
                         date: "2026-04-21T19:40:00",
                         city: "dresden",
-                        notificationsSent: false },
+                        notificationsSent: false
+                    },
                 ]);
             }
         };
@@ -46,11 +51,11 @@ export default function AdminPage() {
         void fetchData();
     }, []);
 
-    const handleDelete = async (id:string)=>{
+    const handleDelete = async (id: string) => {
         try {
             await deleteSession(id);
-            setSessions((prev)=> prev.filter((s)=> s.id !== id));
-        }catch (e){
+            setSessions((prev) => prev.filter((s) => s.id !== id));
+        } catch (e) {
             console.error(e);
             alert("Delete failed");
         }
@@ -93,7 +98,7 @@ export default function AdminPage() {
 
             resetForm();
 
-        } catch (e){
+        } catch (e) {
             console.error(e);
             alert("Save failed");
         }
@@ -165,19 +170,24 @@ export default function AdminPage() {
             {sessions.length === 0 ? (
                 <div className="text-gray-500">No sessions</div>
             ) : (
- 
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <>
+                    <SessionTable
+                        sessions={sessions}
+                        onEdit={handleEdit}
+                        onDelete={handleDelete}
+                    />
 
-                            {sessions.map((session) => (
-                                <AdminSessionCard
-                                    key={session.id}
-                                    session={session}
-                                    onEdit={handleEdit}
-                                    onDelete={handleDelete}
-                                />
-                            ))}
-
-                </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                        {sessions.map((session) => (
+                            <AdminSessionCard
+                                key={session.id}
+                                session={session}
+                                onEdit={handleEdit}
+                                onDelete={handleDelete}
+                            />
+                        ))}
+                    </div>
+                </>
             )}
         </div>
     );
