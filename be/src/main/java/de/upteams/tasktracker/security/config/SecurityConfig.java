@@ -82,6 +82,8 @@ public class SecurityConfig {
                         // Register/confirmation
                         .requestMatchers(HttpMethod.POST, "/api/v1/users/register").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/users/confirm/{code}").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/user/profile/me").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/user/profile/me").authenticated()
 
                         // Публічний доступ до подій та кінотеатрів (лише читання)
                         .requestMatchers(HttpMethod.GET, "/api/events/**").permitAll()

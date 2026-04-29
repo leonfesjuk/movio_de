@@ -22,6 +22,18 @@ public record UserResponseDto(
         String role,
 
         @Schema(
+                description = "User's organization name",
+                example     = "CinemaxX"
+        )
+        String name,
+
+        @Schema(
+                description = "Web-link",
+                example     = "https://cinemaxx.de"
+        )
+        String webLink,
+
+        @Schema(
                 description = "Confirmation status of the user account",
                 example     = "UNCONFIRMED",
                 accessMode  = Schema.AccessMode.READ_ONLY

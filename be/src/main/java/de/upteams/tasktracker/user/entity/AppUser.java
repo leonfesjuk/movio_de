@@ -65,7 +65,8 @@ public class AppUser extends BaseUuidEntity {
     private ConfirmationStatus confirmationStatus = ConfirmationStatus.UNCONFIRMED;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ConfirmationCode> confirmationCodes  = new ArrayList<>();;
+    private List<ConfirmationCode> confirmationCodes = new ArrayList<>();
+    ;
 
     @NotNull(message = "{field.notNull}")
     @Column(name = "role", nullable = false)
@@ -90,5 +91,9 @@ public class AppUser extends BaseUuidEntity {
                 ", webLink='" + webLink + '\'' +
                 ", role=" + role +
                 '}';
+    }
+
+    public void updateProfile(String webLink) {
+        this.webLink = webLink;
     }
 }
