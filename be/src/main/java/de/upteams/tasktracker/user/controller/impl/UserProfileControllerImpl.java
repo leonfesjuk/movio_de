@@ -2,7 +2,9 @@ package de.upteams.tasktracker.user.controller.impl;
 
 import de.upteams.tasktracker.security.service.AuthUserDetails;
 import de.upteams.tasktracker.user.controller.interfaces.UserProfileApi;
+import de.upteams.tasktracker.user.dto.request.PasswordChangeDto;
 import de.upteams.tasktracker.user.dto.request.ProfileUpdateDto;
+import de.upteams.tasktracker.user.dto.response.MessageResponseDto;
 import de.upteams.tasktracker.user.dto.response.UserResponseDto;
 import de.upteams.tasktracker.user.service.UserProfileService;
 import jakarta.validation.Valid;
@@ -39,13 +41,9 @@ public class UserProfileControllerImpl implements UserProfileApi {
         return profileService.updateProfile(principal.user().getId().toString(), updateDto);
     }
 
-//    @Operation(summary = "Change password")
-//    @PutMapping("/me/password")
-//    public ResponseEntity<String> changePassword(
-//            @AuthenticationPrincipal AuthUserDetails principal,
-//            @RequestBody @Valid PasswordChangeDto dto
-//    ) {
-//        profileService.changePassword(principal.user().getId().toString(), dto);
-//        return ResponseEntity.ok("Password successfully changed");
-//    }
+    @Override
+    public MessageResponseDto changePassword(PasswordChangeDto requestDto) {
+        profileService.changePassword(requestDto);
+        return new MessageResponseDto("Password changed successfully");
+    }
 }

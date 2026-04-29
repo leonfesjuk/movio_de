@@ -1,5 +1,7 @@
 package de.upteams.tasktracker.user.service.impl;
 
+import de.upteams.tasktracker.security.service.AuthUserDetails;
+import de.upteams.tasktracker.user.dto.request.PasswordChangeDto;
 import de.upteams.tasktracker.user.dto.request.ProfileUpdateDto;
 import de.upteams.tasktracker.user.dto.response.UserResponseDto;
 import de.upteams.tasktracker.user.entity.AppUser;
@@ -7,6 +9,9 @@ import de.upteams.tasktracker.user.service.UserProfileService;
 import de.upteams.tasktracker.user.service.UserService;
 import de.upteams.tasktracker.user.util.AppUserMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,20 +45,32 @@ public class UserProfileServiceImpl implements UserProfileService {
         return userMapper.mapEntityToDto(user);
     }
 
-//    @Override
-//    @Transactional
-//    public void changePassword(String userId, PasswordChangeDto dto) {
-//        AppUser user = userService.getByIdOrThrow(userId);
-//
-//        if (!passwordEncoder.matches(dto.oldPassword(), user.getPassword())) {
-//            throw new InvalidPasswordException("Invalid current password");
-//        }
-//
-//        if (passwordEncoder.matches(dto.newPassword(), user.getPassword())) {
-//            throw new InvalidPasswordException("New password must be different from current password");
-//        }
-//
-//        user.setPassword(passwordEncoder.encode(dto.newPassword()));
-//        userService.saveOrUpdate(user);
-//    }
+    @Override
+    @Transactional
+    public void changePassword(PasswordChangeDto dto) {
+        AppUser user = getCurrentUser();
+
+        if (!passwordEncoder.matches(dto.currentPassword(), user.getPassword())) {
+            throw new BadCredentialsException("Current password is incorrect");
+        }
+
+        if (!dto.newPassword().equals(dto.confirmPassword())) {
+            throw new IllegalArgumentException("Passwords do not match");
+        }
+
+        if (passwordEncoder.matches(dto.newPassword(), user.getPassword())) {
+            throw new IllegalArgumentException("New password must be different from old password");
+        }
+
+        user.setPassword(passwordEncoder.encode(dto.newPassword()));
+        userService.saveOrUpdate(user);
+    }
+
+    private AppUser getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        AuthUserDetails userDetails = (AuthUserDetails) authentication.getPrincipal();
+
+        return userDetails.user();
+    }
 }

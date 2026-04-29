@@ -1,5 +1,6 @@
 package de.upteams.tasktracker.user.service;
 
+import de.upteams.tasktracker.user.dto.request.PasswordChangeDto;
 import de.upteams.tasktracker.user.dto.request.ProfileUpdateDto;
 import de.upteams.tasktracker.user.dto.response.UserResponseDto;
 
@@ -9,5 +10,5 @@ public interface UserProfileService {
 
     UserResponseDto updateProfile(String userId, ProfileUpdateDto updateDto);
 
-//    void changePassword(String userId, PasswordChangeDto dto)
+    void changePassword(PasswordChangeDto dto);
 }
