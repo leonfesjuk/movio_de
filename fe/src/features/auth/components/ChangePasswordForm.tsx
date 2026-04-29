@@ -4,7 +4,6 @@ import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import {
   changePassword,
   clearAuthErrors,
-  logout,
   selectChangePasswordError,
 } from "../slice/authSlice";
 
