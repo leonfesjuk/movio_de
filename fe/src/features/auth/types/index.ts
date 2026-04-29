@@ -25,6 +25,7 @@ export interface AuthSliceState {
   user?: User;
   loginErrorMessage?: string;
   registerFieldErrors?: Record<string, string[]>;
+  changePasswordError?: string;
 }
 
 export type ValidationErrorResponse = {
@@ -48,4 +49,14 @@ export interface AuthResponse {
   accessToken: string;
   refreshToken: string;
   user: User;
+}
+
+export interface ChangePasswordDto {
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+}
+
+export interface MessageResponse {
+  message: string;
 }

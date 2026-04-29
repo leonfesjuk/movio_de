@@ -1,5 +1,5 @@
 import axiosInstance from "../../../lib/axiosInstance";
-import type { Credentials, User } from "../types";
+import type { ChangePasswordDto, Credentials, User } from "../types";
 
 // we already added  prefix /api in axios config
 
@@ -9,12 +9,13 @@ const API = {
     RESET_PASSWORD: "/auth/reset-password",
     FORGOT_PASSWORD: "/auth/forgot-password",
     ME: "/auth/me",
-    LOGOUT: "/auth/logout"
+    LOGOUT: "/auth/logout",
   },
   USERS: {
     REGISTER: "/users/register",
     VERIFY_EMAIL: "/users/confirm",
     PROFILE: "/users/profile/me",
+    CHANGE_PASSWORD: "/users/profile/change-password",
   },
 } as const;
 
@@ -53,6 +54,13 @@ export const fetchResetPassword = async (data: {
   newPassword: string;
 }) => {
   const res = await axiosInstance.post(API.AUTH.RESET_PASSWORD, data);
+  return res.data;
+};
+
+export const fetchChangePassword = async (
+  dto: ChangePasswordDto,
+): Promise<{ message: string }> => {
+  const res = await axiosInstance.post(API.USERS.CHANGE_PASSWORD, dto);
   return res.data;
 };
 

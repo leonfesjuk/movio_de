@@ -4,6 +4,7 @@ import { selectUser, updateProfile } from "../slice/authSlice";
 import { useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { Link } from "react-router-dom";
 
 const ProfileForm = () => {
   const dispatch = useAppDispatch();
@@ -123,13 +124,23 @@ const ProfileForm = () => {
 
       {/* Edit Profile */}
       {!isEditing && (
-        <button
-          type="button"
-          onClick={() => setIsEditing(true)}
-          className="w-full inline-flex items-center justify-center rounded-md bg-black px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black"
-        >
-          Edit Profile
-        </button>
+        <>
+          <button
+            type="button"
+            onClick={() => setIsEditing(true)}
+            className="w-full inline-flex items-center justify-center rounded-md bg-black px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black"
+          >
+            Edit Profile
+          </button>
+          <div className="text-center">
+            <Link
+              to="/profile/change-password"
+              className="text-sm text-gray-500 hover:text-black"
+            >
+              Change password
+            </Link>
+          </div>
+        </>
       )}
     </div>
   );
