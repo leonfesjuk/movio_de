@@ -29,7 +29,7 @@ export const getSessions = async (): Promise<Session[]> => {
             : "";
 
         const time = dateObj
-            ? dateObj.toISOString().slice(11,16)
+            ? dateObj.toTimeString().slice(0,5)
         : "";
 
         return{
