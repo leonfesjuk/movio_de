@@ -27,14 +27,14 @@ export default function Home() {
                 setSessions([
                     { id: "1",
                         title: "Avatar",
-                        time: "2026-04-21T18:00:00",
-                        date: "2026-04-21T18:00:00",
+                        time: "18:00",
+                        date: "2026-04-21",
                         city: "berlin",
                         notificationsSent: false },
                     { id: "2",
                         title: "Batman",
-                        time: "2026-04-21T19:40:00",
-                        date: "2026-04-21T19:40:00",
+                        time: "18:00",
+                        date: "2026-04-29",
                         city: "dresden",
                         notificationsSent: false },
                 ]);
