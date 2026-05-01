@@ -30,11 +30,9 @@ export const SessionCard = ({session, isAuth,showNotificationStatus}: SessionCar
                     {session.city}
                 </div>
 
-                <CardDescription>
-                    <div className="flex justify-between">
+                <CardDescription className="flex justify-between">
                         <span>{session.date}</span>
                         <span>{session.time}</span>
-                    </div>
                 </CardDescription>
 
                 <CardAction>

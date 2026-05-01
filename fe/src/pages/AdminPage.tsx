@@ -8,7 +8,6 @@ import {
     updateSession,
 } from "@/features/services/sessionService";
 import {SessionTable} from "@/features/session-card/CinemaTable";
-
 export default function AdminPage() {
     const [sessions, setSessions] = useState<Session[]>([]);
 
@@ -24,6 +23,7 @@ export default function AdminPage() {
             try {
                 const data = await getSessions();
                 setSessions(data);
+
             } catch (e) {
                 console.error(e);
 
@@ -31,16 +31,16 @@ export default function AdminPage() {
                     {
                         id: "1",
                         title: "Avatar",
-                        time: "2026-04-21T18:00:00",
-                        date: "2026-04-21T18:00:00",
+                        time: "18:00",
+                        date: "2026-04-21",
                         city: "berlin",
                         notificationsSent: false
                     },
                     {
                         id: "2",
                         title: "Batman",
-                        time: "2026-04-21T19:40:00",
-                        date: "2026-04-21T19:40:00",
+                        time: "19:00",
+                        date: "2026-04-29",
                         city: "dresden",
                         notificationsSent: false
                     },
