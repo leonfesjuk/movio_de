@@ -12,7 +12,6 @@ import NewPasswordConfirmationPage from "./pages/NewPasswordConfirmationPage";
 import VerifyEmailPage from "./pages/VerifyEmailPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import EmailConfirmationPasswordPage from "./pages/EmailConfirmationPasswordPage";
-import InviteTokensPage from "./pages/InviteTokensPage";
 import RequireRole from "./components/auth/RequireRole";
 import AdminPage from "@/pages/AdminPage";
 import Profile from "./pages/Profile";
@@ -45,7 +44,7 @@ function App() {
       }
     };
 
-    initAuth();
+    void initAuth();
   }, [dispatch]);
 
   return (
@@ -74,15 +73,14 @@ function App() {
           />
 
           <Route
-              path="invite-tokens"
+              path="admin"
               element={
                 <RequireRole role="ROLE_ADMIN">
-                  <InviteTokensPage />
+                  <AdminPage />
                 </RequireRole>
               }
           />
 
-          <Route path="admin" element={<AdminPage />} />
 
           <Route path="profile" element={<Profile />} />
           <Route path="profile/change-password" element={<ChangePassword />} />
