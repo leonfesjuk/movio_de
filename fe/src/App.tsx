@@ -74,7 +74,7 @@ function App() {
           />
 
           <Route
-              path="tokens"
+              path="invite-tokens"
               element={
             <RequireRole role="ROLE_ADMIN">
               <InviteTokensPage/>
@@ -82,14 +82,7 @@ function App() {
               }
           />
 
-          <Route
-              path="admin"
-              element={
-                <RequireRole role="ROLE_ADMIN">
-                  <AdminPage />
-                </RequireRole>
-              }
-          />
+          <Route path="dashboard" element={<AdminPage />} />
 
 
           <Route path="profile" element={<Profile />} />

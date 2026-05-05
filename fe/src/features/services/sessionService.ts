@@ -46,10 +46,13 @@ export const getSessions = async (): Promise<Session[]> => {
 };
 
 export const createSession = async (session: Partial<ApiSession>)=>{
+    const token = localStorage.getItem("accessToken");
+
     const  response = await fetch("/api/events", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
         },
         body: JSON.stringify(session),
     });
@@ -62,8 +65,13 @@ export const createSession = async (session: Partial<ApiSession>)=>{
 };
 
 export const deleteSession = async (id:string)=>{
+    const token = localStorage.getItem("accessToken");
+
     const response = await  fetch(`/api/events/${id}`,{
         method: "DELETE",
+        headers:{
+            "Authorization":  `Bearer ${token}`,
+        },
     });
 
     if (!response.ok){
@@ -72,10 +80,13 @@ export const deleteSession = async (id:string)=>{
 };
 
 export  const updateSession = async (id: string, session: Partial<ApiSession>)=>{
+    const token = localStorage.getItem("accessToken");
+
     const  response = await  fetch(`/api/events/${id}`, {
         method: "PUT",
         headers: {
             "Content-Type" : "application/json",
+            "Authorization":  `Bearer ${token}`,
         },
         body: JSON.stringify(session),
     });
