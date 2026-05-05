@@ -22,6 +22,7 @@ import type { AppDispatch, RootState } from "./app/store";
 import { useSelector } from "react-redux";
 import { useEffect } from "react";
 import { checkAuth, me } from "./features/auth/slice/authSlice";
+import InviteTokensPage from "@/pages/InviteTokensPage";
 
 const AUTH_STORAGE_KEY = "is_authenticated";
 
@@ -70,6 +71,15 @@ function App() {
           <Route
               path="auth/confirm-new-password"
               element={<NewPasswordConfirmationPage />}
+          />
+
+          <Route
+              path="tokens"
+              element={
+            <RequireRole role="ROLE_ADMIN">
+              <InviteTokensPage/>
+            </RequireRole>
+              }
           />
 
           <Route
