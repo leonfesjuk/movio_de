@@ -64,7 +64,7 @@ public class UserSeedService implements TestDataSeeder {
             user.setEmail("test" + baseName + suffix + "@example.com");
             user.setName("test_" + baseName + "_" + suffix);
             user.setWebLink("https://example.com/" + baseName);
-            user.setRole(Role.ROLE_ADMIN);
+            user.setRole(Role.ROLE_USER);
             user.setConfirmationStatus(ConfirmationStatus.CONFIRMED);
             user.setInviteToken(inviteToken);
 
