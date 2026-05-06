@@ -44,6 +44,12 @@ export default function Header() {
           {isAuthenticated ? (
             <>
               <Link
+                to="/dashboard"
+                className="text-sm font-medium text-gray-600 hover:text-black transition-colors"
+              >
+                Dashboard
+              </Link>
+              <Link
                 to="/profile"
                 className="text-sm font-medium text-gray-600 hover:text-black transition-colors"
               >

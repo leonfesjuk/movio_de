@@ -12,7 +12,7 @@ import { Eye, EyeOff } from "lucide-react";
 export type CustomInputProps = React.InputHTMLAttributes<HTMLInputElement> & {
   name?: string;
   label?: string;
-  type?: "text" | "password" | "email" | "tel" | "number";
+  type?: "text" | "password" | "email" | "tel" | "number" | "datetime-local";
   id?: string;
   required?: boolean;
   disabled?: boolean;
