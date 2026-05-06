@@ -24,7 +24,6 @@ import { CustomInput } from "@/components/common/input";
 export default function AdminPage() {
   const [sessions, setSessions] = useState<Session[]>([]);
 
-  const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
 
   const [title, setTitle] = useState("");
@@ -78,7 +77,6 @@ export default function AdminPage() {
     setTime("");
     setCity("");
     setEditingId(null);
-    setShowForm(false);
   };
 
   const handleCreateOrEdit = async () => {
@@ -120,7 +118,6 @@ export default function AdminPage() {
     setTime(`${session.date}T${session.time}`);
     setCity(session.city);
     setEditingId(session.id);
-    setShowForm(true);
   };
 
   return (
