@@ -16,3 +16,15 @@ export const createCinema = async (dto: CinemaCreateDto): Promise<Cinema> => {
   const res = await axiosInstance.post(CINEMA_BASE_PATH, dto);
   return res.data;
 };
+
+export const  updateCinema = async (
+    id: string,
+    dto: CinemaCreateDto,
+): Promise<Cinema>=>{
+  const res = await  axiosInstance.put(`${CINEMA_BASE_PATH}/${id}`, dto);
+  return res.data;
+};
+
+export const deleteCinema = async (id: string)=>{
+  await axiosInstance.delete(`${CINEMA_BASE_PATH}/${id}`);
+};

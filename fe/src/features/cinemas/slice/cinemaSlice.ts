@@ -50,7 +50,7 @@ export const cinemaSlice = createAppSlice({
 
     loadMoreCinemas: create.asyncThunk(
       async (_, { getState }) => {
-        const state = getState() as any;
+        const state = getState() as {cinema: CinemaSliceState};
         const page = state.cinema.page;
 
         return api.fetchCinemas(page);
@@ -73,20 +73,12 @@ export const cinemaSlice = createAppSlice({
 
     createCinema: create.asyncThunk(
       async (dto: CinemaCreateDto) => {
-        return api.createCinema(dto).catch((err) => {
-          if (isAxiosError(err)) {
-            throw new Error(
-              err.response?.data?.message || "Failed to create cinema",
-            );
-          }
-          throw err;
-        });
+        return api.createCinema(dto);
       },
       {
         pending: (state) => {
           state.isCreating = true;
           state.createErrorMessage = undefined;
-          state.createdCinema = undefined;
         },
         fulfilled: (state, action) => {
           state.isCreating = false;
@@ -100,6 +92,33 @@ export const cinemaSlice = createAppSlice({
       },
     ),
 
+    updateCinema: create.asyncThunk(
+        async ({ id, dto}: { id: string; dto: CinemaCreateDto }) =>{
+          return api.updateCinema(id,dto);
+        },
+        {
+          fulfilled: (state, action) => {
+            state.cinemas = state.cinemas.map((c)=>
+            c.id === action.payload.id ? action.payload : c,
+                );
+          },
+        },
+    ),
+
+    deleteCinema: create.asyncThunk(
+        async (id: string) => {
+          await api.deleteCinema(id);
+          return id;
+        },
+        {
+          fulfilled: (state, action) => {
+            state.cinemas = state.cinemas.filter(
+                (c) => c.id !== action.payload,
+            );
+          },
+        },
+    ),
+
     clearCreatedCinema: create.reducer((state) => {
       state.createdCinema = undefined;
     }),
@@ -107,30 +126,30 @@ export const cinemaSlice = createAppSlice({
 
   selectors: {
     selectCinemas: (state) => state.cinemas,
-    selectCreatedCinema: (state) => state.createdCinema,
+    selectIsLoading: (state) => state.isLoading,
+    selectFetchErrorMessage: (state) => state.fetchErrorMessage,
     selectHasMore: (state) => state.hasMore,
     selectIsLoadingMore: (state) => state.isLoadingMore,
-    selectIsLoading: (state) => state.isLoading,
     selectIsCreating: (state) => state.isCreating,
-    selectFetchErrorMessage: (state) => state.fetchErrorMessage,
     selectCreateErrorMessage: (state) => state.createErrorMessage,
   },
 });
 
 export const {
   fetchAllCinemas,
-  createCinema,
   loadMoreCinemas,
+  createCinema,
+  updateCinema,
+  deleteCinema,
   clearCreatedCinema,
 } = cinemaSlice.actions;
 
 export const {
   selectCinemas,
-  selectCreatedCinema,
+  selectIsLoading,
+  selectFetchErrorMessage,
   selectHasMore,
   selectIsLoadingMore,
-  selectIsLoading,
   selectIsCreating,
-  selectFetchErrorMessage,
   selectCreateErrorMessage,
 } = cinemaSlice.selectors;
