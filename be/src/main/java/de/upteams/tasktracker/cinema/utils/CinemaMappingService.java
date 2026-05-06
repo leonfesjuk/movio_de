@@ -9,6 +9,6 @@ import org.mapstruct.MappingConstants;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface CinemaMappingService {
 
-    @Mapping(target = "cityName", ignore = true)
+    @Mapping(source = "geoname.name", target = "cityName")
     CinemaResponseDto mapEntityToDto(Cinema entity);
 }

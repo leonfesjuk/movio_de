@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @Tag(name = "Cinemas", description = "Cinemas API")
-@RequestMapping("/api/cinemas")
+@RequestMapping("/api/v1/cinemas")
 public interface CinemaApi {
 
     @Operation(summary = "Get all cinemas for organization")
