@@ -21,6 +21,8 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { CustomInput } from "@/components/common/input";
+import CinemaForm from "@/features/cinemas/components/CinemaForm";
+import CinemaList from "@/features/cinemas/components/CinemaList";
 export default function AdminPage() {
   const [sessions, setSessions] = useState<Session[]>([]);
 
@@ -127,45 +129,8 @@ export default function AdminPage() {
 
       <h2 className="text-xl font-bold my-6">Cinemas</h2>
 
-      <Dialog>
-        <DialogTrigger asChild>
-          <Button>New cinema</Button>
-        </DialogTrigger>
-        <DialogContent
-          showCloseButton={false}
-          onInteractOutside={(e) => e.preventDefault()}
-          onEscapeKeyDown={(e) => e.preventDefault()}
-          className="sm:max-w-sm"
-        >
-          <DialogHeader>
-            <DialogTitle>
-              {editingId ? "Update cinema" : "Create new cinema"}
-            </DialogTitle>
-          </DialogHeader>
-          <CustomInput
-            id="cinema_title"
-            label="Title"
-          />
-          <CustomInput
-            id="cinema_city"
-            label="City"
-          />
-          <CustomInput
-            id="cinema_address"
-            label="Address"
-          />
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button variant="outline">
-                Cancel
-              </Button>
-            </DialogClose>
-            <Button type="submit">
-              {editingId ? "Update" : "Create"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <CinemaForm />
+      <CinemaList />
 
       <Separator />
       <h2 className="text-xl font-bold my-6">Sessions</h2>
