@@ -1,194 +1,254 @@
-import {useEffect, useState} from "react";
-import type {Session} from "@/features/session-card/types";
-import {AdminSessionCard} from "@/features/admin-session-card/adminSessionCard";
+import { useEffect, useState } from "react";
+import type { Session } from "@/features/session-card/types";
+import { AdminSessionCard } from "@/features/admin-session-card/adminSessionCard";
 import {
-    getSessions,
-    deleteSession,
-    createSession,
-    updateSession,
+  getSessions,
+  deleteSession,
+  createSession,
+  updateSession,
 } from "@/features/services/sessionService";
-import {SessionTable} from "@/features/session-card/CinemaTable";
+import { SessionTable } from "@/features/session-card/CinemaTable";
+import { Separator } from "@/components/ui/separator";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { CustomInput } from "@/components/common/input";
 export default function AdminPage() {
-    const [sessions, setSessions] = useState<Session[]>([]);
+  const [sessions, setSessions] = useState<Session[]>([]);
 
-    const [showForm, setShowForm] = useState(false);
-    const [editingId, setEditingId] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
 
-    const [title, setTitle] = useState("");
-    const [time, setTime] = useState("");
-    const [city, setCity] = useState("");
+  const [title, setTitle] = useState("");
+  const [time, setTime] = useState("");
+  const [city, setCity] = useState("");
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const data = await getSessions();
-                setSessions(data);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await getSessions();
+        setSessions(data);
+      } catch (e) {
+        console.error(e);
 
-            } catch (e) {
-                console.error(e);
-
-                setSessions([
-                    {
-                        id: "1",
-                        title: "Avatar",
-                        time: "18:00",
-                        date: "2026-04-21",
-                        city: "berlin",
-                        notificationsSent: false
-                    },
-                    {
-                        id: "2",
-                        title: "Batman",
-                        time: "19:00",
-                        date: "2026-04-29",
-                        city: "dresden",
-                        notificationsSent: false
-                    },
-                ]);
-            }
-        };
-
-        void fetchData();
-    }, []);
-
-    const handleDelete = async (id: string) => {
-        try {
-            await deleteSession(id);
-            setSessions((prev) => prev.filter((s) => s.id !== id));
-        } catch (e) {
-            console.error(e);
-            alert("Delete failed");
-        }
+        setSessions([
+          {
+            id: "1",
+            title: "Avatar",
+            time: "18:00",
+            date: "2026-04-21",
+            city: "berlin",
+            notificationsSent: false,
+          },
+          {
+            id: "2",
+            title: "Batman",
+            time: "19:00",
+            date: "2026-04-29",
+            city: "dresden",
+            notificationsSent: false,
+          },
+        ]);
+      }
     };
 
-    const resetForm = () => {
-        setTitle("");
-        setTime("");
-        setCity("");
-        setEditingId(null);
-        setShowForm(false);
-    };
+    void fetchData();
+  }, []);
 
-    const handleCreateOrEdit = async () => {
-        if (!title || !time || !city) {
-            alert("Please fill all fields");
-            return;
-        }
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteSession(id);
+      setSessions((prev) => prev.filter((s) => s.id !== id));
+    } catch (e) {
+      console.error(e);
+      alert("Delete failed");
+    }
+  };
 
-        try {
-            if (editingId) {
-                await updateSession(editingId, {
-                    title,
-                    datetime: time,
-                    cinema: {
-                        cityName: city,
-                    },
-                });
-            } else {
-                await createSession({
-                    title,
-                    datetime: time,
-                    cinema: {
-                        cityName: city,
-                    },
-                });
-            }
-            const data = await getSessions();
-            setSessions(data);
+  const resetForm = () => {
+    setTitle("");
+    setTime("");
+    setCity("");
+    setEditingId(null);
+  };
 
-            resetForm();
+  const handleCreateOrEdit = async () => {
+    if (!title || !time || !city) {
+      alert("Please fill all fields");
+      return;
+    }
 
-        } catch (e) {
-            console.error(e);
-            alert("Save failed");
-        }
-    };
+    try {
+      if (editingId) {
+        await updateSession(editingId, {
+          title,
+          datetime: time,
+          cinema: {
+            cityName: city,
+          },
+        });
+      } else {
+        await createSession({
+          title,
+          datetime: time,
+          cinema: {
+            cityName: city,
+          },
+        });
+      }
+      const data = await getSessions();
+      setSessions(data);
 
-    const handleEdit = (session: Session) => {
-        setTitle(session.title);
-        setTime(`${session.date}T${session.time}`);
-        setCity(session.city);
-        setEditingId(session.id);
-        setShowForm(true);
-    };
+      resetForm();
+    } catch (e) {
+      console.error(e);
+      alert("Save failed");
+    }
+  };
 
-    return (
-        <div className="p-10">
-            <h1 className="text-2xl font-bold mb-6">Admin Panel</h1>
+  const handleEdit = (session: Session) => {
+    setTitle(session.title);
+    setTime(`${session.date}T${session.time}`);
+    setCity(session.city);
+    setEditingId(session.id);
+  };
 
-            <button
-                onClick={() => {
-                    setShowForm((prev) => !prev);
-                    setEditingId(null);
-                }}
-                className="mb-4 px-4 py-2 bg-green-600 text-white rounded"
-            >
-                Add session
-            </button>
+  return (
+    <div className="p-10">
+      <h1 className="text-2xl font-bold mb-6">Dashboard</h1>
+      <Separator />
 
-            {showForm && (
-                <div className="mb-6 border p-4 rounded-lg space-y-2">
-                    <input
-                        placeholder="Title"
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
-                        className="border p-2 w-full"
-                    />
+      <h2 className="text-xl font-bold my-6">Cinemas</h2>
 
-                    <input
-                        type="datetime-local"
-                        value={time}
-                        onChange={(e) => setTime(e.target.value)}
-                        className="border p-2 w-full"
-                    />
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button>New cinema</Button>
+        </DialogTrigger>
+        <DialogContent
+          showCloseButton={false}
+          onInteractOutside={(e) => e.preventDefault()}
+          onEscapeKeyDown={(e) => e.preventDefault()}
+          className="sm:max-w-sm"
+        >
+          <DialogHeader>
+            <DialogTitle>
+              {editingId ? "Update cinema" : "Create new cinema"}
+            </DialogTitle>
+          </DialogHeader>
+          <CustomInput
+            id="cinema_title"
+            label="Title"
+          />
+          <CustomInput
+            id="cinema_city"
+            label="City"
+          />
+          <CustomInput
+            id="cinema_address"
+            label="Address"
+          />
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button variant="outline">
+                Cancel
+              </Button>
+            </DialogClose>
+            <Button type="submit">
+              {editingId ? "Update" : "Create"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
-                    <input
-                        placeholder="City"
-                        value={city}
-                        onChange={(e) => setCity(e.target.value)}
-                        className="border p-2 w-full"
-                    />
+      <Separator />
+      <h2 className="text-xl font-bold my-6">Sessions</h2>
 
-                    <div className="flex gap-2">
-                        <button
-                            onClick={handleCreateOrEdit}
-                            className="px-3 py-1 bg-blue-500 text-white rounded"
-                        >
-                            {editingId ? "Update" : "Save"}
-                        </button>
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button
+            onClick={() => {
+              setEditingId(null);
+            }}
+          >
+            New poster
+          </Button>
+        </DialogTrigger>
+        <DialogContent
+          showCloseButton={false}
+          onInteractOutside={(e) => e.preventDefault()}
+          onEscapeKeyDown={(e) => e.preventDefault()}
+          className="sm:max-w-sm"
+        >
+          <DialogHeader>
+            <DialogTitle>
+              {editingId ? "Update poster" : "Create new poster"}
+            </DialogTitle>
+          </DialogHeader>
+          <CustomInput
+            id="poster_title"
+            label="Poster title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
+          <CustomInput
+            id="poster_time"
+            type="datetime-local"
+            label="Date/Time"
+            value={time}
+            onChange={(e) => setTime(e.target.value)}
+          />
+          <CustomInput
+            id="poster_city"
+            label="City"
+            value={city}
+            onChange={(e) => setCity(e.target.value)}
+          />
+          <DialogDescription className="text-red-500">
+            Please ensure all information is entered correctly. Once a poster is
+            created, editing is not possible!
+          </DialogDescription>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button variant="outline" onClick={resetForm}>
+                Cancel
+              </Button>
+            </DialogClose>
+            <Button type="submit" onClick={handleCreateOrEdit}>
+              {editingId ? "Update" : "Create"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
-                        <button
-                            onClick={resetForm}
-                            className="px-3 py-1 bg-gray-300 rounded"
-                        >
-                            Cancel
-                        </button>
-                    </div>
-                </div>
-            )}
+      {sessions.length === 0 ? (
+        <div className="text-gray-500">No sessions</div>
+      ) : (
+        <>
+          <SessionTable
+            sessions={sessions}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+          />
 
-            {sessions.length === 0 ? (
-                <div className="text-gray-500">No sessions</div>
-            ) : (
-                <>
-                    <SessionTable
-                        sessions={sessions}
-                        onEdit={handleEdit}
-                        onDelete={handleDelete}
-                    />
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                        {sessions.map((session) => (
-                            <AdminSessionCard
-                                key={session.id}
-                                session={session}
-                                onEdit={handleEdit}
-                                onDelete={handleDelete}
-                            />
-                        ))}
-                    </div>
-                </>
-            )}
-        </div>
-    );
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {sessions.map((session) => (
+              <AdminSessionCard
+                key={session.id}
+                session={session}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+              />
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
 }
