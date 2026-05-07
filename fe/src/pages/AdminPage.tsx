@@ -7,7 +7,6 @@ import {
   createSession,
   updateSession,
 } from "@/features/services/sessionService";
-import { SessionTable } from "@/features/session-card/CinemaTable";
 import { Separator } from "@/components/ui/separator";
 import {
   Dialog,
@@ -138,6 +137,7 @@ export default function AdminPage() {
       <Dialog>
         <DialogTrigger asChild>
           <Button
+              className="mb-4"
             onClick={() => {
               setEditingId(null);
             }}
@@ -196,12 +196,6 @@ export default function AdminPage() {
         <div className="text-gray-500">No sessions</div>
       ) : (
         <>
-          <SessionTable
-            sessions={sessions}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-          />
-
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {sessions.map((session) => (
               <AdminSessionCard
