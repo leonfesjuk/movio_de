@@ -83,7 +83,7 @@ export const cinemaSlice = createAppSlice({
         fulfilled: (state, action) => {
           state.isCreating = false;
           state.createdCinema = action.payload;
-          state.cinemas = [action.payload, ...state.cinemas];
+          state.cinemas = [...state.cinemas, action.payload];
         },
         rejected: (state, action) => {
           state.isCreating = false;
