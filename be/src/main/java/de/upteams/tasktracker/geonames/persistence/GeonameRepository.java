@@ -12,15 +12,13 @@ import java.util.List;
 @Repository
 public interface GeonameRepository extends JpaRepository<GeonameEntity, Long> {
 
-    @Query("SELECT g FROM GeonameEntity g " +
-           "WHERE g.isActive = true " +
-           "AND (LOWER(g.name) LIKE LOWER(CONCAT(:q, '%')) " +
-           "OR LOWER(g.asciiName) LIKE LOWER(CONCAT(:q, '%'))) " +
-           "ORDER BY g.population DESC")
+    @Query(value = "SELECT g FROM GeonameEntity g " +
+            "WHERE (LOWER(g.name) LIKE LOWER(CONCAT(:q, '%')) " +
+            "OR LOWER(g.asciiName) LIKE LOWER(CONCAT(:q, '%'))) " +
+            "ORDER BY g.population DESC")
     List<GeonameEntity> searchAll(@Param("q") String query, Pageable pageable);
 
     @Query("SELECT DISTINCT g FROM GeonameEntity g " +
-           "JOIN Cinema c ON c.geonameId = g.id " +
            "WHERE g.isActive = true " +
            "AND (LOWER(g.name) LIKE LOWER(CONCAT(:q, '%')) " +
            "OR LOWER(g.asciiName) LIKE LOWER(CONCAT(:q, '%'))) " +
