@@ -35,11 +35,16 @@ axiosInstance.interceptors.response.use(
       _retry?: boolean;
     };
 
+    const isAuthRequest =
+      originalRequest.url?.includes("/auth/login") ||
+      originalRequest.url?.includes("/auth/register") ||
+      originalRequest.url?.includes("/auth/refresh-token");
+
     // If 401 error and not a token refresh request
     if (
       error.response?.status === 401 &&
       !originalRequest._retry &&
-      !originalRequest.url?.includes("/auth/refresh-token")
+      !isAuthRequest
     ) {
       originalRequest._retry = true;
 
@@ -68,7 +73,7 @@ axiosInstance.interceptors.response.use(
         // If token refresh fails, logout user
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
-        window.location.href = "/login";
+        window.location.href = "/#/login";
         return Promise.reject(refreshError);
       }
     }
