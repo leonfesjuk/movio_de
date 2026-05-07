@@ -7,7 +7,6 @@ import {
   createSession,
   updateSession,
 } from "@/features/services/sessionService";
-import { SessionTable } from "@/features/session-card/CinemaTable";
 import { Separator } from "@/components/ui/separator";
 import {
   Dialog,
@@ -39,25 +38,7 @@ export default function AdminPage() {
         setSessions(data);
       } catch (e) {
         console.error(e);
-
-        setSessions([
-          {
-            id: "1",
-            title: "Avatar",
-            time: "18:00",
-            date: "2026-04-21",
-            city: "berlin",
-            notificationsSent: false,
-          },
-          {
-            id: "2",
-            title: "Batman",
-            time: "19:00",
-            date: "2026-04-29",
-            city: "dresden",
-            notificationsSent: false,
-          },
-        ]);
+        setSessions([]);
       }
     };
 
@@ -138,6 +119,7 @@ export default function AdminPage() {
       <Dialog>
         <DialogTrigger asChild>
           <Button
+              className="mb-4"
             onClick={() => {
               setEditingId(null);
             }}
@@ -193,15 +175,17 @@ export default function AdminPage() {
       </Dialog>
 
       {sessions.length === 0 ? (
-        <div className="text-gray-500">No sessions</div>
+        <div className="min-h-[260px] flex items-center justify-center">
+          <div className="w-full max-w-xl rounded-2xl border border-dashed border-gray-300 bg-gray-50 px-8 py-10 text-center">
+            <p className="text-xl font-semibold text-gray-800">Пока пусто</p>
+            <p className="mt-2 text-sm text-gray-600">
+              Здесь пока нет сеансов. Вы можете создать свой первый сеанс по кнопке{" "}
+              <span className="font-medium text-gray-800">New poster</span>.
+            </p>
+          </div>
+        </div>
       ) : (
         <>
-          <SessionTable
-            sessions={sessions}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-          />
-
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {sessions.map((session) => (
               <AdminSessionCard
