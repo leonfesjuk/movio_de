@@ -32,15 +32,23 @@ export const getSessions = async (): Promise<Session[]> => {
             ? dateObj.toTimeString().slice(0,5)
         : "";
 
-        return{
-            id:String(item.id),
+        return {
+            id: String(item.id),
             title: item.title || "",
             date,
             time,
+            datetime: item.datetime,
             city: item.cinema?.cityName?.toLowerCase() || "",
-            notificationsSent: false,
+            description: item.description || "",
             imageUrl: item.imageUrl,
             externalUrl: item.seanceLink,
+            cinemaId: item.cinemaId,
+            notificationsSent: false,
+            timeFlags: item.timeFlags || {
+                timeFlag1: false,
+                timeFlag2: false,
+                timeFlag3: false,
+            },
         };
     });
 };

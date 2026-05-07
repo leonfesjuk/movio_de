@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import axiosInstance from "@/lib/axiosInstance";
 import type { Session } from "@/features/session-card/types";
 import { AdminSessionCard } from "@/features/admin-session-card/adminSessionCard";
 import {
@@ -22,14 +23,21 @@ import { Button } from "@/components/ui/button";
 import { CustomInput } from "@/components/common/input";
 import CinemaForm from "@/features/cinemas/components/CinemaForm";
 import CinemaList from "@/features/cinemas/components/CinemaList";
+
 export default function AdminPage() {
   const [sessions, setSessions] = useState<Session[]>([]);
-
+  const [cinemas, setCinemas] = useState<
+      { id: string; name: string }[]
+  >([]);
   const [editingId, setEditingId] = useState<string | null>(null);
 
   const [title, setTitle] = useState("");
   const [time, setTime] = useState("");
-  const [city, setCity] = useState("");
+
+  const [description, setDescription] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
+  const [seanceLink, setSeanceLink] = useState("");
+  const [cinemaId, setCinemaId] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -45,6 +53,12 @@ export default function AdminPage() {
     void fetchData();
   }, []);
 
+  useEffect(() => {
+    axiosInstance.get("/cinemas").then((res) => {
+      setCinemas(res.data.items);
+    });
+  }, []);
+
   const handleDelete = async (id: string) => {
     try {
       await deleteSession(id);
@@ -58,12 +72,15 @@ export default function AdminPage() {
   const resetForm = () => {
     setTitle("");
     setTime("");
-    setCity("");
+    setDescription("");
+    setImageUrl("");
+    setSeanceLink("");
+    setCinemaId("");
     setEditingId(null);
   };
 
   const handleCreateOrEdit = async () => {
-    if (!title || !time || !city) {
+    if (!title || !time || !cinemaId) {
       alert("Please fill all fields");
       return;
     }
@@ -72,17 +89,29 @@ export default function AdminPage() {
       if (editingId) {
         await updateSession(editingId, {
           title,
+          description,
+          imageUrl,
+          seanceLink,
           datetime: time,
-          cinema: {
-            cityName: city,
+          cinemaId,
+          timeFlags: {
+            timeFlag1: false,
+            timeFlag2: false,
+            timeFlag3: false,
           },
         });
       } else {
         await createSession({
           title,
+          description,
+          imageUrl,
+          seanceLink,
           datetime: time,
-          cinema: {
-            cityName: city,
+          cinemaId,
+          timeFlags: {
+            timeFlag1: false,
+            timeFlag2: false,
+            timeFlag3: false,
           },
         });
       }
@@ -99,7 +128,10 @@ export default function AdminPage() {
   const handleEdit = (session: Session) => {
     setTitle(session.title);
     setTime(`${session.date}T${session.time}`);
-    setCity(session.city);
+    setDescription(session.description || "");
+    setImageUrl(session.imageUrl || "");
+    setSeanceLink(session.externalUrl || "");
+    setCinemaId(session.cinemaId || "");
     setEditingId(session.id);
   };
 
@@ -152,11 +184,40 @@ export default function AdminPage() {
             onChange={(e) => setTime(e.target.value)}
           />
           <CustomInput
-            id="poster_city"
-            label="City"
-            value={city}
-            onChange={(e) => setCity(e.target.value)}
+              id="poster_description"
+              label="Description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
           />
+          <CustomInput
+              id="poster_image"
+              label="Image URL"
+              value={imageUrl}
+              onChange={(e) => setImageUrl(e.target.value)}
+          />
+          <CustomInput
+              id="poster_link"
+              label="Poster Link"
+              value={seanceLink}
+              onChange={(e) => setSeanceLink(e.target.value)}
+          />
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Cinema</label>
+
+            <select
+                value={cinemaId}
+                onChange={(e) => setCinemaId(e.target.value)}
+                className="w-full border rounded-md p-2"
+            >
+              <option value="">Select cinema</option>
+
+              {cinemas.map((cinema) => (
+                  <option key={cinema.id} value={cinema.id}>
+                    {cinema.name}
+                  </option>
+              ))}
+            </select>
+          </div>
           <DialogDescription className="text-red-500">
             Please ensure all information is entered correctly. Once a poster is
             created, editing is not possible!
