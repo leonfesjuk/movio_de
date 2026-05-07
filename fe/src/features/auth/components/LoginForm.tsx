@@ -47,7 +47,7 @@ const LoginForm = () => {
         } catch (e) {
           console.error("Failed to load user", e);
         }
-        navigate("/");
+        navigate("/dashboard");
       }
     },
   });
