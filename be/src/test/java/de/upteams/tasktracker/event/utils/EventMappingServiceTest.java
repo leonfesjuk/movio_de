@@ -32,16 +32,13 @@ class EventMappingServiceTest {
     void mapCreateDtoToEntity_shouldMapFieldsCorrectly() {
         UUID testCinemaId = UUID.randomUUID();
         LocalDateTime now = LocalDateTime.now();
-        EventCreateDto.TimeFlagDto dummyTimeFlag = new EventCreateDto.TimeFlagDto(true, false, true);
-
         EventCreateDto createDto = new EventCreateDto(
                 "New Event Title",
                 "New Event Description",
                 "Location A",
                 "2023-10-27T10:00:00",
                 now,
-                testCinemaId,
-                dummyTimeFlag
+                testCinemaId
         );
 
         Event event = eventMappingService.mapDtoToEntity(createDto);

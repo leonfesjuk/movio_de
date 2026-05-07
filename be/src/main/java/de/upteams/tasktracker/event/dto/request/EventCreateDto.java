@@ -35,18 +35,4 @@ public class EventCreateDto {
     @Schema(description = "Cinema UUID", example = "660e8400-e29b-41d4-a716-446655440001")
     @NotNull
     UUID cinemaId;
-
-    @Schema(description = "Time flags")
-    @NotNull
-    TimeFlagDto timeFlags;
-
-    @Value
-    public static class TimeFlagDto {
-        @Schema(description = "Time flag 1")
-        Boolean timeFlag1;
-        @Schema(description = "Time flag 2")
-        Boolean timeFlag2;
-        @Schema(description = "Time flag 3")
-        Boolean timeFlag3;
-    }
 }
