@@ -1,5 +1,6 @@
 package de.upteams.tasktracker.cinema.entity;
 
+import de.upteams.tasktracker.geonames.entity.GeonameEntity;
 import de.upteams.tasktracker.utils.BaseUuidEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -20,6 +21,15 @@ public class Cinema extends BaseUuidEntity {
 
     @Column(name = "geonameid", nullable = false)
     private Long geonameId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
+            name = "geonameid",
+            referencedColumnName = "geonameid",
+            insertable = false,
+            updatable = false
+    )
+    private GeonameEntity geoname;
 
     @Column(nullable = false)
     private String name;

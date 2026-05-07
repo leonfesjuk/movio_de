@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.List;
 
 @Tag(name = "Geonames Controller", description = "Endpoints for searching and getting details of geonames (cities)")
-@RequestMapping("/api/geonames")
+@RequestMapping("/api/v1/geonames")
 public interface GeonameApi {
 
     @Operation(summary = "Search cities", description = "Search for cities based on a query string. Admins see all cities, users/guests see only cities with cinemas.")
