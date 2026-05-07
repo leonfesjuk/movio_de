@@ -20,6 +20,21 @@ import {
 import { CustomInput } from "@/components/common/input/CustomInput";
 import { useEffect, useState } from "react";
 import axiosInstance from "@/lib/axiosInstance";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Check, ChevronsUpDown } from "lucide-react";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 type CinemaFormValues = {
   id?: string;
@@ -40,44 +55,76 @@ export default function CinemaForm({ initialValues, isEdit, onClose }: Props) {
   const isCreating = useAppSelector(selectIsCreating);
   const errorMessage = useAppSelector(selectCreateErrorMessage);
 
-  const [cities, setCities] = useState<{ id: number; name: string }[]>([]);
+  const [open, setOpen] = useState(false);
+  const [cityQuery, setCityQuery] = useState("");
+  const [cities, setCities] = useState<
+    {
+      geonameId: number;
+      name: string;
+      countryCode: string;
+      latitude: number;
+      longitude: number;
+    }[]
+  >([]);
+  const [isLoadingCities, setIsLoadingCities] = useState(false);
 
   useEffect(() => {
-    axiosInstance.get("/geonames/search").then((res) => {
-      setCities(res.data.data.items);
-    });
-  }, []);
+    if (cityQuery.trim().length < 2) {
+      setCities([]);
+      return;
+    }
+
+    const timeout = setTimeout(async () => {
+      try {
+        setIsLoadingCities(true);
+
+        const res = await axiosInstance.get("/geonames/search", {
+          params: {
+            q: cityQuery,
+          },
+        });
+
+        setCities(res.data.data.items);
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setIsLoadingCities(false);
+      }
+    }, 300);
+
+    return () => clearTimeout(timeout);
+  }, [cityQuery]);
 
   const formik = useFormik({
     initialValues: {
       name: initialValues?.name || "",
       address: initialValues?.address || "",
       webLink: initialValues?.webLink || "",
-      geonameId: initialValues?.geonameId || 0,
+      geonameId: initialValues?.geonameId ?? 0,
     },
 
     validationSchema: Yup.object({
       name: Yup.string()
         .required("Required")
         .min(1, "Too short")
-        .max(255, "Too long")
-        .required("Required"),
+        .max(255, "Too long"),
 
       address: Yup.string()
         .required("Required")
         .min(1, "Too short")
-        .max(255, "Too long")
-        .required("Required"),
+        .max(255, "Too long"),
 
       webLink: Yup.string().url("Invalid URL").required("Required"),
 
       geonameId: Yup.number()
+        .moreThan(0, "Select city")
         .required("Required")
-        .typeError("Must be a number")
-        .required("Required"),
+        .typeError("Must be a number"),
     }),
 
     onSubmit: async (values) => {
+      formik.setFieldTouched("geonameId", true, true);
+      
       if (isEdit && initialValues?.id) {
         await dispatch(
           updateCinema({
@@ -95,6 +142,8 @@ export default function CinemaForm({ initialValues, isEdit, onClose }: Props) {
       }
     },
   });
+
+  const geonameError = formik.submitCount > 0 && formik.errors.geonameId
 
   return (
     <>
@@ -118,7 +167,11 @@ export default function CinemaForm({ initialValues, isEdit, onClose }: Props) {
           </DialogHeader>
 
           <form onSubmit={formik.handleSubmit} className="space-y-4">
-            {errorMessage && <div>{errorMessage}</div>}
+            {errorMessage && (
+              <Alert variant="destructive" className="max-w-md">
+                <AlertDescription>{errorMessage}</AlertDescription>
+              </Alert>
+            )}
 
             {/* Name */}
             <CustomInput
@@ -159,19 +212,81 @@ export default function CinemaForm({ initialValues, isEdit, onClose }: Props) {
             />
 
             {/* GeonameId */}
-            <select
-              value={formik.values.geonameId}
-              onChange={(e) =>
-                formik.setFieldValue("geonameId", Number(e.target.value))
-              }
-            >
-              <option value={0}>Select city</option>
-              {cities.map((city) => (
-                <option key={city.id} value={city.id}>
-                  {city.name}
-                </option>
-              ))}
-            </select>
+            <div className="space-y-2">
+              <label className="text-sm font-medium">City</label>
+
+              <Popover open={open} onOpenChange={setOpen}>
+                <PopoverTrigger asChild>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded={open}
+                    className="w-full justify-between"
+                  >
+                    {cityQuery || "Select city"}
+
+                    <ChevronsUpDown className="opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+
+                <PopoverContent className="w-full p-0">
+                  <Command shouldFilter={false}>
+                    <CommandInput
+                      placeholder="Search city..."
+                      value={cityQuery}
+                      onValueChange={setCityQuery}
+                    />
+
+                    <CommandList>
+                      {isLoadingCities && (
+                        <div className="p-2 text-sm text-muted-foreground">
+                          Searching...
+                        </div>
+                      )}
+
+                      {!isLoadingCities &&
+                        cities.length === 0 &&
+                        cityQuery.length >= 2 && (
+                          <CommandEmpty>No cities found.</CommandEmpty>
+                        )}
+
+                      <CommandGroup>
+                        {cities.map((city) => (
+                          <CommandItem
+                            key={city.geonameId}
+                            value={String(city.geonameId)}
+                            onSelect={() => {
+                              formik.setFieldValue("geonameId", city.geonameId);
+                              formik.setFieldTouched("geonameId", true, true);
+                              setCityQuery(city.name);
+                              setOpen(false);
+                            }}
+                          >
+                            {city.name}
+
+                            <Check
+                              className={`ml-auto ${
+                                formik.values.geonameId === city.geonameId
+                                  ? "opacity-100"
+                                  : "opacity-0"
+                              }`}
+                            />
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+              <input type="hidden" {...formik.getFieldProps("geonameId")} />
+            </div>
+
+            {geonameError && (
+              <div className="text-sm text-red-500">
+                {formik.errors.geonameId}
+              </div>
+            )}
 
             <DialogFooter>
               <DialogClose asChild>
