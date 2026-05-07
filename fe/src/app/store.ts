@@ -4,10 +4,11 @@ import { setupListeners } from "@reduxjs/toolkit/query";
 import { authSlice } from "../features/auth/slice/authSlice";
 import { projectsSlice } from "../features/projects/slice/projectsSlice";
 import { inviteTokensSlice } from "@/features/invite-tokens/slice/inviteTokensSlice";
+import { cinemaSlice } from "@/features/cinemas/slice/cinemaSlice";
 
 // `combineSlices` automatically combines the reducers using
 // their `reducerPath`s, therefore we no longer need to call `combineReducers`.
-const rootReducer = combineSlices(authSlice, projectsSlice, inviteTokensSlice);
+const rootReducer = combineSlices(authSlice, projectsSlice, inviteTokensSlice, cinemaSlice);
 // Infer the `RootState` type from the root reducer
 export type RootState = ReturnType<typeof rootReducer>;
 
