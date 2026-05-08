@@ -76,6 +76,14 @@ public class EventServiceImpl implements EventService {
         event.setCinema(cinema);
         Event savedEvent = eventRepository.save(event);
 
+        if (dto.getTimeFlags() != null) {
+            TimeFlag timeFlag = timeFlagMappingService.mapCreateDtoToEntity(
+                    dto.getTimeFlags(),
+                    savedEvent.getId()
+            );
+            timeFlagRepository.save(timeFlag);
+        }
+
         return mapToResponseDto(savedEvent);
     }
 
