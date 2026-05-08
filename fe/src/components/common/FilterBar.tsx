@@ -16,11 +16,11 @@ type FilterBarProps = {
 export default function FilterBar({
     search,
     setSearch,
-    status,
+    // status,
     setStatus,
     city,
     setCity,
-    date,
+    // date,
     setDate,
 }: FilterBarProps){
     const cities = [
