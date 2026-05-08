@@ -1,7 +1,7 @@
 import {SessionCard} from "@/features/session-card/SessionCard";
 import {Button} from "@/components/ui/button";
 import type {Session} from "@/features/session-card/types.ts";
-import {Pencil, Trash2} from "lucide-react";
+import {Trash2} from "lucide-react";
 
 type Props = {
     session: Session
@@ -9,7 +9,7 @@ type Props = {
     onEdit?: (session: Session) => void;
 };
 
-export const AdminSessionCard = ({session, onDelete, onEdit}: Props) => {
+export const AdminSessionCard = ({session, onDelete}: Props) => {
     return (
         <div className="relative group hover:scale-[1.01] transition-transform">
 
@@ -22,15 +22,6 @@ export const AdminSessionCard = ({session, onDelete, onEdit}: Props) => {
             {/* ADMIN ACTIONS */}
 
             <div className="absolute top-2 right-2 flex gap-2 z-10">
-                {onEdit && (
-                    <Button
-                        size="icon"
-                        variant="secondary"
-                        onClick={() => onEdit(session)}
-                    >
-                        <Pencil size={16}/>
-                    </Button>
-                )}
 
                 <Button
                     size="icon"
