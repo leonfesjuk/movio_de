@@ -67,6 +67,7 @@ export default function CinemaForm({ initialValues, isEdit, onClose }: Props) {
     }[]
   >([]);
   const [isLoadingCities, setIsLoadingCities] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   useEffect(() => {
     if (cityQuery.trim().length < 2) {
@@ -138,6 +139,7 @@ export default function CinemaForm({ initialValues, isEdit, onClose }: Props) {
 
         if (createCinema.fulfilled.match(result)) {
           formik.resetForm();
+          setDialogOpen(false);
         }
       }
     },
@@ -147,7 +149,7 @@ export default function CinemaForm({ initialValues, isEdit, onClose }: Props) {
 
   return (
     <>
-      <Dialog open={isEdit ? true : undefined}>
+      <Dialog open={isEdit ? true : dialogOpen} onOpenChange={setDialogOpen}>
         {!isEdit && (
           <DialogTrigger asChild>
             <Button className="mb-4">New cinema</Button>
