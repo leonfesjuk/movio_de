@@ -224,13 +224,15 @@ verify(eventRepository).findUpcomingEvents(any(Pageable.class));
 
         EventCreateDto dto = new EventCreateDto(
             "Title", "Description", "http://img.jpg", "http://seance", LocalDateTime.now().plusDays(1),
-            cinemaId
+            cinemaId, new EventCreateDto.TimeFlagDto(true, false, true)
         );
 
         Cinema cinema = createMockCinema(cinemaId, orgId);
         Event event = createMockEvent();
         event.setTitle(dto.getTitle());
         event.setDescription(dto.getDescription());
+
+        TimeFlag timeFlag = new TimeFlag(eventId, true, false, true);
 
         when(cinemaRepository.findById(cinemaId)).thenReturn(Optional.of(cinema));
         when(eventMappingService.mapDtoToEntity(dto)).thenReturn(event);
@@ -239,6 +241,8 @@ verify(eventRepository).findUpcomingEvents(any(Pageable.class));
             setEntityId(e, eventId);
             return e;
         });
+        when(timeFlagMappingService.mapCreateDtoToEntity(dto.getTimeFlags(), eventId)).thenReturn(timeFlag);
+        when(timeFlagRepository.save(any(TimeFlag.class))).thenReturn(timeFlag);
 
         EventResponseDto result = eventService.create(dto, orgId);
 
@@ -246,7 +250,7 @@ verify(eventRepository).findUpcomingEvents(any(Pageable.class));
         verify(cinemaRepository).findById(cinemaId);
         verify(eventMappingService).mapDtoToEntity(dto);
         verify(eventRepository).save(any(Event.class));
-        verify(timeFlagRepository, never()).save(any(TimeFlag.class));
+        verify(timeFlagRepository).save(any(TimeFlag.class));
     }
 
     @Test
@@ -257,7 +261,7 @@ verify(eventRepository).findUpcomingEvents(any(Pageable.class));
 
         EventCreateDto dto = new EventCreateDto(
             "Title", "Description", "http://img.jpg", "http://seance", LocalDateTime.now().plusDays(1),
-            cinemaId
+            cinemaId, null
         );
 
         Cinema cinema = createMockCinema(cinemaId, orgId);
@@ -284,7 +288,7 @@ verify(eventRepository).findUpcomingEvents(any(Pageable.class));
 
         EventCreateDto dto = new EventCreateDto(
             "Title", "Description", "http://img.jpg", "http://seance", LocalDateTime.now().plusDays(1),
-            cinemaId
+            cinemaId, null
         );
 
         when(cinemaRepository.findById(cinemaId)).thenReturn(Optional.empty());
@@ -300,7 +304,7 @@ verify(eventRepository).findUpcomingEvents(any(Pageable.class));
 
         EventCreateDto dto = new EventCreateDto(
             "Title", "Description", "http://img.jpg", "http://seance", LocalDateTime.now().plusDays(1),
-            cinemaId
+            cinemaId, null
         );
 
         Cinema cinema = createMockCinema(cinemaId, otherOrgId);
