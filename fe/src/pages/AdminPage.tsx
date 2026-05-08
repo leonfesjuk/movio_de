@@ -38,6 +38,7 @@ export default function AdminPage() {
   const [imageUrl, setImageUrl] = useState("");
   const [seanceLink, setSeanceLink] = useState("");
   const [cinemaId, setCinemaId] = useState("");
+  const [dialogEventOpen, setDialogEventOpen] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -117,7 +118,7 @@ export default function AdminPage() {
       }
       const data = await getSessions();
       setSessions(data);
-
+      setDialogEventOpen(false);
       resetForm();
     } catch (e) {
       console.error(e);
@@ -148,7 +149,7 @@ export default function AdminPage() {
       <Separator />
       <h2 className="text-xl font-bold my-6">Sessions</h2>
 
-      <Dialog>
+      <Dialog open={dialogEventOpen} onOpenChange={setDialogEventOpen}>
         <DialogTrigger asChild>
           <Button
               className="mb-4"
