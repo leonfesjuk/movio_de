@@ -10,7 +10,6 @@ import {
 } from "../slice/cinemaSlice";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogFooter,
   DialogHeader,
@@ -289,9 +288,15 @@ export default function CinemaForm({ initialValues, isEdit, onClose }: Props) {
             )}
 
             <DialogFooter>
-              <DialogClose asChild>
-                <Button variant="outline">Cancel</Button>
-              </DialogClose>
+              <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    onClose?.();
+                  }}
+              >
+                Cancel
+              </Button>
               <Button type="submit" disabled={isCreating}>
                 {isEdit ? "Save" : "Create"}
               </Button>
