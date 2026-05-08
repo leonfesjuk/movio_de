@@ -31,11 +31,11 @@ export default function FilterBar({
     return(
         <div className="flex gap-4 items-center mb-6">
 
-            <Input
+            {/* <Input
             type="date"
             value={date}
             onChange={(e) => setDate(e.target.value)}
-            />
+            /> */}
             <Select value={city} onValueChange={setCity}>
                 <SelectTrigger className="w-[200px]">
                     <SelectValue placeholder="All cities"/>
@@ -57,7 +57,7 @@ export default function FilterBar({
                 onChange={(e) => setSearch(e.target.value)}
             />
 
-            <Select value={status} onValueChange={setStatus}>
+            {/* <Select value={status} onValueChange={setStatus}>
                 <SelectTrigger className="w-[150px]">
                     <SelectValue placeholder="Status"/>
                 </SelectTrigger>
@@ -65,7 +65,7 @@ export default function FilterBar({
                     <SelectItem value="active">Active</SelectItem>
                     <SelectItem value="inactive">Inactive</SelectItem>
                 </SelectContent>
-            </Select>
+            </Select> */}
 
             <Button variant="outline"
                     onClick={()=>{
