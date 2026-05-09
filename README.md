@@ -11,6 +11,7 @@ Event management platform for Ukrainian movie screenings in Germany.
 - Developed Events & Cinemas API (entity → repository → service → controller)
 - Implemented Geonames service (city search via JPQL)
 - Configured role-based access and endpoint permissions
+- Organized PostgreSQL database connection (migrated from MySQL)
 - Unit tests for business logic
 
 ## Project Structure
