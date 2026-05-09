@@ -1,78 +1,75 @@
-## 🚀 React + TypeScript + Vite
+# Moonstone Frontend
 
-Перед началом не забудьте выполнить установку зависимостей:
+A React-based admin dashboard for managing cinemas and events.
+
+## Tech Stack
+
+- **React 18** + **TypeScript**
+- **Vite** for fast development
+- **Redux Toolkit** for state management
+- **Tailwind CSS** for styling
+- **Axios** for API requests (with interceptors)
+
+## Quick Start
 
 ```bash
 npm install
+npm run dev
 ```
 
-### 🎨 Стилизация с Tailwind CSS
+## Authentication
 
-Проект уже настроен с использованием **Tailwind CSS**.
-Рекомендуем потратить немного времени на изучение его синтаксиса, чтобы легко и эффективно стилизовать интерфейс.
+Cookie-based authentication with automatic token refresh:
+- Access Token stored in HttpOnly cookies
+- Axios interceptors handle 401 errors and token refresh
+- Example: `src/features/auth/authSlice.ts`
 
-* Документация: [https://tailwindcss.com/docs](https://tailwindcss.com/docs)
-
----
-
-### 📡 Работа с API через Axios
-
-Для отправки запросов используется **Axios**.
-Глобальная конфигурация уже настроена и находится в папке:
+## Project Structure
 
 ```
-/src/lib/axiosInstance.ts
+src/
+├── components/          # Reusable UI components
+│   └── ui/              # Base UI kit (buttons, modals, etc.)
+├── features/            # Feature-based modules
+│   ├── auth/            # Authentication
+│   │   ├── slice.ts     # Redux slice + API calls
+│   │   ├── services/    # Auth API endpoints
+│   │   └── types.ts     # Feature-specific types
+│   ├── cinemas/         # Cinema management
+│   ├── events/          # Event management
+│   └── ...
+├── lib/
+│   └── axiosInstance.ts # Axios config with interceptors
+├── pages/               # Route-level components
+└── types/               # Global shared types
 ```
 
-✅ Поддержка cookie-based аутентификации .
+### Feature Structure
 
----
+Each feature follows the **FSD (Feature-Sliced Design)** pattern:
 
-### ⚠️ Обработка ошибок
+| Folder | Purpose |
+|--------|---------|
+| `slice.ts` | Redux state + business logic |
+| `services/` | API calls specific to this feature |
+| `types.ts` | Local types/interfaces |
 
-Пример обработки серверных ошибок можно найти в **authSlice** (`/features/auth/authSlice.ts`).
+## Error Handling
 
----
+Centralized error handling via Axios interceptors:
+- Server errors trigger notifications
+- Example implementation in `src/features/auth/authSlice.ts`
 
-### ✅ Редирект после успешных запросов
+## API Integration
 
-Форма регистрации демонстрирует, как выполнять **редирект** после успешного действия:
+Base URL configured in `src/lib/axiosInstance.ts`:
+- Cookie credentials enabled
+- Request/response interceptors
+- Automatic retry on 401
 
+## Environment
 
----
-
-### 🗂️ Структура проекта
-
-#### 📁 `/pages`
-
-Содержит **страницы приложения**, соответствующие маршрутам (routes).
-
-#### 📁 `/components`
-
-Хранятся **переиспользуемые UI-компоненты** и общие визуальные блоки, не относящиеся напрямую к конкретным фичам.
-
-#### 📁 `/features`
-
-Каждая фича (feature) — это **логически изолированная область приложения**:
-
+Variables defined in `.env`:
 ```
-features/
-  auth/         # Аутентификация
-  projects/     # Проекты
-  tasks/        # Таски
+VITE_API_URL=http://localhost:8080/api/v1
 ```
-
-Внутри каждой фичи:
-
-| Папка       | Назначение                          |
-| ----------- | ----------------------------------- |
-| `slice.ts`  | Redux slice + бизнес-логика         |
-| `services/` | API-запросы, связанные с этой фичей |
-| `types.ts`  | Локальные типы для данной фичи      |
-
-#### 📁 `/types`
-
-Глобальные типы, общие для всего приложения (например, `User`, `Tokens`, `ApiError` и т.д.).
-
----
-

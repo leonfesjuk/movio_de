@@ -1,140 +1,127 @@
-# Описание проекта TaskTracker
+# Moonstone Backend
 
-## Глава 1. Текущее состояние
+A RESTful API backend for an event management platform, enabling cinema and event organization management.
 
-### 1. Безопасность и авторизация
+## Tech Stack
 
-Для защиты доступа к API и ресурсам TaskTracker используется JWT (JSON Web Tokens) с разделением на два типа токенов:
+- **Java 17** + **Spring Boot 3**
+- **PostgreSQL** for data persistence
+- **JWT** authentication with Access/Refresh tokens (HttpOnly cookies)
+- **Gradle** build system
+- **GitHub Actions** for CI/CD
 
-* **Access Token (AT)**
+## Security & Authentication
 
-    * Краткоживущий токен (обычно 5–15 минут).
-    * Хранится в HTTP‑cookie с флагом `HttpOnly`.
-    * Используется для авторизации каждого запроса к защищённым маршрутам.
-    * Минимизирует риск компрометации: в случае перехвата срок действия ограничен.
+### JWT Token Architecture
 
-* **Refresh Token (RT)**
+| Token Type | Lifetime | Storage | Purpose |
+|------------|----------|---------|---------|
+| Access Token | 5-15 min | HttpOnly Cookie | API authorization |
+| Refresh Token | days/weeks | HttpOnly Cookie | Token renewal |
 
-    * Долгоживущий токен (обычно несколько дней или недель).
-    * Тоже хранится в HTTP‑cookie `HttpOnly`.
-    * Предназначен для получения нового Access Token без повторного ввода учётных данных.
-    * Позволяет поддерживать «сеанс» пользовател-й без постоянной аутентификации.
+### Authorization Flow
 
-**Механика работы**:
+1. User authenticates via `/api/v1/auth/login`
+2. Server validates credentials and issues AT + RT in cookies
+3. AT is automatically sent with each protected request
+4. When AT expires, client calls `/api/v1/auth/refresh-token` with RT
+5. On logout (`/api/v1/auth/logout`), both cookies are cleared
 
-1. При входе (`/api/v1/auth/login`) сервер проверяет логин и пароль и выдаёт пару токенов (AT + RT) в двух cookie.
-2. Браузер автоматически отправляет Access Token, хранящийся в HTTP‑cookie, при каждом запросе к защищённым маршрутам.
-3. По истечении срока действия AT клиент автоматически делает запрос `/api/v1/auth/refresh`, передавая RT, и получает новый AT.
-4. При выходе из системы (`/api/v1/auth/logout`) оба cookie очищаются.
+### User Roles
 
-**Маршруты авторизации**:
+- **ROLE_ADMIN** — Full admin rights: user/project/settings management
+- **ROLE_USER** — Standard access: create and manage own entities
 
-* `POST /api/v1/auth/login` — аутентификация по логину и паролю.
-* `POST /api/v1/auth/refresh-token` — обновление Access Token по Refresh Token.
-* `POST /api/v1/auth/logout` — выход и удаление токенов.
+## API Endpoints
 
-**Роли пользователей**:
+### Authentication
 
-* **ROLE\_ADMIN** — полные административные права: управление пользователями, проектами и настройками.
-* **ROLE\_USER** — базовый доступ: создание и редактирование собственных проектов.
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/v1/auth/login` | Login with email/password |
+| POST | `/api/v1/auth/refresh-token` | Refresh access token |
+| POST | `/api/v1/auth/logout` | Invalidate tokens |
+| POST | `/api/v1/users/register` | Register new user |
+| GET | `/api/v1/users/confirm/{code}` | Activate account |
 
----
+### Cinemas
 
-### 1. Проекты
+| Method | Endpoint | Role | Description |
+|--------|----------|------|-------------|
+| POST | `/api/v1/cinemas` | USER | Create cinema |
+| GET | `/api/v1/cinemas` | USER | List all cinemas |
+| GET | `/api/v1/cinemas/{id}` | USER | Get cinema by ID |
+| DELETE | `/api/v1/cinemas/{id}` | ADMIN/Owner | Delete cinema |
 
-* **Создать проект**
-  `POST /api/v1/projects`
-  Доступно всем зарегистрированным (**ROLE\_USER**, **ROLE\_ADMIN**).
-* **Получить все проекты**
-  `GET  /api/v1/projects`
-  Возвращает список проектов, в которых пользователь участвует.
-* **Получить проект по ID**
-  `GET  /api/v1/projects/{id}`
-  Доступно участникам проекта.
-* **Удалить проект**
-  `DELETE /api/v1/projects/{id}`
-  Доступно владельцу проекта или **ROLE\_ADMIN**.
+### Events
 
-### 2. Задачи
+| Method | Endpoint | Role | Description |
+|--------|----------|------|-------------|
+| POST | `/api/v1/events` | USER | Create event |
+| GET | `/api/v1/events` | USER | List events (with filters) |
+| GET | `/api/v1/events/{id}` | USER | Get event by ID |
+| DELETE | `/api/v1/events/{id}` | ADMIN/Owner | Delete event |
 
-* **Создать задачу**
-  `POST /api/v1/tasks`
-  Доступно участникам проекта.
-* **Получить задачу по ID**
-  `GET  /api/v1/tasks/{id}`
-  Доступно участникам проекта.
-* **Удалить задачу**
-  `DELETE /api/v1/tasks/{id}`
-  Доступно создателю задачи или владельцу проекта.
-* **Получить все задачи проекта**
-  `GET  /api/v1/tasks/project/{projectId}`
-  Доступно участникам проекта.
+### Geonames (City Search)
 
-### 3. Приглашения и участники (не реализованно)
+| Method | Endpoint | Role | Description |
+|--------|----------|------|-------------|
+| GET | `/api/v1/geonames` | USER | Search cities |
+| GET | `/api/v1/geonames/{id}` | USER | Get city details |
 
-* **Приглашение пользователя**
-  `POST /api/v1/projects/{projectId}/invitations`
-  Доступно владельцу проекта.
-* **Получить список участников**
-  `GET  /api/v1/projects/{projectId}/collaborators`
-  Доступно участникам проекта.
+### Administration
 
-### 4. Пользователи (ROLE\_ADMIN)
+| Method | Endpoint | Role | Description |
+|--------|----------|------|-------------|
+| GET | `/api/v1/users/all` | ADMIN | List all users |
 
-* **Получить всех пользователей**
-  `GET /api/v1/users/all`
-  Доступно только **ROLE\_ADMIN**.
+## Project Structure
 
-### 5. Аутентификация и регистрация
+```
+src/main/java/com/moonstone/
+├── config/           # Security, CORS, configuration
+├── controller/       # REST controllers
+├── dto/              # Request/Response DTOs
+├── entity/           # JPA entities
+├── exception/        # Custom exceptions & handlers
+├── mapper/           # Entity <-> DTO mappers
+├── repository/       # JPA repositories
+├── security/         # JWT filters, auth helpers
+└── service/          # Business logic
+```
 
-* **Регистрация**
-  `POST /api/v1/users/register`
-  Открытый эндпоинт для создания нового пользователя.
-* **Подтверждение регистрации**
-  `GET  /api/v1/users/confirm/{code}`
-  Открытый эндпоинт для активации аккаунта по коду.
-* **Вход**
-  `POST /api/v1/auth/login`
-  Принимает e-mail и пароль, возвращает JWT в HTTP-only cookie.
-* **Обновление токена**
-  `POST /api/v1/auth/refresh-token`
-  Принимает refresh token, возвращает новый access token.
-* **Выход**
-  `POST /api/v1/auth/logout`
-  Инвалидирует токены и очищает cookie.
+## Getting Started
 
----
+### Prerequisites
+
+- Java 17+
+- PostgreSQL
+- Gradle
+
+### Environment Variables
+
+```bash
+DATABASE_URL=jdbc:postgresql://localhost:5432/moonstone
+JWT_SECRET=your-secret-key
+```
+
+### Build & Run
+
+```bash
+./gradlew clean build
+./gradlew bootRun
+```
+
+### Run Tests
+
+```bash
+./gradlew test
+```
 
 ## CI/CD
 
-![CI](https://github.com/<your-org>/<your-repo>/actions/workflows/gradle.yml/badge.svg)
+Automated builds via GitHub Actions on:
+- Push to `main`, `develop`
+- Pull Requests to `main`, `develop`
 
-Проект интегрирован с **GitHub Actions** для автоматической сборки, тестирования и статического анализа при каждом `push` в ветки `main`, `develop` и при открытии Pull Request.
-
-### Workflow файл
-
-Расположен по пути `.github/workflows/gradle.yml`. Триггерится на события:
-
-* `push` в ветки `main`, `develop`
-* `pull_request` к веткам `main`, `develop`
-
-#### Основные шаги
-
-1. **Checkout** — клонирование репозитория.
-2. **Настройка JDK 17**:
-
-   ```yaml
-   - name: Set up JDK
-     uses: actions/setup-java@v3
-     with:
-       distribution: 'temurin'
-       java-version: 17
-   ```
-3. **Кеширование зависимостей Gradle**.
-4. **Запуск MySQL** (для интеграционных тестов).
-5. **Сборка и тесты**:
-
-   ```bash
-   ./gradlew clean build --info
-   ```
----
+Workflow: `.github/workflows/gradle.yml`
