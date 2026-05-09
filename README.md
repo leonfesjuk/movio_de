@@ -36,23 +36,6 @@ movio/
 - Redux Toolkit
 - Tailwind CSS
 
-## Quick Start
-
-### Backend
-
-```bash
-cd be
-./gradlew bootRun
-```
-
-### Frontend
-
-```bash
-cd fe
-npm install
-npm run dev
-```
-
 ## Features
 
 - **Cinemas Management** — CRUD operations for cinema venues
